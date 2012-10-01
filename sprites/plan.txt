@@ -1,0 +1,57 @@
+
+- enemies: slime, skull, kangaroo, knight
+
+- PHP sprite cutter
+- PHP sprite/animation manager
+  - also does sprite packing and JSON out
+___________________________________________
+
+SPRITE MANAGER (PHP)
+
+- Imports many tiny PNGs
+- Exports packed sprite sheet PNGs and animation JSON
+
+__MODEL__
+
+Texture
+- (directory name)
+Slice (Texture)
+- (image file)
+AnimationGroup (Texture)
+- name
+- list of favorited slices (and default offsets)
+Animation (AnimationGroup)
+- name
+- loop (y/n)
+Frame (Animation)
+- Slice
+- offset
+- duration
+
+Note that Textures and Slices are represented solely by the filesystem. References to them are strings.
+
+__VIEW__
+
+Texture List
+- select texture
+Texture
+- select/create AnimationGroup
+AnimationGroup
+- delete/rename this AnimationGroup
+? add/remove favorited Slices
+- select/create Animation
+- preview (canvas) (click Animations to start them playing in this single canvas)
+Animation
+- delete/rename this Animation
+- loop checkbox
+- preview (canvas)
+- list of Frames (add/delete)
+  - offset x, offset x2 (flipped), offset y, duration textfields
+  - Slice thumbnail (click to pick from Texture's Slices, favorites at top, you can unfavorite from here too)
+
+Notes:
+- picking a Frame adds the Slice to the AnimationGroup's favorites list
+- saving a Frame updates the Slice's offset in the AnimationGroup's favorites list
+- when adding a Frame, duration is defaulted to the previous Frame's and offset is defaulted to the values used previously for that Slice (from the favorites)
+- all preview canvases show a horizontally mirrored version too (this is for checking offset x2)
+- Textures, Slices, AnimationGroups, and Animations are listed alphabetically, when easiest to do so

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="24" height="15" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiles3" tilewidth="32" tileheight="32">
+  <image source="../res/tiles3.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="24" height="15">
+  <data encoding="base64" compression="zlib">
+   eJy10kcPwjAMhuGUdWAdWAeWBLSMKoz//+t4D0SKrAQbpBweObLir67axjl3RlOo3vGAL3y+4BrV0O8otPlQn3hFVcuV5LzMD8+Vc1300MfgSy/Q9o/vDjHCGBNMM73Ue8h8n9h9hjkWWGKV6ck5b8xfY4Mtdthnepb8X7+n9b8qnf/vfG28Vynqj1Rfm62Me6Z2te5/wBGnQucb2oL1Ddz8HpQ=
+  </data>
+ </layer>
+ <layer name="physics" width="24" height="15" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJxzZGBgcBzGmBCglbnk2kMpGEjzqQUGwnxqA3qZT4l+WrpjsJg/0OUPpRgAOewqaA==
+  </data>
+ </layer>
+ <objectgroup name="objects" width="24" height="15">
+  <object name="test" type="exit" x="-16" y="300" width="53" height="131"/>
+  <object name="test2" type="exit" x="716" y="296" width="65" height="143"/>
+  <object name="EnemyBot" type="spawn" x="448" y="288" width="32" height="32"/>
+  <object name="EnemyOctorok" type="spawn" x="352" y="384" width="32" height="32"/>
+  <object name="EnemyBot" type="spawn" x="288" y="320" width="32" height="32"/>
+ </objectgroup>
+</map>

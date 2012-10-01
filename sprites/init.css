@@ -1,0 +1,29 @@
+a {
+  text-decoration: none;
+}
+#sliceDialog {
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGUlEQVQIW2M0Njb+f/bsWQZGBgaG/0AOAwA7SQWadEHAAAAAAABJRU5ErkJggg==);
+}
+#frames input { width: 50px; text-align: right; }
+.flip {
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
+}
+.imgcontainer {
+  text-align: center;
+  padding: 5px;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGUlEQVQIW2M0Njb+f/bsWQZGBgaG/0AOAwA7SQWadEHAAAAAAABJRU5ErkJggg==);
+}
+#canvas {
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGUlEQVQIW2M0Njb+f/bsWQZGBgaG/0AOAwA7SQWadEHAAAAAAABJRU5ErkJggg==);
+  width: 300px;
+  height: 300px;
+  image-rendering: optimizeSpeed;
+  image-rendering:-o-crisp-edges;
+  image-rendering:-webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}

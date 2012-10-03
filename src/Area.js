@@ -5,6 +5,10 @@ var Area = {
   tileMap: null,
   offsetX: undefined,
   offsetY: undefined,
+  stdX1: undefined, // for game logic to provide identical experience on different screen resolutions
+  stdY1: undefined,
+  stdX2: undefined,
+  stdY2: undefined,
   rows: 0,
   cols: 0,
   exits: null,
@@ -48,6 +52,14 @@ var Area = {
     // center camera on playerSprite
     this.offsetX = Math.min(Math.max(0, Math.floor(Game.playerSprite.x + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width);
     this.offsetY = Math.min(Math.max(0, Math.floor(Game.playerSprite.y + 32 - canvas.height / 2)), this.rows * this.tileSize - canvas.height);
+    
+    //
+    var stdW = 640;
+    var stdH = 480;
+    this.stdX1 = Math.min(Math.max(0, Math.floor(Game.playerSprite.x + 16 - stdW / 2)), this.cols * this.tileSize - stdW);
+    this.stdY1 = Math.min(Math.max(0, Math.floor(Game.playerSprite.y + 32 - stdH / 2)),  this.rows * this.tileSize - stdH);
+    this.stdX2 = this.stdX1 + stdW;
+    this.stdY2 = this.stdY1 + stdH;
   },
   getPhysicsTile: function(tx, ty) {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return -1; } // out of bounds

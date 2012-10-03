@@ -1,19 +1,20 @@
 var PlayerSprite = Object.extend(PhysicsSprite, {
   
   // physics things
-  //gravity: 1.6, // more than other things!
+  gravity: 3, // more than other things!
   facing: 1,
   hitbox: { x1: 4, y1: 4, x2: 28, y2: 64, STANDING_Y1: 4, CROUCHING_Y1: 14 }, // sprite is 0, 0, 32, 64
-  JUMP_IMPULSE: 11,
-  JUMP_IMPULSE_RUN_COMPONENT: 0,
-  JUMP_EXTRA_TIMER: 15,
-  JUMP_EXTRA_INCR: 0.5,
-  JUMP_EXTRA_RUN_COMPONENT: 0.03,
-  JUMP_X_INCR: 0.4,
-  JUMP_X_DECAY: 0.95,
-  WALK_INCR: 0.8,
-  WALK_DECAY: 0.9,
-  IDLE_DECAY: 0.8,
+  JUMP_IMPULSE: 18,
+  JUMP_IMPULSE_RUN_COMPONENT: 0.5,
+  JUMP_EXTRA_TIMER: 10,
+  JUMP_EXTRA_INCR: 0.6,
+  JUMP_EXTRA_RUN_COMPONENT: 0.05,
+  JUMP_X_IDLE_DECAY: 1.0,
+  JUMP_X_INCR: 0.8,
+  JUMP_X_DECAY: 0.9,
+  WALK_INCR: 2.4,
+  WALK_DECAY: 0.7,
+  IDLE_DECAY: 0.7,
   HURT_TIME: 12,
   HURT_INVINCIBLE_TIME: 45,
   hurtTimer: 0,
@@ -47,14 +48,14 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   },
   
   // 
-  collideWithEnemy: function(enemy) {
+  onCollisionWithEnemy: function(enemy) {
     if (this.invincibleTimer === 0) {
       Game.player.health -= 1;
       this.hurtTimer = this.HURT_TIME;
       this.invincibleTimer = this.HURT_INVINCIBLE_TIME;
       this.playAnimation('hurt');
-      this.vx = this.facing * -2;
-      this.vy = -5;
+      this.vx = this.facing * -4;
+      this.vy = -12;
       this.isAttacking = false;
     }
   },
@@ -128,7 +129,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       }
       
       // allow jump if on ground or recently on ground
-      if (Input.keyPressed.jump && this.framesSinceTouchingBottom < 5) {
+      if (Input.keyPressed.jump && this.framesSinceTouchingBottom < 3 && !this.isAttacking) {
         this.hitbox.y1 = this.hitbox.STANDING_Y1; // stop crouching if necessary
         this.vy = -this.JUMP_IMPULSE - (Math.abs(this.vx) * this.JUMP_IMPULSE_RUN_COMPONENT);
         this.framesSinceTouchingBottom = 99; // prevent a second jump!
@@ -159,13 +160,13 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
     //
     if (this.hurtTimer > 0) {
-      if (this.hurtTimer % 8 < 2) {
+      if (this.hurtTimer % 4 < 1) {
         this.imageModifier |= R.IMG_PINK;
       }
-      else if (this.hurtTimer % 8 < 4) {
+      else if (this.hurtTimer % 4 < 2) {
         this.imageModifier |= R.IMG_CYAN;
       }
-      else if (this.hurtTimer % 8 < 6) {
+      else if (this.hurtTimer % 4 < 3) {
         this.imageModifier |= R.IMG_PINK | R.IMG_CYAN;
       }
     }
@@ -216,12 +217,12 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       // walk left or right?
       if (Input.keyDown.left) {
         this.vx *= this.WALK_DECAY;
-        this.vx -= this.WALK_INCR;
+        if (this.vx < 1) { this.vx -= this.WALK_INCR; }
         this.playAnimation('walk');
       }
       else if (Input.keyDown.right) {
         this.vx *= this.WALK_DECAY;
-        this.vx += this.WALK_INCR;
+        if (this.vx > -1) { this.vx += this.WALK_INCR; }
         this.playAnimation('walk');
       }
       
@@ -251,7 +252,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.vx += this.JUMP_X_INCR;
     }
     else {
-      this.vx *= this.JUMP_X_DECAY;
+      this.vx *= this.JUMP_X_IDLE_DECAY;
     }
   },
 });

@@ -20,15 +20,13 @@
       </Directory>
     
     TODO:
-      - "flashing" enemies
       - enemy projectiles (octorok!)
       - player shield - check before enemy-player collisions (flag stabbing enemy weapons as ineffectual for one frame)
       - "particle" effects (enemy killed, projectile destroyed) these are simply sprites, (maybe with no animation code?)
+      - heart container to collect
+      - player death (restart room) extra lives (lose all progress)
       - elevators!
       
-      - interpolate x,y <-> prevX,prevY of all sprites (and background?) to provide a smooth experience for !== 60fps!
-        - also, frameskipping, multiple updates, etc. get robust!!
-    
   */
   
   
@@ -40,6 +38,7 @@
   
 ?>
 <style>
+
   BODY { background-color: #eeeeee; text-align: center; margin: 0px; }
   #canvas {
     background-color: #fff;
@@ -93,6 +92,8 @@
   
   var forceMobile = false;
   
+  if (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html") { $(function() { $('.production-toggle').toggle(); }); }
+  
   window.onload = function() {
     Mobile.init(function() {
       App.init( Game );
@@ -101,8 +102,21 @@
   
 </script>
 
-<div style="display: none;" class="mobile-toggle">
-   <!--<div class="touch" data-keycode="37" style="clear: both; float:left; border: 1px solid black; background-color: #cfc; width: 60px; height: 60px;">LEFT</div>-->
+<div id="debug-panel" class="mobile-toggle production-toggle" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left;">
+  <button onclick="Game.reset();">Reset Game</button><br/>
+  
+  Framerate: <input name="framerate" value="30" onchange="App.SIM_STEP_TIME = 1000 / $(this).val();" onkeydown="$(this).change();">
+  <button onclick="$('[name=framerate]').val($('[name=framerate]').val() * 2).change();">+</button>
+  <button onclick="$('[name=framerate]').val($('[name=framerate]').val() / 2).change();">-</button><br/>
+  
+  Render Strategy: <select onchange="Debug.updateLoop = $(this).val();">
+    <option>setTimeout</option>
+    <option>requestAnimationFrame</option>
+    <option>hybrid</option>
+  </select><br/>
+  
+  <label><input type="checkbox" onclick="Debug.showHitboxes = $(this).is(':checked');"> Show hitboxes</label><br/>
+  
 </div>
 
 <canvas id="canvas" width="640" height="480">
@@ -133,14 +147,22 @@
 <fdiv class="mobile-toggle">
 
 <table style="margin: auto; margin-top: 5px;" id="controls">
+  <!--
   <tr><th>Move</th>  <td>&lt;left&gt; and &lt;right&gt;</td></tr>
   <tr><th>Crouch</th><td>&lt;down&gt;</td></tr>
   <tr><th>Jump</th>  <td>&lt;shift&gt; or &lt;Z&gt;</td></tr>
   <tr><th>Attack</th><td>&lt;ctrl&gt;  or &lt;X&gt;</td></tr>
+  -->
+  <tr><th>Arrow keys</th>  <td>move and crouch</td></tr>
+  <tr><th>Spacebar</th>    <td>jump</td></tr>
+  <tr><th>Ctrl</th>      <td>attack</td></tr>
 </table>
 
-<p>
-  If the game is broken, <a href="http://dl.dropbox.com/u/29873255/aolbackup/index.html">try this version</a>
+<p class="production-toggle">
+  <strong style="color: red;">THIS IS THE DEVELOPMENT VERSION!</strong><br/>If things are broken, <a href="http://dl.dropbox.com/u/29873255/aolbackup/index.html">try the latest stable version</a>
+</p>
+<p class="production-toggle" style="display: none;">
+  This is the latest stable version.<br/>If you're feeling adventurous,<br/><a href="http://dl.dropbox.com/u/29873255/canvasgame/index.html">try the development version</a>
 </p>
 
 </div>

@@ -8,16 +8,16 @@
  </tileset>
  <layer name="background" width="100" height="15">
   <data encoding="base64" compression="zlib">
-   eJztl0kPwiAQhXE9uB3cDm6J2rrF7f//Op+JJIRAWQbE2h6+PDLt4HReQZozxg4gJ2rzA3WequsN3MGVOOZ+UOep6pjrFuyEftoiz2OKx+IITh4auy5fyu7HAzw9NHXf/9UPTtnXhSst0AYd0HX0Q86lxlRQ10XoemLSA30wAEMwcvBDlUuJfev5UtZjYgwmYApmYM7sz1eqXEpMVV9DoSKqe0zPR6nHhkyC/29wla9nQu4CLMEKrMGG6fdlOa7KpcSK/LBBdW/oemz67+OH7IuIbl9OcY7RrYOiWGxM/Q/tRw2t/yY/5D23bNied0P9HrX/Jj98v0NCvEsuMR2xvwND99/kx74eJx+/9Qwutf6MvgAJJ3bY
+   eJztl0kPwiAQhXE9uB3cDm6J2rrF7f//Op+JJIRAWQbE2h6+PDLt4HReQZozxg4gJ2rzA3WequsN3MGVOOZ+UOep6pjrFuyEftoiz2OKx+IITh4auy5fyu7HAzw9NHXf/9UPTtnXhSst0AYd0HX0Q86lxlRQ10XoemLSA30wAEMwcvBDlUuJfev5UtZjYgwmYApmYM7sz1eqXEpMVV9DoSKqe0zPR6nHhkyC/29wla9nQu4CLMEKrMGG6fdlOa7KpcSK/LBBdW/oemz67+OH7IuIbl9OcY7RrYOiWGxM/af4ofOkxr//Jj/kPbds2J53Q/0etf8mP3y/Q0K8Sy4xHbG/A0P33+THvh4nH7/1DC61/oy+AA4Odvo=
   </data>
  </layer>
  <layer name="physics" width="100" height="15" opacity="0.61">
   <data encoding="base64" compression="zlib">
-   eJztlkEKwCAMBPM1//+pnnoQqiS6hkhnYC8eEpIRtJlZE+RFUYvgo1qieH2cJmveLPBRi9t9jPre5mEXfNSimo+/g4891G8ePmKs/ju8XvAxR7l/dhqHnfdkz3ny/md7+erpPfPWVM+XtX9CyDgPWCWq4g==
+   eJztlkEKwCAMBPM1//+pnnoo1BLrukScgb14iCQjxBYRTZAbRS2Cj2oZJetjNa5+XeCjFrv76N27m4dZ8FGLaj5OBx9zqHcePsb4++/IesHHN8r5n7QHVTDvJ+4+V79/p5e3O7Nn2Zrq/lzzJ4T0cwFK76sj
   </data>
  </layer>
  <objectgroup name="objects" width="100" height="15">
-  <object name="test2" type="exit" x="-19" y="142" width="45" height="127"/>
+  <object name="test3" type="exit" x="-19" y="142" width="45" height="127"/>
   <object name="test2" type="exit" x="3149" y="51" width="64" height="190"/>
   <object name="EnemyOctorok" type="spawn" x="1216" y="384" width="32" height="32"/>
   <object name="EnemyBot" type="spawn" x="256" y="256" width="32" height="32"/>

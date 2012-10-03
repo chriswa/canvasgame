@@ -8,17 +8,17 @@
  </tileset>
  <layer name="background" width="24" height="15">
   <data encoding="base64" compression="zlib">
-   eJy10kcPwjAMhuGUdWAdWAeWBLSMKoz//+t4D0SKrAQbpBweObLir67axjl3RlOo3vGAL3y+4BrV0O8otPlQn3hFVcuV5LzMD8+Vc1300MfgSy/Q9o/vDjHCGBNMM73Ue8h8n9h9hjkWWGKV6ck5b8xfY4Mtdthnepb8X7+n9b8qnf/vfG28Vynqj1Rfm62Me6Z2te5/wBGnQucb2oL1Ddz8HpQ=
+   eJy10kcPwjAMhuEwD2UcGD2wJKBlKYz//+t4D0SKrAQbpBweObLir67a1jl3Qluo3vGAL3w+4xLV0O8qtPlQn3hFVcuV5LzMD8+Vcz30McDwSy/Q9o/vVhhhjAmmmV7qPWS+T+w+wxwLLFFnenLOG/NXWGODLXaZniX/1+9p/a9K5/873xjvdRTNh9bLseyZ2tW6/x4HHAudr7gVrG8Kbx63
   </data>
  </layer>
  <layer name="physics" width="24" height="15" opacity="0.61">
   <data encoding="base64" compression="zlib">
-   eJxzZGBgcBzGmBCglbnk2kMpGEjzqQUGwnxqA3qZT4l+WrpjsJg/0OUPpRgAOewqaA==
+   eJxzZGBgcBzGmBCglbnk2kMpGEjzqQUGwnxqA3qZT4l+WrmDmn7GZRax5g90+UMpBgCOOCqp
   </data>
  </layer>
  <objectgroup name="objects" width="24" height="15">
   <object name="test" type="exit" x="-16" y="300" width="53" height="131"/>
-  <object name="test2" type="exit" x="716" y="296" width="65" height="143"/>
+  <object name="test3" type="exit" x="716" y="296" width="65" height="143"/>
   <object name="EnemyBot" type="spawn" x="448" y="288" width="32" height="32"/>
   <object name="EnemyOctorok" type="spawn" x="352" y="384" width="32" height="32"/>
   <object name="EnemyBot" type="spawn" x="288" y="320" width="32" height="32"/>

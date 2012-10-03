@@ -7,7 +7,6 @@ var Input = {
     // system control
     27:  'esc',
     192: 'tilde',
-    49:  'one',
     
     // game
     37:  'left',
@@ -19,6 +18,7 @@ var Input = {
     // game alternates
     90:  'jump',   // <Z>
     88:  'attack', // <X>
+    32:  'jump',   // <spacebar>
   },
   init: function() {
     window.onkeydown = function(e) {
@@ -34,7 +34,6 @@ var Input = {
       
       if (keyName === 'esc') { if (App.isRunning) { App.pause(); } else { App.start(); } }
       if (keyName === 'tilde') { App.stepAndPause(); }
-      if (keyName === 'one') { Game.reset(); }
       
       e.preventDefault();
       

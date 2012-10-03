@@ -1,4 +1,5 @@
 var Sprite = {
+  isAnimating: true,
   uniqueId: null,
   readyToCull: false,
   groups: null,
@@ -65,12 +66,17 @@ var Sprite = {
     this.slice = R.imageSlices[R.animationGroups[this.characterName].image][this.animation.frames[this.frameIndex].slice];
   },
   
-  update: function() {
-    this.advanceAnimation();
+  updateInterpolationData: function() {
     this.oldX = this.prevX;
     this.oldY = this.prevY;
     this.prevX = this.x;
     this.prevY = this.y;
+  },
+  update: function() {
+    if (this.isAnimating) {
+      this.advanceAnimation();
+    }
+    this.updateInterpolationData();
   },
   render: function(stepInterpolation) {
     var slice = this.slice;

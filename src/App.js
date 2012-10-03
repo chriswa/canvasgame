@@ -11,7 +11,7 @@ var App = {
   fpsRender: null,
   
   SIM_STEP_TIME:  1000 / 30, // simulation framerate!
-  MAX_FRAME_SKIP: 5,
+  MAX_FRAME_SKIP: 3,
   simTime:        null,
   
   init: function( game ) {
@@ -67,14 +67,14 @@ var App = {
   // 
   update: function() {
     this.age++;
-    this.clearDebugShapes(); // simply clears them
+    Debug.update();
     Input.update();
     this.game.update();
     //$('#fps-update').text(this.fpsUpdate.measure().toFixed(1));
   },
   render: function(stepInterpolation) {
     this.game.render(stepInterpolation);
-    this.renderDebugShapes();
+    Debug.render(stepInterpolation);
     if (window.extraRenderFunction) { window.extraRenderFunction(); }
     $('#fps-render').text(this.fpsRender.measure().toFixed(1));
   },
@@ -85,57 +85,62 @@ var App = {
     // simulate up to one step into the future (if we lagged behind, simulate up to this.MAX_FRAME_SKIP steps; if we were super fast, we may not have any updating to do!)
     var framesUpdatedBeforeRendering = 0;
     while (this.simTime < now()) {
+      
+      // don't simulate more than this.MAX_FRAME_SKIP steps before rendering
+      if (framesUpdatedBeforeRendering === this.MAX_FRAME_SKIP + 1) {
+        console.log('FRAME SKIP!');
+        this.simTime = now();
+        break;
+      }
+      framesUpdatedBeforeRendering++;
     
-      // push simulation forward by one step
+      // simulate one step and push forward sim time by one time step
       this.update();
       this.simTime += this.SIM_STEP_TIME;
       
-      // don't simulate more than this.MAX_FRAME_SKIP steps before rendering
-      framesUpdatedBeforeRendering++;
-      if (framesUpdatedBeforeRendering === this.MAX_FRAME_SKIP + 1) {
-        console.log('FRAME SKIP!');
-        simTime = now();
-        break;
-      }
     }
     $('#skipped').text( framesUpdatedBeforeRendering > 1 ? (framesUpdatedBeforeRendering - 1) + ' skipped' : '' );
     //if (framesUpdatedBeforeRendering > 1) {
     //  console.log('framesUpdatedBeforeRendering = ' + framesUpdatedBeforeRendering);
     //}
     
-    // render!
-    // determine interpolation between last step and current step
+    // for rendering, determine interpolation between last step and current step
     var stepInterpolation = 1 - (this.simTime - now()) / this.SIM_STEP_TIME; // 0 is current frame, 1 is previous frame
 //console.log([now(), this.simTime, stepInterpolation]);
     // clamp to 0..1, just in case!
     stepInterpolation = Math.min(1, Math.max(0, stepInterpolation));
+    //stepInterpolation = 1;
     this.render(stepInterpolation);
     
-    window.requestAnimationFrame( this.updateLoop.bind(this), canvas );
-    //setTimeout(this.updateLoop.bind(this), 10);
+    // render!
+    if (Debug.updateLoop === 'requestAnimationFrame') {
+      window.requestAnimationFrame( this.updateLoop.bind(this), canvas );
+    }
+    else if (Debug.updateLoop === 'hybrid') {
+      App._hybridAnimationFrameEnabled = true;
+      App._hybridAnimationFrameRequest = window.requestAnimationFrame( App._hybridAnimationFrameHandler, canvas );
+      setTimeout(function() {
+        App._hybridAnimationFrameEnabled = false;
+        //console.log('timeout');
+        cancelAnimationFrame(App._hybridAnimationFrameRequest);
+        App.updateLoop();
+      }, 0);
+    }
+    else {
+      setTimeout(this.updateLoop.bind(this), 0);
+    }
   },
-  
-  /*
-  // running the game continuously
-  updateLoop: function() {
-    if (!this.isRunning) { return; }
-    this.update();
-    $('#fps-update').text(this.fpsUpdate.measure().toFixed(1));
-    window.requestAnimationFrame( this.renderLoop.bind(this), canvas );
-    //setTimeout(this.renderLoop.bind(this), 0);
+  _hybridAnimationFrameEnabled: false,
+  _hybridAnimationFrameRequest: undefined,
+  _hybridAnimationFrameHandler: function() {
+    if (Debug.updateLoop !== 'hybrid') { return; }
+    if (!App.isRunning) { return; }
+    if (!App._hybridAnimationFrameEnabled) { return; }
+    var stepInterpolation = 1 - (App.simTime - now()) / App.SIM_STEP_TIME; // 0 is current frame, 1 is previous frame
+    stepInterpolation = Math.min(1, Math.max(0, stepInterpolation));
+    App.render(stepInterpolation);
+    App._hybridAnimationFrameRequest = window.requestAnimationFrame( App._hybridAnimationFrameHandler.bind(this), canvas );
   },
-  renderLoop: function() {
-    if (!this.isRunning) { return; }
-    this.render();
-    var fps = this.fpsRender.measure().toFixed(1);
-    //window.setTimeout( this.updateLoop.bind(this), 0 );
-    
-    window.setTimeout( function() {
-      $('#fps-render').text(fps);
-      App.updateLoop();
-    }, 0);
-  },
-  */
   
   // 
   drawPausedScreen: function() {
@@ -156,40 +161,13 @@ var App = {
     //ctx.fillRect(canvas.width*.6, canvas.height*.3, canvas.width*.1, canvas.height*.4);
   },
   
-  /*
-  mainLoop: function() {
-    if (!this.isRunning) { return; }
-    window.requestAnimationFrame( this.mainLoop.bind(this), canvas );
-    this.step();
-    $('#fps').text(fps.measure().toFixed(1));
+  blitSliceByFilename: function(sliceFilename, x, y, w, h) {
+    var slice = R.sliceNames[sliceFilename];
+    if (!w) { w = slice[2]; }
+    if (!h) { h = slice[3]; }
+    ctx.drawImage(R.images.ui[0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
   },
-  */
-  /*
-  mainLoop: function() {
-    if (!this.isRunning) { return; }
-    this.step();
-    window.requestAnimationFrame( this.game.render.bind(this.game), canvas );
-    window.setTimeout(this.mainLoop.bind(this), 1000 / 60);
-    $('#fps').text(fps.measure().toFixed(1));
-  },
-  */
   
-  debugShapesToDraw: [],
-  drawDebugRect: function(rect, colour) {
-    this.debugShapesToDraw.push({type: 'rect', rect: rect, colour: colour || '#f0f'});
-  },
-  clearDebugShapes: function() {
-    this.debugShapesToDraw = []
-  },
-  renderDebugShapes: function() {
-    _.each(this.debugShapesToDraw, function(shape) {
-      ctx.strokeStyle = shape.colour;
-      if (shape.type === 'rect') {
-        var rect = shape.rect;
-        ctx.strokeRect(rect.x1 - Game.area.renderOffsetX, rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
-      }
-    });
-  },
 };
 
 //

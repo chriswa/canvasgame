@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="15" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiles3" tilewidth="32" tileheight="32">
+  <image source="../res/tiles3.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="100" height="15">
+  <data encoding="base64" compression="zlib">
+   eJztlscOwyAQRJ16SDukHdKkJE5V2v9/XSaHlSK0NhhYgyUOT4NXlMXjNZyyLDuDU9Io9Ale4JHaQduke3AAbUtonqJnaS7gaqF15VeVpvvxBh8LDf3epf2g765uP4im10VVOqALeqDP+EHfHecHN9YlxuFaF77zkWQAhmAExmDiONYlVtf+QuajYwpmYA4WYOk4VhfLFXTrthj9h+vjmmPV96CDzg2T82MF1mADtmBXYR1urEuszA8TuL6+85H2I3aK6qAsFgt0z1D9yIXWM51Xav3YoXsG54f63/WB6by++kntwzfqPdy2PtSztigmVR+6fk2pM/UervpxTO3g7Z/ewD1pNPoFxhliPg==
+  </data>
+ </layer>
+ <layer name="physics" width="100" height="15" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJztl1EKACEIBb1a979U/4tUuG6rvBl4f2XICNUws0EIWSbKc//betHzb/X7NfioRZaPv/vt7iGLKn3jA1RQnGnFniuDjxrcvutO66rORHcfu3VdvGa9Bb09qzr48In+YwlRzgQE8IdW
+  </data>
+ </layer>
+ <objectgroup name="objects" width="100" height="15">
+  <object name="test2" type="exit" x="-19" y="142" width="45" height="127"/>
+  <object name="test" type="exit" x="3149" y="51" width="64" height="190"/>
+  <object name="EnemyBot" type="spawn" x="608" y="96" width="32" height="32">
+   <properties>
+    <property name="sample" value="property"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

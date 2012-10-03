@@ -32,6 +32,12 @@ function post(obj) {
   form.submit();
 }
 
+// 
+function now() {
+  //return (new Date) * 1 - 1;
+  return new Date().getTime();
+}
+
 //
 var Preview = {
   init: function() {
@@ -40,6 +46,7 @@ var Preview = {
     this.ctx     = this.canvas.getContext('2d');
     this.texture = document.getElementById('texture');
     if (!this.texture) { throw new Error("Preview: Could not find texture!"); }
+    this.simTime = now();
     this.render();
   },
   startAnimation: function(animationFrames) {
@@ -49,27 +56,40 @@ var Preview = {
       this.frames         = $.extend({}, animationFrames); // deep copy
     }
   },
+  MAX_FRAME_SKIP: 3,
+  SIM_STEP_TIME:  1000 / 30,
   render: function() {
     if (this.frames) {
-      this.delayRemaining--;
-      if (this.delayRemaining === 0) {
-        this.frameIndex++;
-        var animFrame = this.frames[this.frameIndex];
-        if (!animFrame) {
-          this.frameIndex = 0;
-          animFrame = this.frames[this.frameIndex];
+      var framesUpdatedBeforeRendering = 0;
+      while (this.simTime < now()) {
+        this.simTime += this.SIM_STEP_TIME;
+        if (framesUpdatedBeforeRendering === this.MAX_FRAME_SKIP + 1) {
+          console.log('FRAME SKIP!');
+          this.simTime = now();
+          break;
         }
-        this.delayRemaining = animFrame.duration
-        var slice = slices[animFrame.slice];
+        framesUpdatedBeforeRendering++;
         
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        this.ctx.drawImage(this.texture, slice[0], slice[1], slice[2], slice[3], 50 - animFrame.x,        25 + animFrame.y,   slice[2], slice[3]);
-        
-        this.ctx.translate(this.canvas.width + 0.5, 0.5); // XXX: ?
-        this.ctx.scale(-1, 1);
-        this.ctx.drawImage(this.texture, slice[0], slice[1], slice[2], slice[3], 0.5 + 50 + animFrame.x_flipped - slice[2], -0.5 + 150 + animFrame.y, slice[2], slice[3]);
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.delayRemaining--;
+        if (this.delayRemaining === 0) {
+          this.frameIndex++;
+          var animFrame = this.frames[this.frameIndex];
+          if (!animFrame) {
+            this.frameIndex = 0;
+            animFrame = this.frames[this.frameIndex];
+          }
+          this.delayRemaining = animFrame.duration
+          var slice = slices[animFrame.slice];
+          
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          
+          this.ctx.drawImage(this.texture, slice[0], slice[1], slice[2], slice[3], 50 - animFrame.x,        25 + animFrame.y,   slice[2], slice[3]);
+          
+          this.ctx.translate(this.canvas.width + 0.5, 0.5); // XXX: ?
+          this.ctx.scale(-1, 1);
+          this.ctx.drawImage(this.texture, slice[0], slice[1], slice[2], slice[3], 0.5 + 50 + animFrame.x_flipped - slice[2], -0.5 + 150 + animFrame.y, slice[2], slice[3]);
+          this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
       }
     }
     window.requestAnimationFrame( this.render.bind(this), this.canvas );

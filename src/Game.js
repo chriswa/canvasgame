@@ -22,11 +22,12 @@ var Game = {
   },
   reset: function() {
     this.player = Object.build(Player);
-    this.loadArea({area: 'test2', x: 146, y: 352});
+    //this.loadArea({area: 'test2', x: 200, y: 352});
+    this.loadArea({area: 'test3', x: 1692, y: 352});
   },
   loadArea: function(exitObject) {
     
-    console.log(["Game.loadArea", exitObject]);
+    //console.log(["Game.loadArea", exitObject]);
     
     // if the player is leaving an area, we can use which side of it they're on to guess where the player should appear on the next area
     var nextSide = null;
@@ -35,10 +36,10 @@ var Game = {
     }
     
     // destroy all entities (including playerSprite)
-    _.invoke(this.allEntities.collection, 'destroy');
+    //_.invoke(this.allEntities.collection, 'destroy');
     // TODO: instead of destroying each entity, consider simply recreating entity groups, thus letting all entities get GC'd
-    //this.allEntities  = Object.build(EntityGroup);
-    //this.enemiesGroup = Object.build(EntityGroup);
+    this.allEntities  = Object.build(EntityGroup);
+    this.enemiesGroup = Object.build(EntityGroup);
     
     // initialize new area
     this.area = Object.build(Area, exitObject.area);
@@ -88,9 +89,9 @@ var Game = {
     // do collisions
     var p = this.playerSprite;
     this.enemiesGroup.each(function(e) {
-      if (e.x + e.hitbox.x2 > p.x + p.hitbox.x1 && e.x + e.hitbox.x1 < p.x + p.hitbox.x2 && e.y + e.hitbox.y2 > p.y + p.hitbox.y1 && e.y + e.hitbox.y1 < p.y + p.hitbox.y2) {
+      if (!e.isHurt && e.x + e.hitbox.x2 > p.x + p.hitbox.x1 && e.x + e.hitbox.x1 < p.x + p.hitbox.x2 && e.y + e.hitbox.y2 > p.y + p.hitbox.y1 && e.y + e.hitbox.y1 < p.y + p.hitbox.y2) {
         //e.vy = -5;
-        p.collideWithEnemy(e);
+        p.onCollisionWithEnemy(e);
       }
     });
     
@@ -98,10 +99,10 @@ var Game = {
     _.invoke(_.filter(this.allEntities.collection, function(spr) { return spr.readyToCull; }), 'destroy');
   },
   handlePlayerAttack: function(absHitbox) {
-    //App.drawDebugRect(absHitbox, '#f00');
+    Debug.drawRect(absHitbox, '#f00');
     this.enemiesGroup.each(function(e) {
       if (e.x + e.hitbox.x2 > absHitbox.x1 && e.x + e.hitbox.x1 < absHitbox.x2 && e.y + e.hitbox.y2 > absHitbox.y1 && e.y + e.hitbox.y1 < absHitbox.y2) {
-        e.kill();
+        e.onHurtByPlayer();
       }
     });
   },

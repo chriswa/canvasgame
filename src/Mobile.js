@@ -1,9 +1,12 @@
 var Mobile = {
+  
+  isMobile: undefined,
+  
   init: function(callback, force) {
     
     // mobile device support?
-    var hasTouch = ('ontouchstart' in window) || force;
-    if (hasTouch) {
+    this.isMobile = ('ontouchstart' in window) || force;
+    if (this.isMobile) {
       
       $('#canvas').attr('width', 598).attr('height', 340).css({ border: 'none', margin: 0 }); // height=340 seems perfect
       $('#statusbar').width($('#canvas').width() - 20);
@@ -12,9 +15,9 @@ var Mobile = {
       var lastDpadTouch = undefined;
       var buttons = {
         left:   { x:   0, y: 200, w:  50, h: 190 },
-        right:  { x: 100, y: 200, w:  50, h: 190 },
-        down:   { x:   0, y: 300, w: 150, h:  90 },
-        up:     { x:   0, y: 200, w: 150, h:  50 },
+        right:  { x: 100, y: 175, w:  75, h: 215 },
+        down:   { x:   0, y: 300, w: 175, h:  90 },
+        up:     { x:   0, y: 175, w: 175, h:  75 },
         jump:   { x:   0, y:   0, w:   0, h:   0 },
         attack: { x:   0, y:   0, w:   0, h:   0 },
       };
@@ -36,7 +39,7 @@ var Mobile = {
           //ctx.strokeRect(0.5+0, 0.5+200, 150, 299);
           //ctx.strokeRect(0.5+50, 0.5+250, 50, 50);
           var size = Math.sin(renderAge / 10) * 5 + 50;
-          blitSliceByFilename('dpad-symbol.png', 75-size/2, 275-size/2, size, size);
+          App.blitSliceByFilename('dpad-symbol.png', 75-size/2, 275-size/2, size, size);
         }
         
         //
@@ -44,11 +47,11 @@ var Mobile = {
         if (wasPressing.attack) { hasPressedAttack = true; }
         if (!hasPressedJump) {
           var size = Math.sin(renderAge / 10) * 3 + 24;
-          blitSliceByFilename('btn-a.png', 480-size/2, 290-size/2, size, size);
+          App.blitSliceByFilename('btn-a.png', 480-size/2, 290-size/2, size, size);
         }
         if (!hasPressedAttack) {
           var size = Math.sin(renderAge / 10) * 3 + 24;
-          blitSliceByFilename('btn-b.png', 550-size/2, 220-size/2, size, size);
+          App.blitSliceByFilename('btn-b.png', 550-size/2, 220-size/2, size, size);
         }
         
         // draw action button separator line
@@ -60,11 +63,11 @@ var Mobile = {
         // draw dpad activity feedback
         if (lastDpadTouch) {
           var dpadOffset = [0, 150]; // 50, 150
-          blitSliceByFilename('dpad.png', dpadOffset[0], dpadOffset[1]);
-          if (wasPressing.up)    { blitSliceByFilename('dpad-up.png',    dpadOffset[0] + 17, dpadOffset[1] +  0); }
-          if (wasPressing.down)  { blitSliceByFilename('dpad-down.png',  dpadOffset[0] + 17, dpadOffset[1] + 32); }
-          if (wasPressing.left)  { blitSliceByFilename('dpad-left.png',  dpadOffset[0] +  0, dpadOffset[1] + 17); }
-          if (wasPressing.right) { blitSliceByFilename('dpad-right.png', dpadOffset[0] + 32, dpadOffset[1] + 17); }
+          App.blitSliceByFilename('dpad.png', dpadOffset[0], dpadOffset[1]);
+          if (wasPressing.up)    { App.blitSliceByFilename('dpad-up.png',    dpadOffset[0] + 17, dpadOffset[1] +  0); }
+          if (wasPressing.down)  { App.blitSliceByFilename('dpad-down.png',  dpadOffset[0] + 17, dpadOffset[1] + 32); }
+          if (wasPressing.left)  { App.blitSliceByFilename('dpad-left.png',  dpadOffset[0] +  0, dpadOffset[1] + 17); }
+          if (wasPressing.right) { App.blitSliceByFilename('dpad-right.png', dpadOffset[0] + 32, dpadOffset[1] + 17); }
           var x = lastDpadTouch[0] / 3 + dpadOffset[0];
           var y = lastDpadTouch[1] / 3 + dpadOffset[1];
           var danger = Math.max(Math.abs(lastDpadTouch[0] - 75), Math.abs((lastDpadTouch[1] > 100 ? lastDpadTouch[1] - 50 : lastDpadTouch[1]) - 75));
@@ -95,12 +98,7 @@ var Mobile = {
         
         
       };
-      function blitSliceByFilename(sliceFilename, x, y, w, h) {
-        var slice = R.sliceNames[sliceFilename];
-        if (!w) { w = slice[2]; }
-        if (!h) { h = slice[3]; }
-        ctx.drawImage(R.images.ui[0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
-      }
+
       var multitoucher = function(event) {
         var isPressing = {};
         lastDpadTouch = undefined;
@@ -117,7 +115,7 @@ var Mobile = {
               isPressing[buttonName] = true;
             }
           }
-          if (x > 0 && x < 150 && y > 200) { lastDpadTouch = [x - 0, y - 200]; }
+          if (x > 0 && x < 175 && y > 175) { lastDpadTouch = [x - 0, y - 200]; }
           if (x > 400 && y > 140) { isPressing[ (x - 400 > y - 140) ? 'attack' : 'jump' ] = true; }
           
           //ctx.arc(touch.pageX, touch.pageY, 20, 0, 2*Math.PI, true);

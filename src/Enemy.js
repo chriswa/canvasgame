@@ -1,6 +1,8 @@
 var Enemy = Object.extend(PhysicsSprite, {
   
   health: 2,
+  isDangerous: true,
+  isHittable: true,
   
   init: function() {
     Sprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
@@ -18,29 +20,33 @@ var Enemy = Object.extend(PhysicsSprite, {
   },
   
   onHurtByPlayer: function() {
+    if (!this.isHittable) { return; }
     if (!this.isHurt) {
       this.health--;
-      this.isHurt            = true;
-      this.origUpdate        = this.update;
-      this.origImageModifier = this.imageModifier;
-      this.hurtTimer         = 0;
-      this.update            = this.updateWhenHurt;
+      this.isHurt              = true;
+      this.origUpdateFixedStep = this.updateFixedStep;
+      this.origImageModifier   = this.imageModifier;
+      this.hurtTimer           = 0;
+      this.updateFixedStep     = this.updateWhenHurtFixedStep;
     }
+    if (this.health <= 0 && this.onCompleted) { this.onCompleted(); }
   },
   
-  updateWhenHurt: function() {
+  onPlayerCollision: function() {},
+  
+  updateWhenHurtFixedStep: function() {
     this.hurtTimer++;
-    if (this.hurtTimer === 8 && this.health < 1) {
+    if (this.hurtTimer > 8 && this.health <= 0) {
       this.kill();
       return;
     }
-    if (this.hurtTimer === 16) {
+    if (this.hurtTimer > 16) {
       this.isHurt            = false;
-      this.update            = this.origUpdate;
+      this.updateFixedStep   = this.origUpdateFixedStep;
       this.imageModifier     = this.origImageModifier;
-      delete this.origUpdate;
+      delete this.origUpdateFixedStep;
       delete this.origImageModifier;
-      this.update();
+      this.updateFixedStep();
       return;
     }
     //
@@ -53,9 +59,6 @@ var Enemy = Object.extend(PhysicsSprite, {
     else if (this.hurtTimer % 4 < 3) {
       this.imageModifier = this.origImageModifier | R.IMG_PINK | R.IMG_CYAN;
     }
-    
-    // 
-    Sprite.updateInterpolationData.call(this);
   },
   
 });

@@ -23,43 +23,25 @@ var Area = {
     this.rows          = Math.floor(this.physicsMap.length / this.cols);
     this.exits         = R.areas[areaId].exits;
     
+    this.maxX          = this.cols * this.tileSize;
+    this.maxY          = this.rows * this.tileSize;
+    
     _.each(R.areas[areaId].spawns, function(spawn) {
+      
+      // have we already completed (i.e. defeated/collected) this spawn?
+      if (spawn.oncePerDungeon && Game.player.dungeonFlags[spawn.oncePerDungeon]) { return; }
+      
+      // spawn!
       var classObject = window[spawn['class']];
       var e = Object.build(classObject, spawn);
       e.x = spawn.x;
       e.y = spawn.y;
+      
+      // do we need to do anything when the spawn is completed?
+      if (spawn.oncePerDungeon) { e.onCompleted = function() { Game.player.dungeonFlags[spawn.oncePerDungeon] = true; } }
+      
     }, this);
     
-    /*
-    var e = Object.build(EnemyOctorok);
-    e.x = 33 * 32;
-    e.y = 12 * 32;
-    
-    var howManyToCreate = 10;
-    _.each(_.range(howManyToCreate), function(i) {
-      var e = Object.build(EnemyBot);
-      e.x = Math.random() * 200 + 200;
-      e.y = Math.random() * 100 + 100;
-    });
-    */
-  },
-  update: function() {
-    this.age++;
-    
-    this.oldOffsetX = this.offsetX;
-    this.oldOffsetY = this.offsetY;
-    
-    // center camera on playerSprite
-    this.offsetX = Math.min(Math.max(0, Math.floor(Game.playerSprite.x + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width);
-    this.offsetY = Math.min(Math.max(0, Math.floor(Game.playerSprite.y + 32 - canvas.height / 2)), this.rows * this.tileSize - canvas.height);
-    
-    //
-    var stdW = 640;
-    var stdH = 480;
-    this.stdX1 = Math.min(Math.max(0, Math.floor(Game.playerSprite.x + 16 - stdW / 2)), this.cols * this.tileSize - stdW);
-    this.stdY1 = Math.min(Math.max(0, Math.floor(Game.playerSprite.y + 32 - stdH / 2)),  this.rows * this.tileSize - stdH);
-    this.stdX2 = this.stdX1 + stdW;
-    this.stdY2 = this.stdY1 + stdH;
   },
   getPhysicsTile: function(tx, ty) {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return -1; } // out of bounds
@@ -69,13 +51,26 @@ var Area = {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return 0; }
     return this.backgroundMap[ ty * this.cols + tx ];
   },
-  render: function(stepInterpolation) {
-    var ts = this.tileSize;
+  update: function(dt) {
+    this.age += dt;
     
-    // deal with stepInterpolation
-    if (this.oldOffsetX === undefined) { this.oldOffsetX = this.offsetX; this.oldOffsetY = this.offsetY; }
-    this.renderOffsetX = Math.round( this.offsetX * stepInterpolation + this.oldOffsetX * (1-stepInterpolation) );
-    this.renderOffsetY = Math.round( this.offsetY * stepInterpolation + this.oldOffsetY * (1-stepInterpolation) );
+    var px = Math.round(Game.playerSprite.x);
+    var py = Math.round(Game.playerSprite.y);
+    
+    // center camera on playerSprite
+    this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width));
+    this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py + 32 - canvas.height / 2)), this.rows * this.tileSize - canvas.height));
+    
+    // provide standardized aabb for game logic to provide identical gameplay on devices with different display sizes
+    var stdW = 640;
+    var stdH = 480;
+    this.stdX1 = Math.min(Math.max(0, Math.floor(px + 16 - stdW / 2)), this.cols * this.tileSize - stdW);
+    this.stdY1 = Math.min(Math.max(0, Math.floor(py + 32 - stdH / 2)), this.rows * this.tileSize - stdH);
+    this.stdX2 = this.stdX1 + stdW;
+    this.stdY2 = this.stdY1 + stdH;
+  },
+  render: function() {
+    var ts = this.tileSize;
     
     var leftCol   = Math.max(Math.floor(this.renderOffsetX / ts), 0);
     var rightCol  = Math.min(Math.ceil((this.renderOffsetX + canvas.width) / ts), this.cols);
@@ -89,7 +84,6 @@ var Area = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getBackgroundTile(x, y);
-        //console.log([tileIndex, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols)]);
         ctx.drawImage(this.tileImg[0], ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }

@@ -22,8 +22,9 @@ var Game = {
   },
   reset: function() {
     this.player = Object.build(Player);
-    //this.loadArea({area: 'test2', x: 200, y: 352});
-    this.loadArea({area: 'test3', x: 1692, y: 352});
+    //this.loadArea({area: 'test2', x: 150, y: 352}); // in small room with enemies
+    //this.loadArea({area: 'test3', x: 1992, y: 352}); // beside a long, flat stretch
+    this.loadArea({area: 'test', x: 900, y: 352}); // near octoroks
   },
   loadArea: function(exitObject) {
     
@@ -37,7 +38,7 @@ var Game = {
     
     // destroy all entities (including playerSprite)
     //_.invoke(this.allEntities.collection, 'destroy');
-    // TODO: instead of destroying each entity, consider simply recreating entity groups, thus letting all entities get GC'd
+    // (instead of destroying each entity, consider simply recreating entity groups, thus letting all entities get GC'd)
     this.allEntities  = Object.build(EntityGroup);
     this.enemiesGroup = Object.build(EntityGroup);
     
@@ -46,7 +47,6 @@ var Game = {
     
     // spawn a playerSprite
     this.playerSprite = Object.build(PlayerSprite);
-    this.playerSprite.reset();
     
     // set the playerSprite's position and velocity
     if (exitObject.x && exitObject.y) {
@@ -66,13 +66,13 @@ var Game = {
       // place player
       this.playerSprite.x = (side === 'left') ? -this.playerSprite.hitbox.x1 : ((tx + 1) * this.area.tileSize) - this.playerSprite.hitbox.x2;
       this.playerSprite.y = (ty + 1) * this.area.tileSize - this.playerSprite.hitbox.y2;
-      this.playerSprite.vx = (side === 'left') ? 4 : -4;
+      this.playerSprite.vx = ((side === 'left') ? 1 : -1) * this.playerSprite.MAX_X_SPEED;
       
       this.playerSprite.facing = (side === 'left') ? 1 : -1;
       this.playerSprite.startAnimation('walk');
     }
   },
-  update: function() {
+  update: function(dt) {
     
     // if we've queued an area transition, load the new area
     if (this.areaTransition) {
@@ -81,10 +81,10 @@ var Game = {
     }
     
     // update entities
-    this.allEntities.update();
+    this.allEntities.update(dt);
     
     // update area
-    this.area.update();
+    this.area.update(dt);
     
     // do collisions
     var p = this.playerSprite;
@@ -109,10 +109,10 @@ var Game = {
   queueAreaTransition: function(exitObject) {
     this.areaTransition = exitObject;
   },
-  render: function(stepInterpolation) {
+  render: function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    this.area.render(stepInterpolation);
-    this.allEntities.render(stepInterpolation);
+    this.area.render();
+    this.allEntities.render();
     this.hud.render();
   },
 };

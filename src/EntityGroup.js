@@ -3,13 +3,13 @@ var EntityGroup = {
   init: function() {
     this.collection = {};
   },
-  update: function() {
-    _.invoke(this.collection, 'update');
-  },
-  render: function(stepInterpolation) {
+  update: function(dt) {
     _.each(this.collection, function(entity) {
-      entity.render(stepInterpolation);
+      entity.update(dt);
     });
+  },
+  render: function() {
+    _.invoke(this.collection, 'render');
   },
   each: function(iter) {
     _.each(this.collection, iter);

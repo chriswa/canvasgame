@@ -7,6 +7,8 @@ var Input = {
     // system control
     27:  'esc',
     192: 'tilde',
+    51:  '3',
+    54:  '6',
     
     // game
     37:  'left',
@@ -33,7 +35,8 @@ var Input = {
       if (!keyName) { return true; }
       
       if (keyName === 'esc') { if (App.isRunning) { App.pause(); } else { App.start(); } }
-      if (keyName === 'tilde') { App.stepAndPause(); }
+      if (keyName === '6') { App.stepAndPause(1000 * 1 / 60); }
+      if (keyName === '3') { App.stepAndPause(1000 * 1 / 30); }
       
       e.preventDefault();
       

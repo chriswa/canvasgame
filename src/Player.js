@@ -1,5 +1,6 @@
 // Player object
 var Player = {
-  health: 5,
+  health:    6,
   healthMax: 6,
+  dungeonFlags: {},
 };

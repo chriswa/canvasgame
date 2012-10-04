@@ -10,9 +10,11 @@ var App = {
   fpsUpdate: null,
   fpsRender: null,
   
-  SIM_STEP_TIME:  1000 / 30, // simulation framerate!
-  MAX_FRAME_SKIP: 3,
-  simTime:        null,
+  SIM_SPEED:           1.0,
+  SIM_STEP_MIN:        1000 * 1/60, // for stability, simulation delta times will not be smaller than this
+  SIM_STEP_MAX:        1000 * 1/30, // for stability, simulation delta times will not be greater than this
+  SIM_STEP_HARD_LIMIT: 1000 * 3/30, // for playability, each render frame will not advance simulation time more than this (avoiding the death spiral!)
+  simTime: null,
   
   init: function( game ) {
     this.game = game;
@@ -48,6 +50,7 @@ var App = {
     if (!this.isRunning) {
       this.isRunning = true;
       this.simTime = now();
+      this.render();
       this.updateLoop();
     }
   },
@@ -57,24 +60,25 @@ var App = {
       this.drawPausedScreen();
     }
   },
-  stepAndPause: function() {
+  stepAndPause: function(dt) {
     this.pause();
-    this.update();
-    this.render(1.0);
+    this.update(dt);
+    this.simTime += dt;
+    this.render();
     this.drawPausedScreen();
   },
   
   // 
-  update: function() {
-    this.age++;
+  update: function(dt) {
+    this.age += dt;
     Debug.update();
     Input.update();
-    this.game.update();
+    this.game.update(dt);
     //$('#fps-update').text(this.fpsUpdate.measure().toFixed(1));
   },
-  render: function(stepInterpolation) {
-    this.game.render(stepInterpolation);
-    Debug.render(stepInterpolation);
+  render: function() {
+    this.game.render();
+    Debug.render();
     if (window.extraRenderFunction) { window.extraRenderFunction(); }
     $('#fps-render').text(this.fpsRender.measure().toFixed(1));
   },
@@ -82,65 +86,58 @@ var App = {
   updateLoop: function() {
     if (!this.isRunning) { return; }
     
-    // simulate up to one step into the future (if we lagged behind, simulate up to this.MAX_FRAME_SKIP steps; if we were super fast, we may not have any updating to do!)
-    var framesUpdatedBeforeRendering = 0;
-    while (this.simTime < now()) {
-      
-      // don't simulate more than this.MAX_FRAME_SKIP steps before rendering
-      if (framesUpdatedBeforeRendering === this.MAX_FRAME_SKIP + 1) {
-        console.log('FRAME SKIP!');
-        this.simTime = now();
-        break;
-      }
-      framesUpdatedBeforeRendering++;
-    
-      // simulate one step and push forward sim time by one time step
-      this.update();
-      this.simTime += this.SIM_STEP_TIME;
-      
+    if (Debug.timestep === '1/30') {
+      this.SIM_STEP_MIN = 1000 / 30;
+      this.SIM_STEP_MAX = 1000 / 30;
     }
-    $('#skipped').text( framesUpdatedBeforeRendering > 1 ? (framesUpdatedBeforeRendering - 1) + ' skipped' : '' );
-    //if (framesUpdatedBeforeRendering > 1) {
-    //  console.log('framesUpdatedBeforeRendering = ' + framesUpdatedBeforeRendering);
-    //}
+    else if (Debug.timestep === '1/60') {
+      this.SIM_STEP_MIN = 1000 / 60;
+      this.SIM_STEP_MAX = 1000 / 60;
+    }
+    else {
+      this.SIM_STEP_MIN = 1000 / 60;
+      this.SIM_STEP_MAX = 1000 / 30;
+    }
     
-    // for rendering, determine interpolation between last step and current step
-    var stepInterpolation = 1 - (this.simTime - now()) / this.SIM_STEP_TIME; // 0 is current frame, 1 is previous frame
-//console.log([now(), this.simTime, stepInterpolation]);
-    // clamp to 0..1, just in case!
-    stepInterpolation = Math.min(1, Math.max(0, stepInterpolation));
-    //stepInterpolation = 1;
-    this.render(stepInterpolation);
+    var dt = (now() - this.simTime) * this.SIM_SPEED;
     
-    // render!
+    // if more than the minimum time has passed, update then render
+    if (dt > this.SIM_STEP_MIN) {
+      
+      // if more than the hard limit has passed, allow the game to slow down to avoid the spiral of death
+      if (dt > this.SIM_STEP_HARD_LIMIT && this.SIM_SPEED === 1.0) {
+        console.log('App: SLOWDOWN! ' + (dt - this.SIM_STEP_HARD_LIMIT) + 'ms abandoned!');
+        dt = this.SIM_STEP_HARD_LIMIT;
+      }
+      
+      // figure out how many updates to run (we need more than 1 if more than the maximum time has passed)
+      var requiredSteps = Math.ceil( dt / this.SIM_STEP_MAX );
+      var stepDt        = dt / requiredSteps;
+      //if (requiredSteps > 1) { console.log('rendering ' + requiredSteps + ' simulation steps this frame because dt > SIM_STEP_MAX'); }
+      for ( var i = 0; i < requiredSteps; i++ ) {
+        this.update(stepDt);
+        this.simTime += stepDt / this.SIM_SPEED;
+      }
+      
+      // render!
+      this.render();
+    }
+    
+    // loop!
     if (Debug.updateLoop === 'requestAnimationFrame') {
       window.requestAnimationFrame( this.updateLoop.bind(this), canvas );
     }
-    else if (Debug.updateLoop === 'hybrid') {
-      App._hybridAnimationFrameEnabled = true;
-      App._hybridAnimationFrameRequest = window.requestAnimationFrame( App._hybridAnimationFrameHandler, canvas );
-      setTimeout(function() {
-        App._hybridAnimationFrameEnabled = false;
-        //console.log('timeout');
-        cancelAnimationFrame(App._hybridAnimationFrameRequest);
-        App.updateLoop();
-      }, 0);
+    else if (Debug.updateLoop === 'aggressive') {
+      if (!this.recursionCount) { this.recursionCount = 0; }
+      this.recursionCount++
+      if (this.recursionCount === 100) { this.recursionCount = 0; setTimeout(this.updateLoop.bind(this), 0); }
+      else { this.updateLoop(); }
     }
     else {
       setTimeout(this.updateLoop.bind(this), 0);
     }
   },
-  _hybridAnimationFrameEnabled: false,
-  _hybridAnimationFrameRequest: undefined,
-  _hybridAnimationFrameHandler: function() {
-    if (Debug.updateLoop !== 'hybrid') { return; }
-    if (!App.isRunning) { return; }
-    if (!App._hybridAnimationFrameEnabled) { return; }
-    var stepInterpolation = 1 - (App.simTime - now()) / App.SIM_STEP_TIME; // 0 is current frame, 1 is previous frame
-    stepInterpolation = Math.min(1, Math.max(0, stepInterpolation));
-    App.render(stepInterpolation);
-    App._hybridAnimationFrameRequest = window.requestAnimationFrame( App._hybridAnimationFrameHandler.bind(this), canvas );
-  },
+
   
   // 
   drawPausedScreen: function() {

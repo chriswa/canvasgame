@@ -4,6 +4,7 @@ var EnemyBot = Object.extend(Enemy, {
   
   behaviour: 'inch',
   behaviourTimer: 0,
+  inchTimer: 0,
   direction: 0,
   
   init: function() {
@@ -21,11 +22,10 @@ var EnemyBot = Object.extend(Enemy, {
     this.touchingBottom = false;
   },
   
-  update: function() {
-    if ( this.getStandardizedOffscreenDist() > 20 ) {
-      Sprite.updateInterpolationData.call(this);
-      return;
-    }
+  updateFixedStep: function() {
+    
+    // don't update when off screen
+    if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     if (this.touchingBottom) {
       this.behaviourTimer--;
@@ -45,6 +45,7 @@ var EnemyBot = Object.extend(Enemy, {
           this.behaviour = 'inch';
           this.behaviourTimer = 20 + Math.random() * 50;
           this.direction = Math.random() < 0.5 ? 1 : -1;
+          this.inchTimer = 0;
         }
         else {
           this.behaviour = 'twitch';
@@ -54,20 +55,24 @@ var EnemyBot = Object.extend(Enemy, {
       }
       
       this.playAnimation(this.behaviour);
+      this.inchTimer++
       
-      if (this.touchingBottom && this.behaviour === 'inch' && this.frameIndex === 0 && this.frameDelayRemaining === 1) {
+      if (this.touchingBottom && this.behaviour === 'inch' && this.inchTimer === 5) {
         this.vx = this.direction * 10;
+        this.inchTimer = 0;
       }
     }
     else {
       this.playAnimation('jump');
     }
     
+    // standard enemy stuff
+    this.vy += this.gravity;
+    this.translateWithTileCollisions( this.vx, this.vy );
+    this.advanceAnimation( this.FIXED_STEP );
     if (this.outOfBounds) { this.kill(); }
     
-    // call overridden method (physics and animation) (but do not allow vx to be zero'd out)
-    var currentVX = this.vx;
-    Enemy.update.call(this);
-    this.vx = currentVX;
+    if (this.touchingBottom || this.touchingTop) { this.vy = 0; }
+    
   },
 });

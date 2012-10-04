@@ -22,6 +22,23 @@ var Sprite = {
     this.addToGroup(Game.allEntities);
     this.setAnimationCharacter(characterName);
     this.startAnimation(_.keys(R.animationGroups[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state
+    
+    // support for updateFixedStep
+    if (this.updateFixedStep) {
+      if (!this.FIXED_STEP) {
+        this.FIXED_STEP = 1000 / 30;
+      }
+      this.simTime = 0;
+      this.age     = 0;
+      this.update = function(dt) {
+        this.simTime += dt;
+        while (this.simTime >= this.FIXED_STEP) {
+          this.updateFixedStep();
+          this.simTime -= this.FIXED_STEP;
+          this.age++;
+        }
+      }
+    }
   },
   destroy: function() {
     var self = this;
@@ -49,9 +66,9 @@ var Sprite = {
       this.startAnimation(animationName);
     }
   },
-  advanceAnimation: function() {
-    this.frameDelayRemaining--;
-    if (this.frameDelayRemaining === 0) {
+  advanceAnimation: function(dt) {
+    this.frameDelayRemaining -= dt;
+    while (this.frameDelayRemaining < 0) {
       this.frameIndex++;
       if (this.frameIndex === this.animation.frames.length) {
         if (this.animation.loop) {
@@ -59,34 +76,29 @@ var Sprite = {
         }
         else {
           this.frameIndex--;
+          this.frameDelayRemaining = 99999;
         }
       }
-      this.frameDelayRemaining = this.animation.frames[this.frameIndex].duration;
+      this.frameDelayRemaining += this.animation.frames[this.frameIndex].duration;
     }
     this.slice = R.imageSlices[R.animationGroups[this.characterName].image][this.animation.frames[this.frameIndex].slice];
   },
   
-  updateInterpolationData: function() {
-    this.oldX = this.prevX;
-    this.oldY = this.prevY;
-    this.prevX = this.x;
-    this.prevY = this.y;
-  },
-  update: function() {
+  /*update: function(dt) {
+    if (dt == 0) { throw new Error("PhysicsSprite.update should never be called with dt == 0"); }
     if (this.isAnimating) {
-      this.advanceAnimation();
+      this.advanceAnimation(dt);
     }
-    this.updateInterpolationData();
   },
-  render: function(stepInterpolation) {
+  */
+  
+  render: function() {
     var slice = this.slice;
     var frame = this.animation.frames[this.frameIndex];
     if (!slice || !frame || this.imageModifier === -1) { return; } 
     
-    // deal with stepInterpolation
-    if (this.oldX === undefined) { this.oldX = this.x; this.oldY = this.y; }
-    var x = Math.round( this.x * stepInterpolation + this.oldX * (1-stepInterpolation) );
-    var y = Math.round( this.y * stepInterpolation + this.oldY * (1-stepInterpolation) );
+    var x = Math.round( this.x );
+    var y = Math.round( this.y );
     
     var t = this.texture[this.imageModifier];
     

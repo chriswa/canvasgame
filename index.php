@@ -105,14 +105,20 @@
 <div id="debug-panel" class="mobile-toggle production-toggle" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left;">
   <button onclick="Game.reset();">Reset Game</button><br/>
   
-  Framerate: <input name="framerate" value="30" onchange="App.SIM_STEP_TIME = 1000 / $(this).val();" onkeydown="$(this).change();">
-  <button onclick="$('[name=framerate]').val($('[name=framerate]').val() * 2).change();">+</button>
-  <button onclick="$('[name=framerate]').val($('[name=framerate]').val() / 2).change();">-</button><br/>
+  Simulation Speed: <input id="simSpeed" value="1.0000000000" onchange="var s = parseFloat($(this).val()); if (s > 0) { App.SIM_SPEED = s; }" onkeydown="$(this).change();">
+  <button onclick="$('#simSpeed').val(($('#simSpeed').val() * 2).toFixed(10)).change();">+</button>
+  <button onclick="$('#simSpeed').val(($('#simSpeed').val() / 2).toFixed(10)).change();">-</button><br/>
+  
+  Time Step: <select onchange="Debug.timestep = $(this).val();">
+    <option>variable</option>
+    <option>1/30</option>
+    <option>1/60</option>
+  </select><br/>
   
   Render Strategy: <select onchange="Debug.updateLoop = $(this).val();">
     <option>setTimeout</option>
     <option>requestAnimationFrame</option>
-    <option>hybrid</option>
+    <option>aggressive</option>
   </select><br/>
   
   <label><input type="checkbox" onclick="Debug.showHitboxes = $(this).is(':checked');"> Show hitboxes</label><br/>

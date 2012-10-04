@@ -4,7 +4,6 @@ var Debug = {
   
   shapesToDraw: [],
   
-  // drawRect() is meant to be called from simulation step code: rects will automatically be rendered as many times as necessary while the simulation step is the most current
   drawRect: function(rect, colour) {
     if (!Debug.showHitboxes) { return; }
     this.shapesToDraw.push({type: 'rect', rect: rect, colour: colour || '#f0f'});
@@ -14,7 +13,7 @@ var Debug = {
     this.shapesToDraw = [];
   },
   
-  render: function(stepInterpolation) {
+  render: function() {
     _.each(this.shapesToDraw, function(shape) {
       ctx.strokeStyle = shape.colour;
       if (shape.type === 'rect') {

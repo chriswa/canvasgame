@@ -1,6 +1,5 @@
 // dummy console.log to avoid errors when console.log is left in!
 if (!window.console) {
-  window.console = { log: function(){} };
 }
 
 // polyfill window.requestAnimationFrame / window.cancelAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -62,7 +61,36 @@ Object.extend = function(BaseClass, properties) {
   return o;
 };
 
-function now() {
-  //return (new Date) * 1 - 1;
-  return new Date().getTime();
+// now()
+var now;
+if (window.performance.now) {
+  now = window.performance.now.bind(window.performance);
+} else {
+  if (window.performance.webkitNow) {
+    now = window.performance.webkitNow.bind(window.performance);
+  } else {
+    now = function() { return new Date().getTime(); };
+  }
 }
+
+//
+function clamp(min, value, max) {
+  if (value < min) { return min; }
+  if (value > max) { return max; }
+  return value;
+}
+
+//
+function sign(value) {
+  return (value >= 0 ? 1 : -1);
+}
+
+//
+function showme(value) {
+  var args = Array.prototype.slice.call(arguments, 0);
+  console.log(args);
+  //console.trace();
+}
+
+//
+// console.assert()!

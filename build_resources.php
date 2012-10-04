@@ -48,6 +48,7 @@
   //if (!$R) { die("Could not parse JSON in R.part! Make sure keys are double-quoted!"); }
   $R = array();
   $R['areas'] = array();
+  $uniqueSpawnId = 1000;
   
   // load areas from maps/*.tmx
   foreach (glob('maps/*.tmx') as $mapFile) {
@@ -115,11 +116,16 @@
             ), $object['properties']);
           }
           elseif ($object['type'] === 'spawn') {
-            $objects['spawn'][] = array_merge(array(
+            $spawn = array_merge(array(
               'class' => $object['name'],
               'x'     => (double)$object['x'],
               'y'     => (double)$object['y'],
             ), $object['properties']);
+            if (@$spawn['once'] === 'dungeon') {
+              unset($spawn['once']);
+              $spawn['oncePerDungeon'] = ++$uniqueSpawnId;
+            }
+            $objects['spawn'][] = $spawn;
           }
           else {
             die("Resource $mapFile - an object has an unknown type '{$object['type']}'");

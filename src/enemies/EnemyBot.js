@@ -57,7 +57,7 @@ var EnemyBot = Object.extend(Enemy, {
       this.playAnimation(this.behaviour);
       this.inchTimer++
       
-      if (this.touchingBottom && this.behaviour === 'inch' && this.inchTimer === 5) {
+      if (this.touchingBottom && this.behaviour === 'inch' && this.inchTimer === 10) {
         this.vx = this.direction * 10;
         this.inchTimer = 0;
       }

@@ -112,6 +112,8 @@
           if (!@$object['type']) { die("Resource $mapFile - an object is missing a type"); }
           
           if ($object['type'] === 'exit') {
+            if (array_key_exists('x', $object['properties'])) { $object['properties']['x'] = (double)$object['properties']['x']; }
+            if (array_key_exists('y', $object['properties'])) { $object['properties']['y'] = (double)$object['properties']['y']; }
             $objects['exit'][] = array_merge(array(
               'area'   => $object['name'],
               'hitbox' => array( 'x1' => (double)$object['x'], 'y1' => (double)$object['y'], 'x2' => (double)$object['x'] + (double)$object['width'], 'y2' => (double)$object['y'] + (double)$object['height'] ),

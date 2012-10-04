@@ -19,7 +19,8 @@ var Game = {
     this.player = Object.build(Player);
     //this.loadArea({area: 'test2', x: 150, y: 352}); // in small room with enemies
     //this.loadArea({area: 'test3', x: 1992, y: 352}); // beside a long, flat stretch
-    this.loadArea({area: 'test', x: 590, y: 0}); // near octoroks
+    //this.loadArea({area: 'test', x: 590, y: 0}); // near octoroks
+    this.loadArea({area: 'intro1', x: 590, y: 0}); // intro
   },
   loadArea: function(exitObject) {
     this.area = Object.build(Area, exitObject, this.area);

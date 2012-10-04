@@ -60,7 +60,12 @@
    </properties>
   </object>
   <object name="EnemyOctorok" type="spawn" x="1056" y="384" width="32" height="32"/>
-  <object name="EnemyHeartContainer" type="spawn" x="128" y="224" width="32" height="32">
+  <object name="EnemyHeartContainer" type="spawn" x="1312" y="352" width="32" height="32">
+   <properties>
+    <property name="once" value="dungeon"/>
+   </properties>
+  </object>
+  <object name="EnemyKey" type="spawn" x="96" y="352" width="32" height="32">
    <properties>
     <property name="once" value="dungeon"/>
    </properties>

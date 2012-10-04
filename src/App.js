@@ -150,19 +150,23 @@ var App = {
     ctx.lineTo(canvas.width * 0.60, canvas.height * 0.50);
     ctx.lineTo(canvas.width * 0.40, canvas.height * 0.65);
     ctx.fill();
+  },
+  
+  drawTextScreen: function(text) {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    //var text      = 'click to unpause';
-    //ctx.font      = '40pt Arial';
-    //ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    //ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 20);
-    //ctx.fillRect(canvas.width*.6, canvas.height*.3, canvas.width*.1, canvas.height*.4);
+    ctx.font      = 'bold 50px sans-serif';
+    ctx.fillStyle = '#900';
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 20);
   },
   
   blitSliceByFilename: function(sliceFilename, x, y, w, h) {
     var slice = R.sliceNames[sliceFilename];
+    var textureName = slice[4];
     if (!w) { w = slice[2]; }
     if (!h) { h = slice[3]; }
-    ctx.drawImage(R.images.ui[0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
+    ctx.drawImage(R.images[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
   },
   
 };

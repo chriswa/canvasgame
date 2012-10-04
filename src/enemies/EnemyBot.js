@@ -16,7 +16,7 @@ var EnemyBot = Object.extend(Enemy, {
   jump: function() {
     this.behaviour = 'inch';
     this.behaviourTimer = 0;
-    this.direction = (Game.playerSprite.x < this.x) ? -1 : 1;
+    this.direction = (Game.area.playerSprite.x < this.x) ? -1 : 1;
     this.vx = this.direction * 4;
     this.vy = -9.5;
     this.touchingBottom = false;

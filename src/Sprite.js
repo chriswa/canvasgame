@@ -19,7 +19,7 @@ var Sprite = {
   init: function(characterName) {
     this.uniqueId = getUniqueId();
     this.groups = [];
-    this.addToGroup(Game.allEntities);
+    this.addToGroup(Game.area.allEntities);
     this.setAnimationCharacter(characterName);
     this.startAnimation(_.keys(R.animationGroups[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state
     
@@ -52,6 +52,7 @@ var Sprite = {
   },
   
   setAnimationCharacter: function(characterName) {
+    if (!R.animationGroups[characterName]) { throw new Error("setAnimationCharacter: characterName unknown: " + characterName); }
     this.characterName = characterName;
     this.texture       = R.images[R.animationGroups[this.characterName].image];
   },

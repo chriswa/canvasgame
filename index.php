@@ -20,11 +20,7 @@
       </Directory>
     
     TODO:
-      - enemy projectiles (octorok!)
-      - player shield - check before enemy-player collisions (flag stabbing enemy weapons as ineffectual for one frame)
       - "particle" effects (enemy killed, projectile destroyed) these are simply sprites, (maybe with no animation code?)
-      - heart container to collect
-      - player death (restart room) extra lives (lose all progress)
       - elevators!
       
   */
@@ -133,7 +129,7 @@
   </div>
 </canvas>
 
-<div id="statusbar" style="width: 640px; margin: auto; text-align: left; background-color: #999; color: white; height: 20px; padding: 0 10px 0px;">
+<div id="statusbar production-toggle" style="width: 640px; margin: auto; text-align: left; background-color: #999; color: white; height: 20px; padding: 0 10px 0px;">
   <div id="running" style="float: left; width: 160px;">
     <span style="width: 80px;">
       <span id="fps-render">??</span> FPS
@@ -150,7 +146,7 @@
 
 <div style="clear: both;"></div>
 
-<fdiv class="mobile-toggle">
+<div class="mobile-toggle">
 
 <table style="margin: auto; margin-top: 5px;" id="controls">
   <!--
@@ -159,9 +155,9 @@
   <tr><th>Jump</th>  <td>&lt;shift&gt; or &lt;Z&gt;</td></tr>
   <tr><th>Attack</th><td>&lt;ctrl&gt;  or &lt;X&gt;</td></tr>
   -->
-  <tr><th>Arrow keys</th>  <td>move and crouch</td></tr>
-  <tr><th>Spacebar</th>    <td>jump</td></tr>
-  <tr><th>Ctrl</th>      <td>attack</td></tr>
+  <tr><th>Arrow keys</th> <td>move and crouch</td></tr>
+  <tr><th>Spacebar</th>   <td>jump</td></tr>
+  <tr><th>Ctrl</th>       <td>attack</td></tr>
 </table>
 
 <p class="production-toggle">

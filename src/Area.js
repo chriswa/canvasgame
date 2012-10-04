@@ -1,4 +1,10 @@
 var Area = {
+  
+  playerSprite: null,
+  
+  allEntities: null,
+  enemiesGroup: null,
+  
   tileImg: null,
   tileSize: null,
   tileImgCols: 0,
@@ -13,7 +19,11 @@ var Area = {
   cols: 0,
   exits: null,
   age: 0,
-  init: function(areaId) {
+  init: function(exitObject, oldArea) {
+    Game.area = this;
+    
+    var areaId = exitObject.area;
+    
     this.tileImg       = R.images[ R.areas[areaId].image ];
     this.tileSize      = R.areas[areaId].tileSize;
     this.tileImgCols   = Math.floor(this.tileImg[0].width / this.tileSize);
@@ -26,22 +36,58 @@ var Area = {
     this.maxX          = this.cols * this.tileSize;
     this.maxY          = this.rows * this.tileSize;
     
+    this.allEntities  = Object.build(EntityGroup);
+    this.enemiesGroup = Object.build(EntityGroup);
+    
+    // spawn a playerSprite
+    this.playerSprite = Object.build(PlayerSprite);
+    
+    // spawn enemies
     _.each(R.areas[areaId].spawns, function(spawn) {
       
-      // have we already completed (i.e. defeated/collected) this spawn?
+      // have we already "completed" (i.e. defeated/collected) this spawn?
       if (spawn.oncePerDungeon && Game.player.dungeonFlags[spawn.oncePerDungeon]) { return; }
       
       // spawn!
       var classObject = window[spawn['class']];
       var e = Object.build(classObject, spawn);
-      e.x = spawn.x;
-      e.y = spawn.y;
+      e.x += spawn.x;
+      e.y += spawn.y;
       
       // do we need to do anything when the spawn is completed?
-      if (spawn.oncePerDungeon) { e.onCompleted = function() { Game.player.dungeonFlags[spawn.oncePerDungeon] = true; } }
+      if (spawn.oncePerDungeon) { e.onComplete = function() { Game.player.dungeonFlags[spawn.oncePerDungeon] = true; } }
       
     }, this);
     
+    // set the playerSprite's position and velocity
+    // if the player is leaving an area, we can use which side of it they're on to guess where the player should appear on the next area
+    if (exitObject.x !== undefined && exitObject.y !== undefined) {
+      this.playerSprite.x = exitObject.x;
+      this.playerSprite.y = exitObject.y;
+      // TODO: also set velocity
+    }
+    else {
+      var side = exitObject.side || 'left';
+      
+      // if side is not supplied, we can determine it from where the player was on the old area (if supplied)
+      if (!exitObject.side && oldArea && oldArea.playerSprite) {
+        side = (oldArea.playerSprite.x > oldArea.cols * oldArea.tileSize / 2) ? 'left' : 'right'; // walking off left side enters on right side (and vice versa)
+      }
+      
+      // find the first solid tile from the bottom
+      var tx = (side === 'left') ? 0 : this.cols - 1;
+      for (var ty = this.rows - 1; ty > 2; ty--) {
+        if (this.getPhysicsTile(tx, ty) < 1) { break; }
+      }
+      
+      // place player
+      this.playerSprite.x = (side === 'left') ? -this.playerSprite.hitbox.x1 : ((tx + 1) * this.tileSize) - this.playerSprite.hitbox.x2;
+      this.playerSprite.y = (ty + 1) * this.tileSize - this.playerSprite.hitbox.y2;
+      this.playerSprite.vx = ((side === 'left') ? 1 : -1) * this.playerSprite.MAX_X_SPEED;
+      
+      this.playerSprite.facing = (side === 'left') ? 1 : -1;
+      this.playerSprite.startAnimation('walk');
+    }
   },
   getPhysicsTile: function(tx, ty) {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return -1; } // out of bounds
@@ -54,8 +100,11 @@ var Area = {
   update: function(dt) {
     this.age += dt;
     
-    var px = Math.round(Game.playerSprite.x);
-    var py = Math.round(Game.playerSprite.y);
+    // update entities
+    this.allEntities.update(dt);
+    
+    var px = Math.round(Game.area.playerSprite.x);
+    var py = Math.round(Game.area.playerSprite.y);
     
     // center camera on playerSprite
     this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width));
@@ -68,6 +117,18 @@ var Area = {
     this.stdY1 = Math.min(Math.max(0, Math.floor(py + 32 - stdH / 2)), this.rows * this.tileSize - stdH);
     this.stdX2 = this.stdX1 + stdW;
     this.stdY2 = this.stdY1 + stdH;
+    
+    // do collisions
+    var p = this.playerSprite;
+    this.enemiesGroup.each(function(e) {
+      if (!e.isHurt && e.x + e.hitbox.x2 > p.x + p.hitbox.x1 && e.x + e.hitbox.x1 < p.x + p.hitbox.x2 && e.y + e.hitbox.y2 > p.y + p.hitbox.y1 && e.y + e.hitbox.y1 < p.y + p.hitbox.y2) {
+        //e.vy = -5;
+        p.onCollisionWithEnemy(e);
+      }
+    });
+    
+    // cull entities while have been "killed"
+    _.invoke(_.filter(this.allEntities.collection, function(spr) { return spr.readyToCull; }), 'destroy');
   },
   render: function() {
     var ts = this.tileSize;
@@ -89,5 +150,16 @@ var Area = {
       }
       ty += ts;
     }
+    
+    // render all entities
+    this.allEntities.render();
+  },
+  handlePlayerAttack: function(absHitbox) {
+    Debug.drawRect(absHitbox, '#f00');
+    this.enemiesGroup.each(function(e) {
+      if (e.x + e.hitbox.x2 > absHitbox.x1 && e.x + e.hitbox.x1 < absHitbox.x2 && e.y + e.hitbox.y2 > absHitbox.y1 && e.y + e.hitbox.y1 < absHitbox.y2) {
+        e.onStabbed();
+      }
+    });
   },
 };

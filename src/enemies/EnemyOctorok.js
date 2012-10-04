@@ -13,9 +13,9 @@ var EnemyOctorok = Object.extend(Enemy, {
     this.startAnimation('idle');
   },
   
-  onHurtByPlayer: function() {
+  onStabbed: function() {
     this.isReadyToFire = false;
-    Enemy.onHurtByPlayer.apply(this);
+    Enemy.onStabbed.apply(this);
   },
   
   updateFixedStep: function() {
@@ -23,7 +23,7 @@ var EnemyOctorok = Object.extend(Enemy, {
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     // turn to face player
-    var facing = (Game.playerSprite.x > this.x) ? 1 : -1;
+    var facing = (Game.area.playerSprite.x > this.x) ? 1 : -1;
     this.imageModifier = facing === 1 ? R.IMG_ORIGINAL : R.IMG_FLIPX;
     
     this.behaviourTimer++;

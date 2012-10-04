@@ -2,15 +2,15 @@ var Enemy = Object.extend(PhysicsSprite, {
   
   health: 2,
   isDangerous: true,
-  isHittable: true,
+  isStabbable: true,
   
   init: function() {
     Sprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
-    this.addToGroup(Game.enemiesGroup);
+    this.addToGroup(Game.area.enemiesGroup);
   },
   
   getStandardizedOffscreenDist: function() {
-    //return Math.max(Math.abs( this.x - Game.playerSprite.x ), Math.abs( this.y - Game.playerSprite.y ));
+    //return Math.max(Math.abs( this.x - Game.area.playerSprite.x ), Math.abs( this.y - Game.area.playerSprite.y ));
     var result = 0;
     if (this.x + this.hitbox.x2 < Game.area.stdX1) { result = Math.max(result, Game.area.stdX1 - (this.x + this.hitbox.x2)); }
     if (this.x + this.hitbox.x1 > Game.area.stdX2) { result = Math.max(result, (this.x + this.hitbox.x1) - Game.area.stdX2); }
@@ -19,8 +19,8 @@ var Enemy = Object.extend(PhysicsSprite, {
     return result;
   },
   
-  onHurtByPlayer: function() {
-    if (!this.isHittable) { return; }
+  onStabbed: function() {
+    if (!this.isStabbable) { return; }
     if (!this.isHurt) {
       this.health--;
       this.isHurt              = true;
@@ -29,7 +29,7 @@ var Enemy = Object.extend(PhysicsSprite, {
       this.hurtTimer           = 0;
       this.updateFixedStep     = this.updateWhenHurtFixedStep;
     }
-    if (this.health <= 0 && this.onCompleted) { this.onCompleted(); }
+    if (this.health <= 0) { this.onComplete(); }
   },
   
   onPlayerCollision: function() {},
@@ -60,5 +60,7 @@ var Enemy = Object.extend(PhysicsSprite, {
       this.imageModifier = this.origImageModifier | R.IMG_PINK | R.IMG_CYAN;
     }
   },
+  
+  onComplete: function() {},
   
 });

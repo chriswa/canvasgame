@@ -50,10 +50,9 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
     // if it's collectable, collect it!
     if (enemy.isCollectable) {
-      //this.collect(enemy);
       enemy.onPlayerCollision();
+      enemy.onComplete();
       enemy.kill();
-      if (enemy.onCompleted) { enemy.onCompleted(); }
       return;
     }
     
@@ -302,7 +301,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     if (this.frameIndex === 1) {
       var absHitbox = { x1: this.x + this.facing*32, y1: this.y + 18, x2: this.x + 32 + this.facing*32, y2: this.y + 28 };
-      Game.handlePlayerAttack(absHitbox);
+      Game.area.handlePlayerAttack(absHitbox);
     }
   },
   
@@ -313,7 +312,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     if (this.frameIndex === 0) {
       var absHitbox = { x1: this.x + this.facing*32, y1: this.y + 38, x2: this.x + 32 + this.facing*32, y2: this.y + 48 };
-      Game.handlePlayerAttack(absHitbox);
+      Game.area.handlePlayerAttack(absHitbox);
     }
   },
   

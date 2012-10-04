@@ -16,8 +16,10 @@
       'imageModifiers' => 1 | 2 | 4, // XXX
     );
     
-    $R['sliceNames'] = $SLICES;
-
+    foreach ($SLICES as $filename => $slice) {
+      $R['sliceNames'][$filename] = array($slice[0], $slice[1], $slice[2], $slice[3], $textureName);
+    }
+    
     $R['imageSlices'][$textureName] = array_values($SLICES);
     $SLICES = array_combine(array_keys($SLICES), range(0, count($SLICES)-1)); // map slice filenames to indicies in $R['imageSlices'][$textureName]
     
@@ -121,9 +123,16 @@
               'x'     => (double)$object['x'],
               'y'     => (double)$object['y'],
             ), $object['properties']);
-            if (@$spawn['once'] === 'dungeon') {
-              unset($spawn['once']);
+            $once = @$spawn['once'];
+            unset($spawn['once']);
+            if ($once === 'dungeon') {
               $spawn['oncePerDungeon'] = ++$uniqueSpawnId;
+            }
+            elseif ($once === 'world') {
+              $spawn['oncePerWorld'] = ++$uniqueSpawnId;
+            }
+            elseif ($once) {
+              die("Resource $mapFile - an object has an unknown 'once' property (should be either dungeon or world)");
             }
             $objects['spawn'][] = $spawn;
           }

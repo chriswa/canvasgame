@@ -285,6 +285,9 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     // clamp maximum walking speed
     this.vx = clamp(-this.MAX_X_SPEED, this.vx, this.MAX_X_SPEED);
     
+    // also clamp delta
+    deltaX = clamp(-this.MAX_X_SPEED * dt, deltaX, this.MAX_X_SPEED * dt);
+    
     // move sprite
     this.translateWithTileCollisions( deltaX, deltaY );
     if (this.touchingBottom || this.touchingTop)   { this.vy = 0; }

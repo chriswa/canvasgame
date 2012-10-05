@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="index.css" type="text/css" media="all" />
+<script src="src/util.js"></script>
+
+<canvas id="canvas" width="640" height="480">
+</canvas>
+
+<script>
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#f99';
+  
+  var img = ctx.createImageData(1, 1);
+  img.data[0]   = 255;
+  img.data[1]   = 255;
+  img.data[2]   = 255;
+  img.data[3]   = 255;
+  ctx.putImageData( img, 0, 0 ); 
+  
+  var counter = 0;
+  var startTime = now();
+  var currentTime = startTime;
+  function tick() {
+    
+    var newTime = now();
+    dt = newTime - currentTime;
+    currentTime = newTime;
+    
+    //ctx.putImageData( img, dt, counter++ );
+    ctx.fillRect(counter++, dt, 1, 1);
+    
+    if (dt > canvas.width) { console.log("OOPS"); }
+    
+    if (currentTime - startTime > 1000 * 5) { return; }
+    
+    // loop
+    setTimeout(tick, 0);
+    //requestAnimationFrame(tick);
+  }
+  
+  // start
+  tick();
+</script>

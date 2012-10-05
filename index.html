@@ -1,30 +1,11 @@
-<style>
+<link rel="stylesheet" href="index.css" type="text/css" media="all" />
 
-  BODY { background-color: #eeeeee; text-align: center; margin: 0px; }
-  #canvas {
-    background-color: #fff;
-    margin-top: 10px;
-    border: 10px solid black;
-    image-rendering: optimizeSpeed;
-    image-rendering:-o-crisp-edges;
-    image-rendering:-webkit-optimize-contrast;
-    -ms-interpolation-mode: nearest-neighbor;
-  }
-  #controls TH {
-    text-align: left;
-    padding-right: 30px;
-  }
-  #controls TD {
-    text-align: center;
-  }
-</style>
-
+<!-- INCLUDE SCRIPTS -->
 <!--[if lt IE 9]>
   <script src="excanvas.compiled.js"></script>
 <![endif]-->
       <script src="lib/jquery.min.js"></script>
     <script src="lib/underscore-min.js"></script>
-
   <script src="src/util.js"></script>
   <script src="src/R.js"></script>
   <script src="src/Sprite.js"></script>
@@ -49,22 +30,28 @@
   <script src="src/enemies/EnemyKey.js"></script>
   <script src="src/enemies/EnemyOctorok.js"></script>
 
+<!-- INIT CODE -->
 <script>
-  
   var forceMobile = false;
-  
   if (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html") { $(function() { $('.production-toggle').toggle(); }); }
-  
+  // init App and Game
   window.onload = function() {
     Mobile.init(function() {
       App.init( Game );
     }, forceMobile);
   };
-  
 </script>
 
+<!-- DEBUG PANEL -->
 <div id="debug-panel" class="mobile-toggle production-toggle" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left;">
-  <button onclick="Game.reset();">Reset Game</button><br/>
+  
+  <div style="float: right;"><a href="#" onclick="$('.production-toggle').toggle(); return false;" style="color: #ccc; font: 10px bold monospace; padding: 5px; margin-right: -6px;">X</a></div>
+  
+  <button onclick="Game.reset();">Reset Game</button>
+  Area: <select id="areaDropdown" onchange="Debug.teleportToArea($(this).val());"></select>
+  </br>
+  
+  <label><input type="checkbox" onclick="Debug.clickToTeleport = $(this).is(':checked');"> Click to teleport</label><br/>
   
   Simulation Speed: <input id="simSpeed" value="1.0000000000" onchange="var s = parseFloat($(this).val()); if (s > 0) { App.SIM_SPEED = s; }" onkeydown="$(this).change();">
   <button onclick="$('#simSpeed').val(($('#simSpeed').val() * 2).toFixed(10)).change();">+</button>
@@ -86,6 +73,7 @@
   
 </div>
 
+<!-- CANVAS -->
 <canvas id="canvas" width="640" height="480">
   <div id="nocanvas">
     This page uses the <a href="http://en.wikipedia.org/wiki/Canvas_element">HTML5 Canvas Element</a>,
@@ -94,6 +82,7 @@
   </div>
 </canvas>
 
+<!-- STATUS BAR -->
 <div id="statusbar" class="production-toggle" style="width: 640px; margin: auto; text-align: left; background-color: #999; color: white; height: 20px; padding: 0 10px 0px;">
   <div id="running" style="float: left; width: 160px;">
     <span style="width: 80px;">
@@ -108,26 +97,26 @@
   <div style="float: left; width: 90px;">vx: <span id="playerVX"></span></div>
   <div style="float: left; width: 90px;">vy: <span id="playerVY"></span></div>
 </div>
-
 <div style="clear: both;"></div>
 
+<!-- INSTRUCTIONS -->
 <div class="mobile-toggle">
 
-  <table style="margin: auto; margin-top: 5px;" id="controls">
+  <table style="margin: auto; margin-top: 10px;" id="controls">
     <!--
     <tr><th>Move</th>  <td>&lt;left&gt; and &lt;right&gt;</td></tr>
     <tr><th>Crouch</th><td>&lt;down&gt;</td></tr>
     <tr><th>Jump</th>  <td>&lt;shift&gt; or &lt;Z&gt;</td></tr>
     <tr><th>Attack</th><td>&lt;ctrl&gt;  or &lt;X&gt;</td></tr>
     -->
-    <tr><th>Arrow keys</th> <td>move and crouch</td></tr>
-    <tr><th>Spacebar</th>   <td>jump</td></tr>
-    <tr><th>Ctrl</th>       <td>attack</td></tr>
+    <tr><th><span>Move &amp; Crouch</span></th><td><span>arrow keys</span></td></tr>
+    <tr><th><span>Jump</span></th><td><span>spacebar</span></td></tr>
+    <tr><th><span>Attack</span></th><td><span>ctrl</span></td></tr>
   </table>
   
-  <p class="production-toggle">
+  <div class="production-toggle" style="background-color: #ddd; padding: 10px; border: 1px solid #999; display: inline-block; margin-top: 10px;">
     <strong style="color: red;">THIS IS THE DEVELOPMENT VERSION!</strong><br/>If things are broken, <a href="http://dl.dropbox.com/u/29873255/aolbackup/index.html">try the latest stable version</a>
-  </p>
-
+  </div>
+  
 </div>
 

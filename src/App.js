@@ -40,7 +40,8 @@ var App = {
     
     // load resources, then call callback
     ResourceManager.init( function() {
-      game.init();
+      App.game.init();
+      Debug.init();
       App.start();
     });
   },
@@ -107,6 +108,7 @@ var App = {
       // if more than the hard limit has passed, allow the game to slow down to avoid the spiral of death
       if (dt > this.SIM_STEP_HARD_LIMIT && this.SIM_SPEED === 1.0) {
         console.log('App: SLOWDOWN! ' + (dt - this.SIM_STEP_HARD_LIMIT) + 'ms abandoned!');
+        this.simTime += dt - this.SIM_STEP_HARD_LIMIT;
         dt = this.SIM_STEP_HARD_LIMIT;
       }
       

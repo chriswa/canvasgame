@@ -32,7 +32,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // misc constants
   HURT_TIME:             400,
   HURT_INVINCIBLE_TIME:  1500,
-  JUMP_GRACE_TIME:       100,
+  JUMP_GRACE_TIME:       50,
   
   // init
   // ====

@@ -1,0 +1,35 @@
+body {
+  background-color: #eeeeee;
+  text-align: center;
+  margin: 0px;
+}
+a, a:visited {
+  color: blue;
+  text-decoration: none;
+}
+
+#canvas {
+  background-color: #fff;
+  margin-top: 10px;
+  border: 10px solid black;
+  image-rendering: optimizeSpeed;
+  image-rendering:-o-crisp-edges;
+  image-rendering:-webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+#controls TR {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAAHklEQVQIW2NkwAEYqSixePHi/7GxsRhGUtMOkp0LAFAXBAuKyd1IAAAAAElFTkSuQmCC) repeat-x bottom;
+}
+#controls TH span, #controls TD span {
+  display: inline-block;
+  background-color: #eee;
+  padding-right: 2px;
+}
+#controls TH {
+  text-align: left;
+  padding-right: 30px;
+}
+#controls TD {
+  text-align: right;
+}

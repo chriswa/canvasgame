@@ -1,4 +1,4 @@
-
+// globals
 var canvas, ctx;
 
 // App object
@@ -16,12 +16,13 @@ var App = {
   SIM_STEP_HARD_LIMIT: 1000 * 3/30, // for playability, each render frame will not advance simulation time more than this (avoiding the death spiral!)
   simTime: null,
   
-  init: function( game ) {
-    this.game = game;
+  init: function() {
+    this.game = Game;
     
     // initialize video globals
     canvas = document.getElementById('canvas');
     ctx    = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
     
     // show loading screen
     ctx.fillStyle    = '#ccc';

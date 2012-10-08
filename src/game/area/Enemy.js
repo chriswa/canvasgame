@@ -6,7 +6,7 @@ var Enemy = Object.extend(PhysicsSprite, {
   
   init: function() {
     Sprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
-    this.addToGroup(Game.area.enemiesGroup);
+    this.addToGroup(Game.area.enemyGroup);
   },
   
   getStandardizedOffscreenDist: function() {
@@ -32,7 +32,7 @@ var Enemy = Object.extend(PhysicsSprite, {
     if (this.health <= 0) { this.onComplete(); }
   },
   
-  onPlayerCollision: function() {},
+  onPlayerCollision: function(playerSprite) {},
   
   updateWhenHurtFixedStep: function() {
     this.hurtTimer++;

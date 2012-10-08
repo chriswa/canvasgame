@@ -54,10 +54,16 @@ Object.build = function(o) {
 
 // Object.extend is Object.create, which then has properties merged into it
 Object.extend = function(BaseClass, properties) {
+  /*
   var o = Object.create(BaseClass);
   for (prop in properties) {
     o[prop] = properties[prop];
   }
+  return o;
+  */
+  var o = {};
+  for (prop in BaseClass)  { o[prop] = BaseClass[prop]; }
+  for (prop in properties) { o[prop] = properties[prop]; }
   return o;
 };
 

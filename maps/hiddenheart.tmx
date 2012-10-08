@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="24" height="15" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiles3" tilewidth="32" tileheight="32">
+  <image source="../res/tiles3.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="24" height="15">
+  <data encoding="base64" compression="zlib">
+   eJy10ssKwjAQheF4XWh14W1RW0Gl3ki17/90/TcDYWhMBGfxMWHonExpG+fcDY1RbfGGNz7f8Qiq9McJqXmpH3RBTeVqel7ny716boIpZph/6YnU/uGzCyxRYIV1pDf0HjrfD+y+wRY77HGI9PScz8wvcUSFGqdILyf/1++Z+19Z5/87V5xxwciI5FvvL/VqdH7iZVh7kSweYg==
+  </data>
+ </layer>
+ <layer name="physics" width="24" height="15" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJxzZGBgcBzGmBCglbnk2kMpGEjzqQUGwnxqA3qZTyswXMwf6hgAzTEqJw==
+  </data>
+ </layer>
+ <objectgroup name="objects" width="24" height="15">
+  <object name="overworld" type="exit" x="-16" y="300" width="53" height="131"/>
+  <object name="HeartContainer" type="spawn" x="352" y="384" width="32" height="32">
+   <properties>
+    <property name="once" value="dungeon"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

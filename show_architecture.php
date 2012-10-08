@@ -14,7 +14,7 @@ a, a:visited { color: blue; text-decoration: none; }
     'src/HUD.js',
     'src/Area.js',
     'src/Player.js',
-    'src/EntityGroup.js',
+    'src/SpriteGroup.js',
     'src/Sprite.js',
     'src/PhysicsSprite.js',
     'src/PlayerSprite.js',

@@ -1,4 +1,4 @@
-var EnemyBot = Object.extend(Enemy, {
+R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   
   hitbox: { x1: 4, y1: 0, x2: 28, y2: 24 },
   

@@ -1,4 +1,4 @@
-var EnemyKey = Object.extend(Enemy, {
+R.spawnableSprites['Key'] = Object.extend(Enemy, {
   hitbox: { x1: 0, y1: 0, x2: 16, y2: 30 },
   
   isDangerous: false,

@@ -9,6 +9,7 @@ var Debug = {
     
     // fill area
     for (var areaId in R.areas) {
+      if (areaId === 'overworld') { continue; }
       $('#areaDropdown').append('<option>'+areaId+'</option>');
     }
     
@@ -25,9 +26,15 @@ var Debug = {
         var x = e.pageX - $(this).offset().left;
         var y = e.pageY - $(this).offset().top;
         var area = App.game.area;
-        area.playerSprite.x = x + area.renderOffsetX - 16;
-        area.playerSprite.y = y + area.renderOffsetY - 32;
-        area.playerSprite.vx = area.playerSprite.vy = 0;
+        if (area) {
+          area.playerSprite.x = x + area.renderOffsetX - 16;
+          area.playerSprite.y = y + area.renderOffsetY - 32;
+          area.playerSprite.vx = area.playerSprite.vy = 0;
+        }
+        else {
+          Game.player.overworldX = Math.floor((x + Game.overworld.renderOffsetX) / 32);
+          Game.player.overworldY = Math.floor((y + Game.overworld.renderOffsetY) / 32);
+        }
       }
     });
     

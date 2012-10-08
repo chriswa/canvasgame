@@ -1,4 +1,4 @@
-var HUD = {
+var AreaHUD = {
   update: function() {
     
   },

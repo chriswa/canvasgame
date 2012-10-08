@@ -8,39 +8,46 @@
     <script src="lib/underscore-min.js"></script>
   <script src="src/util.js"></script>
   <script src="src/R.js"></script>
-  <script src="src/Sprite.js"></script>
-  <script src="src/PhysicsSprite.js"></script>
-  <script src="src/Enemy.js"></script>
+  <script src="src/game/Sprite.js"></script>
+  <script src="src/game/area/PhysicsSprite.js"></script>
+  <script src="src/game/area/Enemy.js"></script>
   <script src="src/App.js"></script>
-  <script src="src/Area.js"></script>
   <script src="src/Debug.js"></script>
-  <script src="src/EntityGroup.js"></script>
-  <script src="src/Game.js"></script>
-  <script src="src/HUD.js"></script>
   <script src="src/Input.js"></script>
   <script src="src/Mobile.js"></script>
-  <script src="src/Player.js"></script>
-  <script src="src/PlayerSprite.js"></script>
   <script src="src/R.areas.js"></script>
   <script src="src/R.sprites.js"></script>
   <script src="src/ResourceManager.js"></script>
-  <script src="src/enemies/EnemyBot.js"></script>
-  <script src="src/enemies/EnemyFireball.js"></script>
-  <script src="src/enemies/EnemyGhostRunner.js"></script>
-  <script src="src/enemies/EnemyHeartContainer.js"></script>
-  <script src="src/enemies/EnemyKey.js"></script>
-  <script src="src/enemies/EnemyOctorok.js"></script>
+  <script src="src/game/Game.js"></script>
+  <script src="src/game/SpriteGroup.js"></script>
+  <script src="src/game/area/Area.js"></script>
+  <script src="src/game/area/AreaHUD.js"></script>
+  <script src="src/game/area/PlayerSprite.js"></script>
+  <script src="src/game/overworld/OWEncounter.js"></script>
+  <script src="src/game/overworld/OWPlayer.js"></script>
+  <script src="src/game/overworld/Overworld.js"></script>
+  <script src="src/game/area/enemy/Bot.js"></script>
+  <script src="src/game/area/enemy/EnemyFireball.js"></script>
+  <script src="src/game/area/enemy/Octorok.js"></script>
+  <script src="src/game/area/object/Fairy.js"></script>
+  <script src="src/game/area/object/HeartContainer.js"></script>
+  <script src="src/game/area/object/Key.js"></script>
+  <script src="src/game/area/particle/SampleParticle.js"></script>
 
 <!-- INIT CODE -->
 <script>
+  
   var forceMobile = false;
+  
   if (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html") { $(function() { $('.production-toggle').toggle(); }); }
-  // init App and Game
+  
+  // init App
   window.onload = function() {
     Mobile.init(function() {
-      App.init( Game );
+      App.init();
     }, forceMobile);
   };
+  
 </script>
 
 <!-- DEBUG PANEL -->

@@ -1,11 +1,11 @@
-var EntityGroup = {
+var SpriteGroup = {
   collection: null,
   init: function() {
     this.collection = {};
   },
   update: function(dt) {
-    _.each(this.collection, function(entity) {
-      entity.update(dt);
+    _.each(this.collection, function(spr) {
+      spr.update(dt);
     });
   },
   render: function() {
@@ -13,5 +13,8 @@ var EntityGroup = {
   },
   each: function(iter) {
     _.each(this.collection, iter);
+  },
+  invoke: function(methodName) {
+    _.invoke(this.collection, methodName);
   },
 };

@@ -47,8 +47,8 @@
  <objectgroup name="objects" width="24" height="15">
   <object name="test" type="exit" x="-16" y="300" width="53" height="131"/>
   <object name="test3" type="exit" x="716" y="296" width="65" height="143"/>
-  <object name="EnemyBot" type="spawn" x="288" y="320" width="32" height="32"/>
-  <object name="EnemyOctorok" type="spawn" x="416" y="288" width="32" height="32"/>
-  <object name="EnemyOctorok" type="spawn" x="352" y="384" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="288" y="320" width="32" height="32"/>
+  <object name="Octorok" type="spawn" x="416" y="288" width="32" height="32"/>
+  <object name="Octorok" type="spawn" x="352" y="384" width="32" height="32"/>
  </objectgroup>
 </map>

@@ -20,14 +20,33 @@
       </Directory>
     
     TODO:
+      
+      - consider dropping or improving SpriteGroup
+      - rename PhysicsSprite to Sprite, Enemy* to *, SpriteGroup to SpriteGroup?, HUD to AreaHUD, rename enemies/ to areasprites/
+        - alternately, area/, and move into it: Area, HUD, SpriteGroup, and all sprite classes
+        
+      - overworld (Game will update the Overworld instead of an Area)
+      
       - "particle" effects (enemy killed, projectile destroyed) these are simply sprites, (maybe with no animation code?)
       - elevators!
       
   */
   
-  
-  // build R*.js
+  // build R.*.js
   require_once "build_resources.php";
+  
+  //
+  function recurseDir($initialDir) {
+    $results = array();
+    $queue = array('src');
+    while ($queue) {
+      $file = array_shift($queue);
+      if ($file === '.' || $file === '..') { continue; }
+      if (is_dir($file)) { $queue = array_merge($queue, glob("$file/*")); }
+      else { array_push($results, $file); }
+    }
+    return $results;
+  }
   
   // capture page to be cached into index.html for publicly-accessible URL (i.e. http://dl.dropbox.com/u/29873255/canvasgame/index.html)
   ob_start();
@@ -36,7 +55,7 @@
 <link rel="stylesheet" href="index.css" type="text/css" media="all" />
 
 <!-- INCLUDE SCRIPTS -->
-<?php /* not even sure if this is useful... */ ?>
+<?php /* not even sure if this IE-specific canvas shim is useful... */ ?>
 <!--[if lt IE 9]>
   <script src="excanvas.compiled.js"></script>
 <![endif]-->
@@ -45,21 +64,20 @@
   <script src="<?php echo $jsFile ?>"></script>
 <?php endforeach ?>
 <?php
-  // include all js files
+  // include all src/*.js files
   $jsFiles = array_unique(array_merge(
     
     // load files which define base classes first!
     array(
       'src/util.js',
       'src/R.js',
-      'src/Sprite.js',
-      'src/PhysicsSprite.js',
-      'src/Enemy.js',
+      'src/game/Sprite.js',
+      'src/game/area/PhysicsSprite.js',
+      'src/game/area/Enemy.js',
     ),
     
     // now load all other .js files
-    glob('src/*.js'),
-    glob('src/enemies/*.js')
+    recurseDir('src')
   ));
 ?>
 <?php foreach ($jsFiles as $jsFile): ?>
@@ -68,14 +86,18 @@
 
 <!-- INIT CODE -->
 <script>
+  
   var forceMobile = false;
+  
   if (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html") { $(function() { $('.production-toggle').toggle(); }); }
-  // init App and Game
+  
+  // init App
   window.onload = function() {
     Mobile.init(function() {
-      App.init( Game );
+      App.init();
     }, forceMobile);
   };
+  
 </script>
 
 <!-- DEBUG PANEL -->

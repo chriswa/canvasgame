@@ -10,12 +10,16 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // timers
   hurtTimer:        0,
   invincibleTimer:  0,
+  frozenTimer:     0,
   fallStopwatch:    9999,
   
   // flags
   isAirborne:   true,
   isAttacking:  false,
   isCrouching:  false,
+  
+  //
+  collectEntityHandle: undefined,
   
   // physics constants
   GRAVITY:          0.00400,
@@ -46,50 +50,52 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // collision handler
   // =================
   
-  onCollisionWithEnemy: function(enemy) {
+  onCollisionWithEnemy: function(entity) {
     
     // if it's collectable, collect it!
-    if (enemy.isCollectable) {
-      enemy.onPlayerCollision();
-      enemy.onComplete();
-      enemy.kill();
+    if (entity.isCollectable) {
+      entity.isCollectable = false;
+      entity.onPlayerCollision(this);
+      entity.onComplete();
       return;
     }
     
     // if it's blockable with the shield, try to block it
-    if (enemy.isBlockable && !this.isAttacking) {
+    if (entity.isBlockable && !this.isAttacking) {
       
       // shield must be at the right height to block something
-      var shieldCenterY = this.y + (this.isCrouching ? 52 : 16);
-      var enemyCenterY  = enemy.y + (enemy.hitbox.y1 + enemy.hitbox.y2) / 2;
-      var shieldAtRightHeight = (Math.abs(enemyCenterY - shieldCenterY) < 20);
+      var shieldCenterY = this.y   + (this.isCrouching ? 52 : 16);
+      var entityCenterY = entity.y + (entity.hitbox.y1 + entity.hitbox.y2) / 2;
+      var shieldAtRightHeight = (Math.abs(entityCenterY - shieldCenterY) < 20);
       
       // if you're facing towards its midpoint, you can deflect it
-      var playerCenterX = this.x  + (this.hitbox.x1  + this.hitbox.x2) / 2;
-      var enemyCenterX  = enemy.x + (enemy.hitbox.x1 + enemy.hitbox.x2) / 2;
-      var directionTowardEnemy = enemyCenterX > playerCenterX ? 1 : -1;
-      var facingEnemy = (this.facing === directionTowardEnemy);
+      var playerCenterX = this.x   + (this.hitbox.x1  + this.hitbox.x2) / 2;
+      var entityCenterX = entity.x + (entity.hitbox.x1 + entity.hitbox.x2) / 2;
+      var directionTowardEntity = entityCenterX > playerCenterX ? 1 : -1;
+      var facingEntity = (this.facing === directionTowardEntity);
       
       // if you're facing against the direction of its motion, you can deflect it (just in case it tunnels into you from your shield-side!)
-      var facingAgainstMotion = (sign(enemy.vx) !== this.facing);
+      var facingAgainstMotion = (sign(entity.vx) !== this.facing);
       
-      if (shieldAtRightHeight && (facingEnemy || facingAgainstMotion)) {
-        enemy.onBlock();
+      if (shieldAtRightHeight && (facingEntity || facingAgainstMotion)) {
+        entity.onBlock();
       }
     }
     
     // if it's dangerous and we're not invincible, we get hurt
-    if (enemy.isDangerous && this.invincibleTimer <= 0) {
+    if (entity.isDangerous && this.invincibleTimer <= 0) {
       Game.player.health -= 1;
       this.isAttacking     = false;
       this.hurtTimer       = this.HURT_TIME;
       this.invincibleTimer = this.HURT_INVINCIBLE_TIME;
-      this.playAnimation('hurt');
-      this.vx = this.facing * -this.HURT_IMPULSE_X;
-      this.vy = -this.HURT_IMPULSE_Y;
+      if (this.frozenTimer <= 0) {
+        this.playAnimation('hurt');
+        this.vx = this.facing * -this.HURT_IMPULSE_X;
+        this.vy = -this.HURT_IMPULSE_Y;
+      }
       
-      // tell the enemy it hurt us (e.g. fireballs will kill themselves)
-      enemy.onPlayerCollision();
+      // tell the entity it hurt us (e.g. fireballs will want to kill themselves)
+      entity.onPlayerCollision(this);
     }
   },
   
@@ -104,10 +110,14 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
     // update timers
     if (this.invincibleTimer > 0) { this.invincibleTimer -= dt; }
-    if (this.hurtTimer > 0)       { this.hurtTimer -= dt; }
+    if (this.hurtTimer > 0) { this.hurtTimer -= dt; }
+    if (this.frozenTimer > 0) {
+      this.frozenTimer -= dt;
+      if (this.frozenTimer <= 0 && this.collectEntityHandle) { this.collectEntityHandle.kill(); this.collectEntityHandle = undefined; }
+    }
     
-    // if you're hurt, you can't do anything at all (even change your facing)
-    if (this.hurtTimer <= 0) {
+    // if you're hurt or collecting something, you can't do anything at all (even change your facing)
+    if (this.hurtTimer <= 0 && this.frozenTimer <= 0) {
       
       // if you're dead after your hurtTimer expires, die!
       if (Game.player.health <= 0) {
@@ -147,7 +157,6 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       if (this.isAttacking) {
         if (this.isCrouching) { this.updateCrouchingAttack(); }
         else                  { this.updateUprightAttack();   }
-        this.updateInAir();                                                                         // ??? WTF
         
         // unless we're in the air, attacking stops all movement instantly
         if (this.touchingBottom) { this.vx = 0; }
@@ -161,14 +170,20 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       
     }
     
-    // move sprite
-    this.integrateAndTranslate(dt);
-    
-    // update animation
-    this.advanceAnimation( dt );
+    // move and animate! (if we're not frozen!)
+    if (this.frozenTimer <= 0) {
+      
+      // move sprite
+      this.integrateAndTranslate(dt);
+      
+      // update animation
+      this.advanceAnimation( dt );
+    }
     
     // check for area transitions
-    this.checkForAreaTransitions();
+    if (this.outOfBounds) {
+      Game.area.findAndQueuePlayerExit();
+    }
     
     // visual effects (hurting and invincibility)
     this.applyVisualEffects();
@@ -348,20 +363,24 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   },
   
   // misc
-  // ----
+  // ====
   
-  checkForAreaTransitions: function() {
-    if (this.outOfBounds) {
-      var p = this;
-      // find an overlapping area exit object
-      _.each(Game.area.exits, function(exitObject) {
-        var exitHitbox = exitObject.hitbox;
-        if (p.x + p.hitbox.x2 > exitHitbox.x1 && p.x + p.hitbox.x1 < exitHitbox.x2 && p.y + p.hitbox.y2 > exitHitbox.y1 && p.y + p.hitbox.y1 < exitHitbox.y2) {
-          Game.queueAreaTransition(exitObject);
-        }
-      });
-      if (!Game.areaTransition) { console.log("Player is out of bounds, but no exitObject could be found!"); }
-    }
+  poseWithItem: function(entity) {
+    
+    // move player down onto ground in case they grabbed this thing mid-jump
+    this.translateWithTileCollisions( 0, 32 );
+    
+    if (this.collectEntityHandle) { this.collectEntityHandle.kill(); }
+    this.collectEntityHandle = entity;
+    entity.isCollectable = false;
+    entity.x = this.x;
+    entity.y = this.y - 32;
+    
+    this.playAnimation('collect');
+    this.advanceAnimation( 0 );
+    this.frozenTimer = 1000;
+    this.vx = 0;
+    this.vy = 0;
   },
   
 });

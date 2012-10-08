@@ -19,9 +19,8 @@ var Sprite = {
   init: function(characterName) {
     this.uniqueId = getUniqueId();
     this.groups = [];
-    this.addToGroup(Game.area.allEntities);
     this.setAnimationCharacter(characterName);
-    this.startAnimation(_.keys(R.animationGroups[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state
+    this.startAnimation(_.keys(R.animationGroups[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state, ready to be rendered
     
     // support for updateFixedStep
     if (this.updateFixedStep) {
@@ -40,12 +39,33 @@ var Sprite = {
       }
     }
   },
+  
   destroy: function() {
     var self = this;
     _.each(this.groups, function(group) {
       delete group.collection[self.uniqueId];
     });
   },
+  
+  render: function(ox, oy) {
+    var slice = this.slice;
+    var frame = this.animation.frames[this.frameIndex];
+    if (!slice || !frame || this.imageModifier === -1) { return; } 
+    
+    var x = Math.round( this.x );
+    var y = Math.round( this.y );
+    
+    var t = this.texture[this.imageModifier];
+    
+    if (this.imageModifier & R.IMG_FLIPX) {
+      ctx.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - ox, y + frame.y - oy, slice[2], slice[3]);
+    }
+    else {
+      ctx.drawImage(t, slice[0], slice[1], slice[2], slice[3], x - frame.x - ox, y + frame.y - oy, slice[2], slice[3]);
+    }
+  },
+  
+  
   addToGroup: function(group) {
     group.collection[this.uniqueId] = this;
     this.groups.push(group);
@@ -59,6 +79,7 @@ var Sprite = {
   startAnimation: function(animationName) {
     this.animationName = animationName;
     this.animation = R.animationGroups[this.characterName].sequences[this.animationName];
+    if (!this.animation) { throw new Error("Sprite: character " + this.characterName + " has no animation named " + this.animationName); }
     this.frameIndex = 0;
     this.frameDelayRemaining = this.animation.frames[this.frameIndex].duration;
   },
@@ -67,6 +88,8 @@ var Sprite = {
       this.startAnimation(animationName);
     }
   },
+  
+  // this should be called from update code
   advanceAnimation: function(dt) {
     this.frameDelayRemaining -= dt;
     while (this.frameDelayRemaining < 0) {
@@ -77,41 +100,17 @@ var Sprite = {
         }
         else {
           this.frameIndex--;
-          this.frameDelayRemaining = 99999;
+          this.frameDelayRemaining = Infinity;
         }
       }
       this.frameDelayRemaining += this.animation.frames[this.frameIndex].duration;
     }
     this.slice = R.imageSlices[R.animationGroups[this.characterName].image][this.animation.frames[this.frameIndex].slice];
   },
-  
-  /*update: function(dt) {
-    if (dt == 0) { throw new Error("PhysicsSprite.update should never be called with dt == 0"); }
-    if (this.isAnimating) {
-      this.advanceAnimation(dt);
-    }
-  },
-  */
-  
-  render: function() {
-    var slice = this.slice;
-    var frame = this.animation.frames[this.frameIndex];
-    if (!slice || !frame || this.imageModifier === -1) { return; } 
-    
-    var x = Math.round( this.x );
-    var y = Math.round( this.y );
-    
-    var t = this.texture[this.imageModifier];
-    
-    if (this.imageModifier & R.IMG_FLIPX) {
-      ctx.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - Game.area.renderOffsetX, y + frame.y - Game.area.renderOffsetY, slice[2], slice[3]);
-    }
-    else {
-      ctx.drawImage(t, slice[0], slice[1], slice[2], slice[3], x - frame.x - Game.area.renderOffsetX, y + frame.y - Game.area.renderOffsetY, slice[2], slice[3]);
-    }
-  },
-  
+
+  // this may be safely called from anywhere
   kill: function() {
     this.readyToCull = true;
   },
+  
 };

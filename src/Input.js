@@ -14,6 +14,7 @@ var Input = {
     37:  'left',
     39:  'right',
     40:  'down',
+    38:  'up',
     16:  'jump',   // <shift>
     17:  'attack', // <ctrl>
     

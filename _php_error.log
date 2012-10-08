@@ -1,0 +1,52 @@
+[08-Oct-2012 02:54:10] PHP Notice:  Undefined index: physics in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 153
+[08-Oct-2012 02:54:10] PHP Stack trace:
+[08-Oct-2012 02:54:10] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 02:54:10] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:35:54] PHP Notice:  Undefined variable: imageFilename in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 155
+[08-Oct-2012 07:35:54] PHP Stack trace:
+[08-Oct-2012 07:35:54] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:35:54] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36
+[08-Oct-2012 07:46:43] PHP Notice:  Undefined index: overworld-tiles.png in C:\Users\Chris\Dropbox\Public\canvasgame\build_resources.php on line 160
+[08-Oct-2012 07:46:43] PHP Stack trace:
+[08-Oct-2012 07:46:43] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[08-Oct-2012 07:46:43] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:36

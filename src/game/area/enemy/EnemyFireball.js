@@ -1,4 +1,4 @@
-var EnemyFireball = Object.extend(Enemy, {
+R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
   hitbox: { x1: 0, y1: 0, x2: 16, y2: 16 },
   
   isBlockable: true,
@@ -22,7 +22,7 @@ var EnemyFireball = Object.extend(Enemy, {
     this.ay = 2;
   },
   
-  onPlayerCollision: function() {
+  onPlayerCollision: function(playerSprite) {
     this.kill();
   },
   

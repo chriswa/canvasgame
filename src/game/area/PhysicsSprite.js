@@ -9,28 +9,8 @@ var PhysicsSprite = Object.extend(Sprite, {
   touchingRight: false,
   outOfBounds: false,
   
-  /*init: function() {
-    return Sprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
-  },*/
   /*
-  update: function(dt) {
-    if (dt == 0) { throw new Error("PhysicsSprite.update should never be called with dt == 0"); }
-    
-    this.vy += this.gravity * dt;
-    
-    //if (spr.touchingBottom) {
-    //  this.translateOnGround(spr);
-    //}
-    //else {
-      this.translateWithTileCollisions( this.vx / dt, this.vy / dt );
-    //}
-    }
-    
-    // call overridden method
-    Sprite.update.call(this, dt);
-    
     Debug.drawRect({x1:this.hitbox.x1+this.x, y1:this.hitbox.y1+this.y, x2:this.hitbox.x2+this.x, y2:this.hitbox.y2+this.y}, '#0f0');
-  },
   */
   translateWithTileCollisions: function( dx, dy ) {
     this.touchingBottom = false;

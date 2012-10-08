@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="64" height="16" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiles-old" tilewidth="32" tileheight="32">
+  <image source="../res/tiles-old.png" width="512" height="192"/>
+ </tileset>
+ <tileset firstgid="97" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="64" height="16">
+  <data encoding="base64" compression="zlib">
+   eJztkUEOgDAIBPsOpX2QZ///FuPBhJBdxEQP6h4mIbAFlvbWWhdCiAcZDpQ3Un8DI2AgXhxee+SM1EeYU5nLbo7uzP6lJ/n4bgkYiTMynZ/Dbup7oL0MzGH/EvujG1e93OG/qs16IP87K8BI/qyGNBX9FV2mrex9dX/5l3/5/67/+edM4tdsuhm8gg==
+  </data>
+ </layer>
+ <objectgroup name="objects" width="64" height="16">
+  <object name="overworld" type="exit" x="2048" y="0" width="64" height="512"/>
+  <object name="overworld" type="exit" x="-64" y="0" width="64" height="512"/>
+  <object name="Bot" type="spawn" x="1696" y="416" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="1600" y="416" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="1312" y="416" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="640" y="416" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="352" y="416" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="160" y="416" width="32" height="32"/>
+ </objectgroup>
+ <layer name="physics" width="64" height="16" opacity="0.74">
+  <data encoding="base64" compression="zlib">
+   eJztwwEJAAAAAqCu9v9EQ1IwAQAA4EG9PvPQMIE=
+  </data>
+ </layer>
+</map>

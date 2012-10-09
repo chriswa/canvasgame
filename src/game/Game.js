@@ -29,30 +29,21 @@ var Game = {
       worldFlags:   {},
     };
     this.isOverworldActive = true;
+    this.overworld.reset();
     //this.loadArea({area: 'test2', x: 150, y: 352}); // in small room with enemies
     //this.loadArea({area: 'test3', x: 1992, y: 352}); // beside a long, flat stretch
     //this.loadArea({area: 'test', x: 590, y: 0}); // near octoroks
     //this.loadArea({area: 'intro1', x: 590, y: 0}); // intro
   },
-  loadArea: function(exitObject) {
-    this.area = Object.build(Area, exitObject, this.area);
+  loadArea: function(exitObject, sideHint) {
+    this.area = Object.build(Area, exitObject, sideHint);
   },
   unloadArea: function() {
     this.area = null;
   },
   update: function(dt) {
     // if we've queued an area transition, load the new area
-    if (this.areaTransition) {
-      if (this.areaTransition.area === 'overworld') {
-        this.unloadArea();
-        if (this.areaTransition.x) { Game.player.overworldX = this.areaTransition.x; }
-        if (this.areaTransition.y) { Game.player.overworldY = this.areaTransition.y; }
-      }
-      else {
-        this.loadArea(this.areaTransition);
-      }
-      this.areaTransition = null;
-    }
+    this.transitionIfNeeded();
     
     // update area (and sprites owned by it, including the playerSprite)
     if (this.area) {
@@ -75,8 +66,50 @@ var Game = {
   queueAreaTransition: function(exitObject) {
     this.areaTransition = exitObject;
   },
+  transitionIfNeeded: function() {
+    if (!this.areaTransition) { return; }
+    
+    // we can guess where to enter an area based on which side the player is walking off (not all areaTransitions use this)
+    var sideHint = undefined;
+    if (this.area) {
+      sideHint = (this.area.playerSprite.x > this.area.cols * this.area.tileSize / 2) ? 'right' : 'left'; // walking off left side enters on right side (and vice versa)
+    }
+    
+    // "bridge" style rules?
+    if (this.areaTransition.sidenorth && this.overworld.player.lastDir === 'north') { sideHint = this.areaTransition.sidenorth; }
+    if (this.areaTransition.sidesouth && this.overworld.player.lastDir === 'south') { sideHint = this.areaTransition.sidesouth; }
+    if (this.areaTransition.sideeast  && this.overworld.player.lastDir === 'east' ) { sideHint = this.areaTransition.sideeast;  }
+    if (this.areaTransition.sidewest  && this.overworld.player.lastDir === 'west' ) { sideHint = this.areaTransition.sidewest;  }
+    
+    // add delay time going back and forth between overworld, not between "attached" areas 
+    var delayTime = 250;
+    if (this.area && this.areaTransition.area !== 'overworld') { delayTime = 0; }
+    
+    // set up a timer to do the transition after the delay
+    var areaTransition = this.areaTransition;
+    setTimeout(function() {
+      
+      if (areaTransition.area === 'overworld') {
+        if (areaTransition.x) { Game.player.overworldX = areaTransition.x; }
+        if (areaTransition.y) { Game.player.overworldY = areaTransition.y; }
+        this.isOverworldActive = true;
+        this.overworld.player.finishMove();
+      }
+      else {
+        this.loadArea(areaTransition, sideHint);
+      }
+    }.bind(this), delayTime);
+    
+    // reset everything
+    this.unloadArea();
+    this.isOverworldActive = false;
+    this.areaTransition = null;
+    
+    // paint it black
+    App.paintScreen('#000');
+    
+  },
   render: function() {
-    //ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (this.area) {
       this.area.render();
       this.areaHud.render();

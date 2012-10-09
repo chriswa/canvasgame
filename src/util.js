@@ -92,7 +92,7 @@ function sign(value) {
 }
 
 //
-function showme(value) {
+function showme() {
   var args = Array.prototype.slice.call(arguments, 0);
   console.log(args);
   //console.trace();

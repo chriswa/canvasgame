@@ -9,6 +9,7 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   
   init: function() {
     Enemy.init.call(this, 'blob');
+    this.y += 8;
     //this.startAnimation('idle');
     //this.vx = Math.random() < 0.5 ? 1 : -1;
   },

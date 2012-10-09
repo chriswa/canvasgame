@@ -8,7 +8,7 @@
  </tileset>
  <layer name="background" width="64" height="15">
   <data encoding="base64" compression="zlib">
-   eJztkUEKwDAIBPOO1uRBOff/byk9FER2jYH20MbDgOhGXVNLKTVJkldpCpQXUv8CzSAg7gqtvXNC6s3MicxlN0d3Zv9Snbx91w1CYg9Pp+ewm+oeaC8Bc9i/2P7oxlEvT/iPar0eyP/FARCSH9WQJqKf0XnayN6z+6f/9J/+/+t/X5wtWZoTRAm1Qg==
+   eJwLYWBgCBnFoxgLZgVitkHgDmr5hX0QuGMk4YFIP4MlzXpB8WD3rxcDbrcS4wdc+Ype/h8ueKDLp8GSb0bxKKY35sHD5kESw8ZHV4vORlcXQoR+bHYRcjM2ddjMQLebe4Rj3lE8ojEAJIj32g==
   </data>
  </layer>
  <layer name="physics" width="64" height="15" opacity="0.74">
@@ -29,7 +29,5 @@
   <object name="Bot" type="spawn" x="192" y="384" width="32" height="32"/>
   <object name="Bot" type="hardSpawn" x="384" y="384" width="32" height="32"/>
   <object name="Bot" type="hardSpawn" x="1344" y="384" width="32" height="32"/>
-  <object name="Bot" type="hardSpawn" x="224" y="384" width="32" height="32"/>
-  <object name="Bot" type="hardSpawn" x="1824" y="384" width="32" height="32"/>
  </objectgroup>
 </map>

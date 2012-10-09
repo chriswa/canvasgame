@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tiles-old" tilewidth="32" tileheight="32">
+  <image source="../res/tiles-old.png" width="512" height="192"/>
+ </tileset>
+ <tileset firstgid="97" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJwLYWBgCBnFdMGsQMw2CNwxmDEojNgHgTuGChaE4jAohvFDoTQPkhgIB6HxkfWB1AoMcgwA90dS6w==
+  </data>
+ </layer>
+ <layer name="physics" width="20" height="15" opacity="0.74">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjAIISBzkGADfvA8p
+  </data>
+ </layer>
+ <objectgroup name="objects" width="20" height="15">
+  <object name="overworld" type="exit" x="640" y="0" width="64" height="480">
+   <properties>
+    <property name="x" value="66"/>
+    <property name="y" value="31"/>
+   </properties>
+  </object>
+  <object name="overworld" type="exit" x="-64" y="0" width="64" height="480">
+   <properties>
+    <property name="x" value="66"/>
+    <property name="y" value="29"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

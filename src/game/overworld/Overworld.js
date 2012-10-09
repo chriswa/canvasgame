@@ -43,6 +43,9 @@ var Overworld = {
     
     this.spawnTimer = this.SPAWN_DELAY_INITIAL;
   },
+  reset: function() {
+    this.player.reset();
+  },
   getTile: function(tx, ty) {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return 0; }
     return this.areaData.background[ ty * this.cols + tx ];
@@ -52,20 +55,20 @@ var Overworld = {
   update: function(dt) {
     this.age += dt;
     
-    // update all entities
-    this.allGroup.update(dt);
-    
     // 
-    var ptx = Math.round(this.player.x / 32);
-    var pty = Math.round(this.player.y / 32);
+    var ptx = this.getPlayerX();
+    var pty = this.getPlayerY();
     var playerTileIndex = this.getTile(ptx, pty);
     
     // spawn encounters?
     this.spawnTimer -= dt;
-    if (this.spawnTimer <= 0 && (playerTileIndex !== 1 && playerTileIndex !== 8 && playerTileIndex !== 9 && playerTileIndex !== 10)) { // road or towns
+    if (this.spawnTimer <= 0 && (playerTileIndex !== 1 && playerTileIndex !== 8 && playerTileIndex !== 9 && playerTileIndex !== 10 && playerTileIndex !== 15)) { // road or towns or cave
       this.spawnEncounters(4);
       this.spawnTimer = this.SPAWN_DELAY_REPEAT;
     }
+    
+    // update all entities
+    this.allGroup.update(dt);
     
     // center camera on playerSprite
     var px = Math.round(this.player.x);
@@ -74,14 +77,21 @@ var Overworld = {
     this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py + 32 - canvas.height / 2)), this.rows * this.tileSize - canvas.height));
     
     // do collisions
-    this.enemyGroup.each(function(e) {
-      var etx = Math.round(e.x / 32);
-      var ety = Math.round(e.y / 32);
-      if (etx === ptx && ety === pty) {
-        Game.overworld.resetEncounters();
-        Game.loadArea({ area: 'forest', side: 'centre' });
-      }
-    });
+    if (!this.findPlayerExit()) {
+      this.enemyGroup.each(function(e) {
+        var etx = Math.round(e.x / 32);
+        var ety = Math.round(e.y / 32);
+        if (etx === ptx && ety === pty) {
+          var started = Game.overworld.startEncounter(e, playerTileIndex);
+          if (started) {
+            Game.overworld.resetEncounters();
+          }
+          else {
+            e.kill();
+          }
+        }
+      });
+    }
     
     // cull entities while have been "killed"
     _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
@@ -118,12 +128,32 @@ var Overworld = {
     var dirs = [[1,0],[-1,0],[0,1],[0,-1]];
     dirs.splice(Math.floor(Math.random() * 4), 1);
     for (var i = 0; i < dirs.length; i++) {
-      var type = ['owblob', 'owmonster', 'owfairy'];
+      var type = ['blob', 'blob', 'blob', 'blob', 'blob', 'blob', 'monster', 'monster', 'monster', 'monster', 'fairy'];
+      //var type = ['blob', 'monster', 'fairy'];
       type = type[Math.floor(Math.random() * type.length)];
       var e = Object.build(OverworldEncounter, type, this.getPlayerX() + distance * dirs[i][0], this.getPlayerY() + distance * dirs[i][1]);
       e.addToGroup(this.allGroup);
       e.addToGroup(this.enemyGroup);
     }
+  },
+  
+  startEncounter: function(encounter, tileIndex) {
+    var areaId = undefined;
+    if (encounter.type === 'fairy') {
+      if      (tileIndex === 1) { areaId = 'road'; } // road already satisfies fairy area requirements!
+      else if (tileIndex === 2) { areaId = 'fairy-grass'; }
+      if      (tileIndex === 3) { areaId = 'fairy-forest'; }
+      else if (tileIndex === 5) { areaId = 'fairy-desert'; }
+    }
+    else {
+      if (tileIndex === 1) { areaId = 'road'; }
+      if (tileIndex === 2) { areaId = 'grass'; }
+      if (tileIndex === 3) { areaId = 'forest'; }
+      if (tileIndex === 5) { areaId = 'desert'; }
+    }
+    if (!areaId) { return false; }
+    Game.queueAreaTransition({ area: areaId, side: 'centre', encounter: encounter.type });
+    return true;
   },
   
   resetEncounters: function() {
@@ -132,15 +162,24 @@ var Overworld = {
   },
   
   findAndQueuePlayerExit: function() {
+    var exitObject = this.findPlayerExit();
+    if (exitObject) {
+      Game.overworld.resetEncounters();
+      Game.queueAreaTransition(exitObject);
+    }
+  },
+  
+  findPlayerExit: function() {
     var px = this.getPlayerX() * 32 + 16;
     var py = this.getPlayerY() * 32 + 16;
+    var match = false;
     _.each(this.areaData.exits, function(exitObject) {
       var exitHitbox = exitObject.hitbox;
       if (px > exitHitbox.x1 && px < exitHitbox.x2 && py > exitHitbox.y1 && py < exitHitbox.y2) {
-        Game.overworld.resetEncounters();
-        Game.queueAreaTransition(exitObject);
+        match = exitObject;
       }
     });
+    return match;
   },
   
 };

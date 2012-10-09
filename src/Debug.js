@@ -5,6 +5,9 @@ var Debug = {
   
   shapesToDraw: [],
   
+  logFrameTimer: 0,
+  loggingEnabled: false,
+  
   init: function() {
     
     // fill area
@@ -17,7 +20,7 @@ var Debug = {
     var originalLoadArea = App.game.loadArea;
     App.game.loadArea = function(exitObject) {
       $('#areaDropdown').val(exitObject.area);
-      originalLoadArea(exitObject);
+      originalLoadArea.apply(App.game, Array.prototype.slice.call(arguments));
     };
     
     // clicking on the canvas teleports you to that point
@@ -51,6 +54,21 @@ var Debug = {
   
   update: function() {
     this.shapesToDraw = [];
+    if (this.logFrameTimer > 0) {
+      this.log("--- Frame start ---");
+      this.logFrameTimer--;
+    }
+  },
+  
+  startTemporaryLogging: function(nFrames) {
+    this.logFrameTimer = nFrames;
+  },
+  
+  log: function() {
+    if ( !this.logFrameTimer && !this.loggingEnabled ) { return; }
+    var args = Array.prototype.slice.call(arguments, 0);
+    args.unshift("Debug.log");
+    console.log(args);
   },
   
   render: function() {

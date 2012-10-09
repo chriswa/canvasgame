@@ -42,5 +42,10 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
       this.kill();
     }
     
+    // kill when off screen
+    if ( this.getStandardizedOffscreenDist() > 10 ) {
+      this.kill();
+    }
+    
   },
 });

@@ -21,6 +21,7 @@ var Sprite = {
     this.groups = [];
     this.setAnimationCharacter(characterName);
     this.startAnimation(_.keys(R.animationGroups[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state, ready to be rendered
+    this.advanceAnimation(0);
     
     // support for updateFixedStep
     if (this.updateFixedStep) {

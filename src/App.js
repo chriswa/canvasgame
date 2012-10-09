@@ -142,11 +142,15 @@ var App = {
   },
 
   
+  //
+  paintScreen: function(colour) {
+    ctx.fillStyle = colour;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  },
+  
   // 
   drawPausedScreen: function() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+    this.paintScreen('rgba(0, 0, 0, 0.5)')
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.beginPath();
     ctx.moveTo(canvas.width * 0.40, canvas.height * 0.35);
@@ -156,9 +160,7 @@ var App = {
   },
   
   drawTextScreen: function(text) {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+    this.paintScreen('#000');
     ctx.font      = 'bold 50px sans-serif';
     ctx.fillStyle = '#900';
     ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 20);

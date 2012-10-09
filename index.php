@@ -168,8 +168,8 @@
     <tr><th>Attack</th><td>&lt;ctrl&gt;  or &lt;X&gt;</td></tr>
     -->
     <tr><th><span>Move &amp; Crouch</span></th><td><span>arrow keys</span></td></tr>
-    <tr><th><span>Jump</span></th><td><span>spacebar</span></td></tr>
-    <tr><th><span>Attack</span></th><td><span>ctrl</span></td></tr>
+    <tr><th><span>Jump</span></th><td><span>spacebar <i>or</i> shift <i>or</i> Z</span></td></tr>
+    <tr><th><span>Attack</span></th><td><span>ctrl <i>or</i> X</span></td></tr>
   </table>
   
   <div class="production-toggle" style="background-color: #ddd; padding: 10px; border: 1px solid #999; display: inline-block; margin-top: 10px;">

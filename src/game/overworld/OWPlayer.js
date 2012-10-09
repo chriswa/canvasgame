@@ -3,6 +3,7 @@ var OverworldPlayer = Object.extend(Sprite, {
   vx: 0,
   vy: 0,
   moveRemaining: 0,
+  lastDir: undefined,
   
   SPEED: 250, // milliseconds to move one tile
   SWAMP_SPEED: 500,
@@ -10,6 +11,10 @@ var OverworldPlayer = Object.extend(Sprite, {
   init: function() {
     Sprite.init.call(this, 'owplayer');
     this.startAnimation('stand');
+  },
+  
+  reset: function() {
+    this.moveRemaining = 0;
   },
   
   update: function(dt) {
@@ -22,10 +27,10 @@ var OverworldPlayer = Object.extend(Sprite, {
       this.y = Game.player.overworldY * 32;
       
       // move?
-      if      (Input.keyDown.left)  { this.startMove( -1,  0); }
-      else if (Input.keyDown.right) { this.startMove(  1,  0); }
-      else if (Input.keyDown.up)    { this.startMove(  0, -1); }
-      else if (Input.keyDown.down)  { this.startMove(  0,  1); }
+      if      (Input.keyDown.left)  { if (this.startMove( -1,  0)) { this.lastDir = 'west';  } }
+      else if (Input.keyDown.right) { if (this.startMove(  1,  0)) { this.lastDir = 'east';  } }
+      else if (Input.keyDown.up)    { if (this.startMove(  0, -1)) { this.lastDir = 'north'; } }
+      else if (Input.keyDown.down)  { if (this.startMove(  0,  1)) { this.lastDir = 'south'; } }
       
       // we haven't started a move? stand still
       if (this.moveRemaining <= 0) {
@@ -56,7 +61,7 @@ var OverworldPlayer = Object.extend(Sprite, {
     var tileIndex = Game.overworld.getTile(newTX, newTY);
     
     // can't move into water or mountains
-    if (tileIndex === 0 || tileIndex === 4) { return; }
+    if (tileIndex === 0 || tileIndex === 4) { return false; }
     
     // player moves slower going into swamps
     var speed = (tileIndex === 6) ? this.SWAMP_SPEED : this.SPEED;
@@ -83,6 +88,13 @@ var OverworldPlayer = Object.extend(Sprite, {
     else if (dtx > 0) {
       this.startAnimation('walk-east');
     }
+    return true;
+  },
+  
+  finishMove: function() {
+    this.moveRemaining = 0;
+    this.x = Game.player.overworldX * 32;
+    this.y = Game.player.overworldY * 32;
   },
   
 });

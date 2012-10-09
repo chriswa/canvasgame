@@ -24,12 +24,14 @@ var Area = {
   cols: 0,
   age: 0,
   
-  init: function(exitObject, oldArea) {
+  init: function(exitObject, sideHintFromLastExit) {
     Game.area = this;
     
     var areaId = exitObject.area;
     
     this.areaData      = R.areas[areaId];
+    if (!this.areaData) { throw new Error("could not find areaId " + areaId); }
+    
     this.tileImg       = R.images[ this.areaData.image ];
     this.tileSize      = this.areaData.tileSize;
     this.tileImgCols   = Math.floor(this.tileImg[0].width / this.tileSize);
@@ -52,6 +54,11 @@ var Area = {
       // have we already "completed" (i.e. defeated/collected) this spawn?
       if (spawnInfo.oncePerDungeon && Game.player.dungeonFlags[spawnInfo.oncePerDungeon]) { return; }
       
+      // is this an encounter-type dependant spawn and the wrong type of encounter?
+      if (exitObject.encounter === 'fairy') { return; }
+      if (exitObject.encounter === 'blob' && spawnInfo.hard) { return; }
+      if (exitObject.encounter === 'monster' && !spawnInfo.hard) { return; }
+      
       // spawn!
       var classObject = R.spawnableSprites[spawnInfo['class']];
       var e = this.spawn(classObject, spawnInfo);
@@ -63,6 +70,13 @@ var Area = {
       
     }, this);
     
+    // special rules for exitObject.encounter === 'fairy'
+    if (exitObject.encounter === 'fairy') {
+      var e = this.spawn(R.spawnableSprites['Fairy']);
+      e.x += this.tileSize * this.cols / 2 - 16;
+      e.y += 9 * this.tileSize;
+    }
+    
     // set the playerSprite's position and velocity
     // if the player is leaving an area, we can use which side of it they're on to guess where the player should appear on the next area
     if (exitObject.x !== undefined && exitObject.y !== undefined) {
@@ -71,12 +85,12 @@ var Area = {
       // TODO: also set velocity
     }
     else {
-      var side = exitObject.side || 'left';
-      
-      // if side is not supplied, we can determine it from where the player was on the old area (if supplied)
-      if (!exitObject.side && oldArea && oldArea.playerSprite) {
-        side = (oldArea.playerSprite.x > oldArea.cols * oldArea.tileSize / 2) ? 'left' : 'right'; // walking off left side enters on right side (and vice versa)
+      var side = exitObject.side;
+      if (!side && sideHintFromLastExit) {
+        if (sideHintFromLastExit === 'left') { side = 'right'; }
+        if (sideHintFromLastExit === 'right') { side = 'left'; }
       }
+      if (!side) { side = 'left'; }
       
       // find the first solid tile from the bottom
       var tx = 0;
@@ -88,6 +102,7 @@ var Area = {
       
       // place player
       this.playerSprite.x = (side === 'left') ? -this.playerSprite.hitbox.x1 : ((tx + 1) * this.tileSize) - this.playerSprite.hitbox.x2;
+      if (side === 'centre') { this.playerSprite.x = this.tileSize * this.cols / 2 - 16; }
       this.playerSprite.y = (ty + 1) * this.tileSize - this.playerSprite.hitbox.y2;
       this.playerSprite.vx = 0;
       if (side === 'left')  { this.playerSprite.vx =  this.playerSprite.MAX_X_SPEED; }

@@ -7,14 +7,17 @@ var OverworldEncounter = Object.extend(Sprite, {
   vy: 0,
   moveRemaining: 0,
   
+  type: null,
+  
   age: 0,
   
   SPEED: 250, // milliseconds to move one tile
   EXPIRY_TIME: 8000, // automatically die after this long
   
   init: function(type, tx, ty) {
-    if (type !== 'owblob' && type !== 'owmonster' && type !== 'owfairy') { throw new Error("OverworldEncounter: unknown type " + type); }
-    Sprite.init.call(this, type);
+    if (type !== 'blob' && type !== 'monster' && type !== 'fairy') { throw new Error("OverworldEncounter: unknown type " + type); }
+    Sprite.init.call(this, 'ow' + type);
+    this.type = type;
     this.tx = tx;
     this.ty = ty;
     this.x = this.tx * 32;

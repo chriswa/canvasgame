@@ -61,7 +61,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     
     // if it's blockable with the shield, try to block it
-    if (entity.isBlockable && !this.isAttacking) {
+    if (entity.isBlockable) {
       
       // shield must be at the right height to block something
       var shieldCenterY = this.y   + (this.isCrouching ? 52 : 16);

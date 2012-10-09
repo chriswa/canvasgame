@@ -33,3 +33,7 @@ a, a:visited {
 #controls TD {
   text-align: right;
 }
+#controls I {
+  font-size: 10px;
+  color: #aaa;
+}

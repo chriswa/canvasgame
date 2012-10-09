@@ -131,12 +131,13 @@
               'hitbox' => array( 'x1' => (double)$object['x'], 'y1' => (double)$object['y'], 'x2' => (double)$object['x'] + (double)$object['width'], 'y2' => (double)$object['y'] + (double)$object['height'] ),
             ), $object['properties']);
           }
-          elseif ($object['type'] === 'spawn') {
+          elseif ($object['type'] === 'spawn' || $object['type'] === 'hardSpawn') {
             $spawn = array_merge(array(
               'class' => $object['name'],
               'x'     => (double)$object['x'],
               'y'     => (double)$object['y'],
             ), $object['properties']);
+            if ($object['type'] === 'hardSpawn') { $spawn['hard'] = true; }
             $once = @$spawn['once'];
             unset($spawn['once']);
             if ($once === 'dungeon') {

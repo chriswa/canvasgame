@@ -70,15 +70,15 @@ var Preview = {
         }
         framesUpdatedBeforeRendering++;
         
-        this.delayRemaining--;
-        if (this.delayRemaining === 0) {
+        this.delayRemaining -= this.SIM_STEP_TIME;
+        if (this.delayRemaining <= 0) {
           this.frameIndex++;
           var animFrame = this.frames[this.frameIndex];
           if (!animFrame) {
             this.frameIndex = 0;
             animFrame = this.frames[this.frameIndex];
           }
-          this.delayRemaining = animFrame.duration
+          this.delayRemaining += animFrame.duration;
           var slice = slices[animFrame.slice];
           
           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -92,6 +92,6 @@ var Preview = {
         }
       }
     }
-    window.requestAnimationFrame( this.render.bind(this), this.canvas );
+    setTimeout( this.render.bind(this), this.SIM_STEP_TIME );
   }
 };

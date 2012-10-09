@@ -12,7 +12,6 @@ var OverworldEncounter = Object.extend(Sprite, {
   age: 0,
   
   SPEED: 250, // milliseconds to move one tile
-  EXPIRY_TIME: 8000, // automatically die after this long
   
   init: function(type, tx, ty) {
     if (type !== 'blob' && type !== 'monster' && type !== 'fairy') { throw new Error("OverworldEncounter: unknown type " + type); }
@@ -27,7 +26,7 @@ var OverworldEncounter = Object.extend(Sprite, {
   update: function(dt) {
     
     this.age += dt;
-    if (this.age > this.EXPIRY_TIME) { this.kill(); }
+    if (this.age > Game.overworld.ENCOUNTER_LIFETIME) { this.kill(); }
     
     // we only have control if we're not executing a move
     if (this.moveRemaining <= 0) {

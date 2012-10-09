@@ -22,18 +22,12 @@
     TODO:
       
       - consider dropping or improving SpriteGroup
-      - rename PhysicsSprite to Sprite, Enemy* to *, SpriteGroup to SpriteGroup?, HUD to AreaHUD, rename enemies/ to areasprites/
-        - alternately, area/, and move into it: Area, HUD, SpriteGroup, and all sprite classes
-        
-      - overworld (Game will update the Overworld instead of an Area)
-      
-      - "particle" effects (enemy killed, projectile destroyed) these are simply sprites, (maybe with no animation code?)
       - elevators!
       
   */
   
   // build R.*.js
-  require_once "build_resources.php";
+  require_once "build/index.php";
   
   //
   function recurseDir($initialDir) {
@@ -89,12 +83,19 @@
   
   var forceMobile = false;
   
-  if (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html") { $(function() { $('.production-toggle').toggle(); }); }
+  var isProduction = (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html");
   
   // init App
   window.onload = function() {
     Mobile.init(function() {
       App.init();
+      
+      if (isProduction) {
+        Debug.showStatusbar = false;
+        $('.production-toggle').toggle();
+        if (Mobile.isMobile) { $('.production-toggle.mobile-toggle').toggle(); }
+      }
+      
     }, forceMobile);
   };
   
@@ -139,23 +140,6 @@
     Please upgrade your browser and reload this page.
   </div>
 </canvas>
-
-<!-- STATUS BAR -->
-<div id="statusbar" class="production-toggle" style="width: 640px; margin: auto; text-align: left; background-color: #999; color: white; height: 20px; padding: 0 10px 0px;">
-  <div id="running" style="float: left; width: 160px;">
-    <span style="width: 80px;">
-      <span id="fps-render">??</span> FPS
-    </span>
-    <span style="width: 80px;">
-      <span id="skipped">??</span>
-    </span>
-  </div>
-  <div style="float: left; width: 90px;">x: <span id="playerX"></span></div>
-  <div style="float: left; width: 90px;">y: <span id="playerY"></span></div>
-  <div style="float: left; width: 90px;">vx: <span id="playerVX"></span></div>
-  <div style="float: left; width: 90px;">vy: <span id="playerVY"></span></div>
-</div>
-<div style="clear: both;"></div>
 
 <!-- INSTRUCTIONS -->
 <div class="mobile-toggle">

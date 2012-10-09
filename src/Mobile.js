@@ -2,6 +2,8 @@ var Mobile = {
   
   isMobile: undefined,
   
+  render: function() {},
+  
   init: function(callback, force) {
     
     // mobile device support?
@@ -24,7 +26,7 @@ var Mobile = {
       var renderAge = 0;
       var hasPressedJump   = false;
       var hasPressedAttack = false;
-      window.extraRenderFunction = function() {
+      this.render = function() {
         renderAge++;
         
         ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";

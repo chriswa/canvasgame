@@ -18,13 +18,14 @@ var Overworld = {
   age: 0,
   
   spawnTimer: 0,
-  SPAWN_DELAY_INITIAL: 2000,
-  SPAWN_DELAY_REPEAT:  5000,
+  SPAWN_DELAY_INITIAL:  4000,
+  SPAWN_DELAY_REPEAT:  10000,
+  ENCOUNTER_LIFETIME:   6000,
   
   init: function() {
     
     this.areaData      = R.areas['overworld'];
-    this.tileImg       = R.images['overworld-tiles'];
+    this.tileImg       = R.images['overworld-tiles.png'];
     this.tileSize      = this.areaData.tileSize;
     this.tileImgCols   = Math.floor(this.tileImg[0].width / this.tileSize);
     
@@ -141,9 +142,9 @@ var Overworld = {
     var areaId = undefined;
     if (encounter.type === 'fairy') {
       if      (tileIndex === 1) { areaId = 'road'; } // road already satisfies fairy area requirements!
-      else if (tileIndex === 2) { areaId = 'fairy-grass'; }
-      if      (tileIndex === 3) { areaId = 'fairy-forest'; }
-      else if (tileIndex === 5) { areaId = 'fairy-desert'; }
+      else if (tileIndex === 2) { areaId = 'fairy_grass'; }
+      if      (tileIndex === 3) { areaId = 'fairy_forest'; }
+      else if (tileIndex === 5) { areaId = 'fairy_desert'; }
     }
     else {
       if (tileIndex === 1) { areaId = 'road'; }

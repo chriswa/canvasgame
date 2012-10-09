@@ -1,9 +1,11 @@
 var Debug = {
   
+  showStatusbar: true,
   showHitboxes: false,
   clickToTeleport: false,
   
   shapesToDraw: [],
+  statusTextToDraw: [],
   
   logFrameTimer: 0,
   loggingEnabled: false,
@@ -54,6 +56,7 @@ var Debug = {
   
   update: function() {
     this.shapesToDraw = [];
+    this.statusTextToDraw = [];
     if (this.logFrameTimer > 0) {
       this.log("--- Frame start ---");
       this.logFrameTimer--;
@@ -78,6 +81,28 @@ var Debug = {
         var rect = shape.rect;
         ctx.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
       }
+    });
+    
+    var fps = App.fpsRender.measure().toFixed(1);
+    this.statusbarPrint('FPS: ' + fps, 0);
+    
+    if (this.showStatusbar) { this.renderStatusbar(); }
+  },
+  
+  statusbarPrint: function(text, column, colour) {
+    if (!colour) { colour = '#fff'; }
+    this.statusTextToDraw.push({ text: text, column: column, colour: colour });
+  },
+  
+  renderStatusbar: function() {
+    ctx.fillStyle = '#333';
+    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+    ctx.font      = 'bold 10px monospace';
+    ctx.textAlign = 'left';
+    
+    _.each(this.statusTextToDraw, function(value) {
+      ctx.fillStyle = value.colour;
+      ctx.fillText(value.text, value.column * 6, canvas.height - 2);
     });
   },
   

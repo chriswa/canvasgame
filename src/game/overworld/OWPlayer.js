@@ -60,8 +60,8 @@ var OverworldPlayer = Object.extend(Sprite, {
     var newTY = Game.player.overworldY + dty;
     var tileIndex = Game.overworld.getTile(newTX, newTY);
     
-    // can't move into water or mountains
-    if (tileIndex === 0 || tileIndex === 4) { return false; }
+    // can't move into water or mountains or boulders
+    if (tileIndex === 0 || tileIndex === 4 || tileIndex === 13) { return false; }
     
     // player moves slower going into swamps
     var speed = (tileIndex === 6) ? this.SWAMP_SPEED : this.SPEED;

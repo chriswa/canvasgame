@@ -30,9 +30,10 @@ var ResourceManager = {
     // load images
     totalToLoad += _.keys(R.images).length; // increment totalToLoad
     _.each(R.images, function(value, key, obj) {
+      var filepath = 'res/' + key;
       var img = new Image();
       img.onload = resourceLoad;
-      img.src = value.filename + '?' + now();
+      img.src = filepath + '?' + now();
       obj[key][0] = img;
     });
     

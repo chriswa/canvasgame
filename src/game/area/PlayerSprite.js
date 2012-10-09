@@ -188,16 +188,10 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     // visual effects (hurting and invincibility)
     this.applyVisualEffects();
     
-    // 
-    //$('#playerX' ).text(this.x.toFixed(2));
-    //$('#playerY' ).text(this.y.toFixed(2));
-    
-    if (this.debugStartJumpY) {
-      this.debugHighestY = Math.min(this.debugHighestY, this.y);
-      $('#playerY' ).text(((this.debugStartJumpY - this.debugHighestY)/32).toFixed(2));
-    }
-    $('#playerVX').text(this.vx.toFixed(2));
-    $('#playerVY').text(this.vy.toFixed(2));
+    //if (this.debugStartJumpY) {
+    //  this.debugHighestY = Math.min(this.debugHighestY, this.y);
+    //  $('#playerY' ).text(((this.debugStartJumpY - this.debugHighestY)/32).toFixed(2));
+    //}
   },
   
   tryToJump: function() {
@@ -214,7 +208,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.touchingBottom = false;
       this.fallStopwatch  = 9999; // invalidate fallStopwatch (also prevents a double-jump)
       this.playAnimation('jump');
-      this.debugStartJumpY = this.debugHighestY = this.y;
+      //this.debugStartJumpY = this.debugHighestY = this.y;
     }
   },
   

@@ -25,10 +25,7 @@ var App = {
     ctx.imageSmoothingEnabled = false;
     
     // show loading screen
-    ctx.fillStyle    = '#ccc';
-    ctx.font         = 'bold 30px sans-serif';
-    ctx.textAlign    = 'center';
-    ctx.fillText('Loading...', canvas.width / 2, canvas.height / 2);
+    this.drawTextScreen('Loading...', '#fff', '#ccc');
     
     this.fpsUpdate = Object.build(FPSCounter);
     this.fpsRender = Object.build(FPSCounter);
@@ -80,9 +77,8 @@ var App = {
   },
   render: function() {
     this.game.render();
+    Mobile.render();
     Debug.render();
-    if (window.extraRenderFunction) { window.extraRenderFunction(); }
-    $('#fps-render').text(this.fpsRender.measure().toFixed(1));
   },
   
   updateLoop: function() {
@@ -159,10 +155,13 @@ var App = {
     ctx.fill();
   },
   
-  drawTextScreen: function(text) {
-    this.paintScreen('#000');
+  drawTextScreen: function(text, colour, backgroundColour) {
+    colour           = colour           || '#900';
+    backgroundColour = backgroundColour || '#000';
+    this.paintScreen(backgroundColour);
     ctx.font      = 'bold 50px sans-serif';
-    ctx.fillStyle = '#900';
+    ctx.fillStyle = colour;
+    ctx.textAlign = 'center';
     ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 20);
   },
   

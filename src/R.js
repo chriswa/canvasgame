@@ -13,8 +13,8 @@ var R = {
 
 // add some extra stuff after R.sprites.js builds things
 R.beforeLoad = function() {
-  R.images['tiles']           = { "filename": "res/tiles3.png",          "imageModifiers": [], };
-  R.images['tiles-old']       = { "filename": "res/tiles-old.png",       "imageModifiers": [], };
-  R.images['overworld-tiles'] = { "filename": "res/overworld-tiles.png", "imageModifiers": [], };
-  //R.images['ui'] = { "filename": "res/ui.png",            "imageModifiers": [], };
+  R.images['tiles3.png']          = { "imageModifiers": [], };
+  R.images['tiles-old.png']       = { "imageModifiers": [], };
+  R.images['overworld-tiles.png'] = { "imageModifiers": [], };
+  //R.images['ui.png'] = { "imageModifiers": [], };
 };

@@ -56,6 +56,9 @@ var Sprite = {
     var x = Math.round( this.x );
     var y = Math.round( this.y );
     
+    // debug for galaxy nexus weirdness
+    //this.imageModifier = R.IMG_PINK;
+    
     var t = this.texture[this.imageModifier];
     
     if (this.imageModifier & R.IMG_FLIPX) {

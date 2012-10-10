@@ -10,8 +10,7 @@ var Mobile = {
     this.isMobile = ('ontouchstart' in window) || force;
     if (this.isMobile) {
       
-      $('#canvas').attr('width', 598).attr('height', 340).css({ border: 'none', margin: 0 }); // height=340 seems perfect
-      $('#statusbar').width($('#canvas').width() - 20);
+      $('#canvas').attr('width', 598).attr('height', 360).css({ border: 'none', margin: 0 }); // height=340 seems perfect
       
       var wasPressing = {};
       var lastDpadTouch = undefined;
@@ -29,87 +28,61 @@ var Mobile = {
       this.render = function() {
         renderAge++;
         
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-        ctx.fillStyle   = "rgba(255, 0, 0, 1)";
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = '#fff';
         
-        ctx.beginPath();
+        // draw dpad
+        // up
+        ctx.fillStyle = wasPressing.up ? '#fff' : '#000';
+        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(50-0.5, 250-0.5); ctx.lineTo(50-0.5, 200-0.5); ctx.lineTo(100-0.5, 200-0.5); ctx.lineTo(100-0.5, 250-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        // down
+        ctx.fillStyle = wasPressing.down ? '#fff' : '#000';
+        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(50-0.5, 300-0.5); ctx.lineTo(50-0.5, 350-0.5); ctx.lineTo(100-0.5, 350-0.5); ctx.lineTo(100-0.5, 300-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        // left
+        ctx.fillStyle = wasPressing.left ? '#fff' : '#000';
+        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(50-0.5, 250-0.5); ctx.lineTo(0-0.5, 250-0.5); ctx.lineTo(0-0.5, 300-0.5); ctx.lineTo(50-0.5, 300-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        // right
+        ctx.fillStyle = wasPressing.right ? '#fff' : '#000';
+        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(100-0.5, 250-0.5); ctx.lineTo(150-0.5, 250-0.5); ctx.lineTo(150-0.5, 300-0.5); ctx.lineTo(100-0.5, 300-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
         
-        //ctx.stroke();
+        // draw attack/jump buttons
+        // attack
+        ctx.fillStyle = wasPressing.attack ? '#fff' : '#000';
+        ctx.beginPath(); ctx.arc(550, 240, 40, 0, Math.PI*2, true); ctx.fill(); ctx.stroke();
+        // jump
+        ctx.fillStyle = wasPressing.jump ? '#fff' : '#000';
+        ctx.beginPath(); ctx.arc(480, 310, 40, 0, Math.PI*2, true); ctx.fill(); ctx.stroke();
         
-        // draw dpad rectangles
-        if (!lastDpadTouch) {
-          //ctx.strokeRect(0.5+0, 0.5+200, 150, 299);
-          //ctx.strokeRect(0.5+50, 0.5+250, 50, 50);
-          var size = Math.sin(renderAge / 10) * 5 + 50;
-          App.blitSliceByFilename('dpad-symbol.png', 75-size/2, 275-size/2, size, size);
-        }
+        ctx.fillStyle = '#fff';
+        ctx.font      = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("attack", 550, 240 + 3);
+        ctx.fillText("jump", 480, 310 + 3);
         
-        //
-        if (wasPressing.jump)   { hasPressedJump   = true; }
-        if (wasPressing.attack) { hasPressedAttack = true; }
-        if (!hasPressedJump) {
-          var size = Math.sin(renderAge / 10) * 3 + 24;
-          App.blitSliceByFilename('btn-a.png', 480-size/2, 290-size/2, size, size);
-        }
-        if (!hasPressedAttack) {
-          var size = Math.sin(renderAge / 10) * 3 + 24;
-          App.blitSliceByFilename('btn-b.png', 550-size/2, 220-size/2, size, size);
-        }
-        
-        // draw action button separator line
-        //ctx.moveTo(0.5+600, 0.5+340);
-        //ctx.lineTo(0.5+600-140, 0.5+340-140);
-        //ctx.closePath();
-        
-
-        // draw dpad activity feedback
-        if (lastDpadTouch) {
-          var dpadOffset = [0, 150]; // 50, 150
-          App.blitSliceByFilename('dpad.png', dpadOffset[0], dpadOffset[1]);
-          if (wasPressing.up)    { App.blitSliceByFilename('dpad-up.png',    dpadOffset[0] + 17, dpadOffset[1] +  0); }
-          if (wasPressing.down)  { App.blitSliceByFilename('dpad-down.png',  dpadOffset[0] + 17, dpadOffset[1] + 32); }
-          if (wasPressing.left)  { App.blitSliceByFilename('dpad-left.png',  dpadOffset[0] +  0, dpadOffset[1] + 17); }
-          if (wasPressing.right) { App.blitSliceByFilename('dpad-right.png', dpadOffset[0] + 32, dpadOffset[1] + 17); }
-          var x = lastDpadTouch[0] / 3 + dpadOffset[0];
-          var y = lastDpadTouch[1] / 3 + dpadOffset[1];
-          var danger = Math.max(Math.abs(lastDpadTouch[0] - 75), Math.abs((lastDpadTouch[1] > 100 ? lastDpadTouch[1] - 50 : lastDpadTouch[1]) - 75));
-          var radius = 2;
-          if (danger > 50) { radius = Math.min((danger - 50) / 25, 1) * 8 + 2; }
-          ctx.moveTo(x, y);
-          ctx.arc(x, y, radius, 0, Math.PI * 2, true);
-          ctx.fill();
-        }
-        
-        /*
-        // draw jump button activity
-        if (wasPressing.jump) {
-          var x = 600;
-          var y = 340;
-          ctx.moveTo(x, y);
-          ctx.arc(x, y, 150, 1.25 * Math.PI, Math.PI * 0.25, true);
-        }
-        
-        // draw attack button activity
-        if (wasPressing.attack) {
-          var x = 600;
-          var y = 340;
-          ctx.moveTo(x, y);
-          ctx.arc(x, y, 150, Math.PI * 0.25, 1.25 * Math.PI, true);
-        }
-        */
-        
+        ctx.globalAlpha = 1;
         
       };
 
+      var refreshButtonTimeout = null;
       var multitoucher = function(event) {
         var isPressing = {};
         lastDpadTouch = undefined;
+        var isHoldingReset = false;
         for (var i = 0; i < event.touches.length; i++) {
           var touch = event.touches[i];
           var x = touch.pageX;
           var y = touch.pageY;
           
-          if (y < 50 && x > 275 && x < 325) { $('#canvas').hide(); window.location.reload(); }
+          if (y < 50 && x > 275 && x < 325) {
+            isHoldingReset = true;
+            if (!refreshButtonTimeout) {
+              refreshButtonTimeout = setTimeout(function() {
+                App.pause();
+                App.drawTextScreen("Refreshing...", "#ccc", "#fff");
+                setTimeout(function() { window.location.reload(); }, 0);
+              }, 750);
+            }
+          }
           
           for (var buttonName in buttons) {
             var button = buttons[buttonName];
@@ -130,6 +103,10 @@ var Mobile = {
           if (!isPressing[buttonName] && wasPressing[buttonName]) { Input.touchUp( buttonName ); }
         }
         wasPressing = isPressing;
+        if (!isHoldingReset && refreshButtonTimeout) {
+          clearTimeout(refreshButtonTimeout);
+          refreshButtonTimeout = null;
+        }
       }
       document.addEventListener('touchmove', multitoucher);
       document.addEventListener('touchstart', multitoucher);

@@ -292,4 +292,53 @@ function first($array) {
   return @reset($array);
 }
 
+//
+function create_blank_samesize_trans_image($size_x, $size_y) {
+  $targetImage = imagecreatetruecolor($size_x, $size_y);
+  imagesavealpha($targetImage, true);
+  $im_trans = imagecolorallocatealpha($targetImage, 0, 0, 0, 127);
+  imagefill($targetImage, 0, 0, $im_trans);
+  return $targetImage;
+}
+
+// 
+function flip_image_horizontally($sourceImage) {
+  $size_x = imagesx($sourceImage);
+  $size_y = imagesy($sourceImage);
+  $targetImage = create_blank_samesize_trans_image($size_x, $size_y);
+  imagecopyresampled($targetImage, $sourceImage, 0, 0, $size_x - 1, 0, $size_x, $size_y, -$size_x, $size_y);
+  return $targetImage;
+}
+
+// 
+function colourize_image($sourceImage, $colourTranslatorFunction) {
+  $size_x = imagesx($sourceImage);
+  $size_y = imagesy($sourceImage);
+  $targetImage = create_blank_samesize_trans_image($size_x, $size_y);
+  
+  $colourTranslationCache = array();
+  
+  for ($y = 0; $y < $size_y; $y++) {
+    for ($x = 0; $x < $size_x; $x++) {
+      
+      $rgb = imagecolorat($sourceImage, $x, $y);
+      
+      $newColour = @$colourTranslationCache[$rgb];
+      if (!$newColour) {
+        $a = ($rgb >> 24) & 0xFF;
+        $r = ($rgb >> 16) & 0xFF;
+        $g = ($rgb >> 8) & 0xFF;
+        $b = $rgb & 0xFF;
+        list($r, $g, $b, $a) = $colourTranslatorFunction($r, $g, $b, $a);
+        $colourTranslationCache[$rgb] = imagecolorallocatealpha($targetImage, $r, $g, $b, $a);
+      }
+      
+      imagesetpixel($targetImage, $x, $y, $newColour);
+      
+    }
+  }
+  
+  return $targetImage;
+}
+
 ?>

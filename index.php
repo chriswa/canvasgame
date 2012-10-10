@@ -27,7 +27,9 @@
   */
   
   // build R.*.js
+  $startTime = time();
   require_once "build/index.php";
+  $buildTime = time() - $startTime;
   
   //
   function recurseDir($initialDir) {
@@ -46,6 +48,7 @@
   ob_start();
   
 ?>
+<link rel="Shortcut Icon" href="index.ico" />
 <link rel="stylesheet" href="index.css" type="text/css" media="all" />
 
 <!-- INCLUDE SCRIPTS -->
@@ -81,11 +84,14 @@
 <!-- INIT CODE -->
 <script>
   
-  var forceMobile = false;
+  console.log("Build took: " + (<?php echo $buildTime ?>).toFixed(1) + "ms");
+  
+  var forceMobile = true;
   
   var isProduction = (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html");
   
   // init App
+  App.BUILD_TIME = <?php echo time() ?>;
   window.onload = function() {
     Mobile.init(function() {
       App.init();
@@ -108,7 +114,7 @@
   
   <button onclick="Game.reset();">Reset Game</button>
   Area: <select id="areaDropdown" onchange="Debug.teleportToArea($(this).val());"></select>
-  </br>
+  <br/>
   
   <label><input type="checkbox" onclick="Debug.clickToTeleport = $(this).is(':checked');"> Click to teleport</label><br/>
   

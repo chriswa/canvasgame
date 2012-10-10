@@ -167,7 +167,9 @@ var Overworld = {
     if (exitObject) {
       Game.overworld.resetEncounters();
       Game.queueAreaTransition(exitObject);
+      return true;
     }
+    return false;
   },
   
   findPlayerExit: function() {

@@ -1,40 +1,78 @@
 var ResourceManager = {
   init: function(callback) {
+    
     R.beforeLoad();
-    this.loadImages( function() {
+    
+    //ctx.strokeStyle = '#666';
+    //ctx.fillRect(canvas.width / 2 - 115, canvas.height * 2 / 3, 230, 5);
+    
+    var progressCallback = function(percentComplete) {
+      ctx.fillStyle = '#999';
+      //ctx.fillRect(canvas.width / 2 - 115, canvas.height * 2 / 3, 230 * percentComplete, 5);
       
-      _.each(R.images, function(img, key, obj) {
-        img[ R.IMG_PINK ]                            = ResourceManager.colourizeImage(img[ R.IMG_ORIGINAL ], 'pink');
-        img[ R.IMG_CYAN ]                            = ResourceManager.colourizeImage(img[ R.IMG_ORIGINAL ], 'cyan');
-        img[ R.IMG_PINK | R.IMG_CYAN ]               = ResourceManager.colourizeImage(img[ R.IMG_ORIGINAL ], 'wacky');
-        img[ R.IMG_FLIPX ]                           = ResourceManager.flipImageHorizontally(img[ R.IMG_ORIGINAL ]);
-        img[ R.IMG_PINK | R.IMG_FLIPX ]              = ResourceManager.flipImageHorizontally(img[ R.IMG_PINK ]);
-        img[ R.IMG_CYAN | R.IMG_FLIPX ]              = ResourceManager.flipImageHorizontally(img[ R.IMG_CYAN ]);
-        img[ R.IMG_PINK | R.IMG_CYAN | R.IMG_FLIPX ] = ResourceManager.flipImageHorizontally(img[ R.IMG_PINK | R.IMG_CYAN ]);
-      });
-      
-      callback();
-    });
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(canvas.width / 2 - 115 + 230 * percentComplete, 0);
+      ctx.lineTo(canvas.width / 2 - 115 + 230 * percentComplete, canvas.height);
+      ctx.lineTo(0, canvas.height);
+      ctx.clip();
+      ctx.fillText("Loading...", canvas.width / 2, canvas.height / 2 + 20);
+      ctx.restore();
+    };
+    
+    this.loadImages( progressCallback, callback );
   },
   
-  loadImages: function(callback) {
+  loadImages: function(progressCallback, callback) {
     // count resources as they load and call callback after the last one
     var loaded      = 0;
     var totalToLoad = 0;
     var resourceLoad = function() {
-      if (++loaded === totalToLoad) {
+      loaded += 1;
+      progressCallback(loaded / totalToLoad);
+      if (loaded === totalToLoad) {
         callback();
       }
     };
     
-    // load images
-    totalToLoad += _.keys(R.images).length; // increment totalToLoad
-    _.each(R.images, function(value, key, obj) {
-      var filepath = 'res/' + key;
-      var img = new Image();
+    var loadImage = function(filepath, obj, key) {
+      var img    = new Image();
       img.onload = resourceLoad;
-      img.src = filepath + '?' + now();
-      obj[key][0] = img;
+      img.src    = filepath + '?' + App.BUILD_TIME;
+      obj[key]   = img;
+    };
+    
+    // load images
+    totalToLoad = 0;
+    _.each(R.images, function(value, key, obj) {
+      totalToLoad += Math.pow(2, value.imageModifiers.length);
+    });
+    _.each(R.images, function(value, key, obj) {
+      var textureName = key.split('.')[0];
+      var imageModifiers = _.reduce(value.imageModifiers, function(acc, num) { return acc | num; }, 0);
+      loadImage('res/' + textureName + '.png',         obj[key], R.IMG_ORIGINAL);
+      if (imageModifiers & R.IMG_FLIPX) {
+        loadImage('res/' + textureName + '-x.png',       obj[key], R.IMG_FLIPX);
+      }
+      if (imageModifiers & R.IMG_PINK) {
+        loadImage('res/' + textureName + '-pink.png',    obj[key], R.IMG_PINK);
+      }
+      if (imageModifiers & R.IMG_PINK && imageModifiers & R.IMG_FLIPX) {
+        loadImage('res/' + textureName + '-pink-x.png',  obj[key], R.IMG_PINK | R.IMG_FLIPX);
+      }
+      if (imageModifiers & R.IMG_CYAN) {
+        loadImage('res/' + textureName + '-cyan.png',    obj[key], R.IMG_CYAN);
+      }
+      if (imageModifiers & R.IMG_CYAN && imageModifiers & R.IMG_FLIPX) {
+        loadImage('res/' + textureName + '-cyan-x.png',  obj[key], R.IMG_CYAN | R.IMG_FLIPX);
+      }
+      if (imageModifiers & R.IMG_PINK && imageModifiers & R.IMG_CYAN) {
+        loadImage('res/' + textureName + '-wacky.png',   obj[key], R.IMG_PINK | R.IMG_CYAN);
+      }
+      if (imageModifiers & R.IMG_PINK && imageModifiers & R.IMG_CYAN && imageModifiers & R.IMG_FLIPX) {
+        loadImage('res/' + textureName + '-wacky-x.png', obj[key], R.IMG_PINK | R.IMG_CYAN | R.IMG_FLIPX);
+      }
     });
     
   },
@@ -83,6 +121,34 @@ var ResourceManager = {
         imgData.data[i+2] = g;
       }
     }
+    else if (mode === 'reverse') {
+      for (var i = 0; i < imgData.data.length; i += 4) {
+        var r = imgData.data[i], g = imgData.data[i+1], b = imgData.data[i+2];
+        imgData.data[i]   = 255-r;
+        imgData.data[i+1] = 255-g;
+        imgData.data[i+2] = 255-b;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    
+    return canvas;
+  },
+  
+  //
+  replaceColours: function(img, colourTransformMap) {
+    var canvas = this.cloneImage(img);
+    var ctx    = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    
+    // invert colors
+    var imgData = ctx.getImageData(0, 0, img.width, img.height);
+    for (var i = 0; i < imgData.data.length; i += 4) {
+      var rgb = imgData.data[i] + (imgData.data[i+1] << 8) + (imgData.data[i+2] << 16);
+      rgb = colourTransformMap[rgb] || rgb;
+      imgData.data[i]   = rgb & 0xff;
+      imgData.data[i+1] = (rgb >> 8) & 0xff;
+      imgData.data[i+2] = (rgb >> 16) & 0xff;
+    }
     ctx.putImageData(imgData, 0, 0);
     
     return canvas;
@@ -95,6 +161,14 @@ var ResourceManager = {
     canvas.setAttribute('height', img.height);
     //$(canvas).appendTo('body');
     return canvas;
+  },
+  
+  // for bugs on galaxy nexus
+  finalizeTexture: function(canvas) {
+    if (!Mobile.isMobile) { return canvas; }
+    var image = document.createElement('img');
+    image.src = canvas.toDataURL("image/png");
+    return image;
   },
 
 

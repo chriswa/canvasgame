@@ -19,13 +19,16 @@ var App = {
   init: function() {
     this.game = Game;
     
+    var startTime = now();
+    
     // initialize video globals
     canvas = document.getElementById('canvas');
+    canvas.onselectstart = function () { return false; } // prevent text selection on doubleclick
     ctx    = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     
     // show loading screen
-    this.drawTextScreen('Loading...', '#fff', '#ccc');
+    this.drawTextScreen('Loading...', '#ccc', '#fff');
     
     this.fpsUpdate = Object.build(FPSCounter);
     this.fpsRender = Object.build(FPSCounter);
@@ -33,14 +36,21 @@ var App = {
     // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
     $(window).blur(function() { App.pause(); });
     $(canvas).click(function() { App.start(); });
+    if (Mobile.isMobile) {
+      $(window).focus(function() { App.start(); });
+    }
     
     Input.init();
     
+    console.log("App init: " + (now() - startTime).toFixed(1) + "ms"); startTime = now();
+    
     // load resources, then call callback
     ResourceManager.init( function() {
+      console.log("ResourceManager: " + (now() - startTime).toFixed(1) + "ms"); startTime = now();
       App.game.init();
       Debug.init();
       App.start();
+      console.log("Game init: " + (now() - startTime).toFixed(1) + "ms"); startTime = now();
     });
   },
   

@@ -1,5 +1,23 @@
 // dummy console.log to avoid errors when console.log is left in!
 if (!window.console) {
+  var logger = window.opera ? window.opera.postError : function() {};
+  window.console = { log: logger };
+}
+
+// es5 shim for bind
+if ( !Function.prototype.bind ) {
+  Function.prototype.bind = function( obj ) {
+    var slice = [].slice,
+    args = slice.call(arguments, 1),
+    self = this,
+    nop = function () {},
+    bound = function () {
+      return self.apply( this instanceof nop ? this : ( obj || {} ), args.concat( slice.call(arguments) ) );
+    };
+    nop.prototype = self.prototype;
+    bound.prototype = new nop();
+    return bound;
+  };
 }
 
 // polyfill window.requestAnimationFrame / window.cancelAnimationFrame from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -69,10 +87,10 @@ Object.extend = function(BaseClass, properties) {
 
 // now()
 var now;
-if (window.performance.now) {
+if (window.performance && window.performance.now) {
   now = window.performance.now.bind(window.performance);
 } else {
-  if (window.performance.webkitNow) {
+  if (window.performance && window.performance.webkitNow) {
     now = window.performance.webkitNow.bind(window.performance);
   } else {
     now = function() { return new Date().getTime(); };

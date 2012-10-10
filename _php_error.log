@@ -1,0 +1,172 @@
+[09-Oct-2012 22:02:03] PHP Parse error:  syntax error, unexpected '[' in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 22
+[09-Oct-2012 22:02:03] PHP Stack trace:
+[09-Oct-2012 22:02:03] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[09-Oct-2012 22:02:03] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:30
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 21
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:21
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-pink) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 22
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:22
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-pink-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 23
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:23
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-cyan) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 24
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:24
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-cyan-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 25
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:25
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-wacky) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 26
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:26
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/enemies.png-wacky-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 27
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:27
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/player.png-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 21
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:21
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/player.png-pink) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 22
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:55] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:55] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:22
+[10-Oct-2012 02:21:55] PHP Warning:  copy(sprites/textures/player.png-pink-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 23
+[10-Oct-2012 02:21:55] PHP Stack trace:
+[10-Oct-2012 02:21:55] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:55] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:23
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/player.png-cyan) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 24
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:24
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/player.png-cyan-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 25
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:25
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/player.png-wacky) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 26
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:26
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/player.png-wacky-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 27
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:27
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 21
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:21
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-pink) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 22
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:22
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-pink-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 23
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:23
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-cyan) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 24
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:24
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-cyan-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 25
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:25
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-wacky) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 26
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:26
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/ui.png-wacky-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 27
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:27
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/overworld.png-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 21
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:21
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/overworld.png-pink) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 22
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:22
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/overworld.png-pink-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 23
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:23
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/overworld.png-cyan) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 24
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:24
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/overworld.png-cyan-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 25
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:56] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:56] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:56] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:25
+[10-Oct-2012 02:21:56] PHP Warning:  copy(sprites/textures/overworld.png-wacky) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 26
+[10-Oct-2012 02:21:56] PHP Stack trace:
+[10-Oct-2012 02:21:56] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:57] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:57] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:57] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:26
+[10-Oct-2012 02:21:57] PHP Warning:  copy(sprites/textures/overworld.png-wacky-x) [<a href='function.copy'>function.copy</a>]: failed to open stream: No such file or directory in C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php on line 27
+[10-Oct-2012 02:21:57] PHP Stack trace:
+[10-Oct-2012 02:21:57] PHP   1. {main}() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:0
+[10-Oct-2012 02:21:57] PHP   2. require_once() C:\Users\Chris\Dropbox\Public\canvasgame\index.php:31
+[10-Oct-2012 02:21:57] PHP   3. build_sprites() C:\Users\Chris\Dropbox\Public\canvasgame\build\index.php:14
+[10-Oct-2012 02:21:57] PHP   4. copy() C:\Users\Chris\Dropbox\Public\canvasgame\build\lib\sprites.php:27

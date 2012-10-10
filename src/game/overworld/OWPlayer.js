@@ -19,6 +19,22 @@ var OverworldPlayer = Object.extend(Sprite, {
   
   update: function(dt) {
     
+    var timeLeft = dt;
+    
+    // 
+    if (this.moveRemaining > 0) {
+      this.moveRemaining -= timeLeft;
+      this.x += timeLeft * this.vx;
+      this.y += timeLeft * this.vy;
+      timeLeft = -this.moveRemaining;
+      if (this.moveRemaining <= 0) {
+        if (Game.overworld.findAndQueuePlayerExit()) {
+          this.advanceAnimation(dt);
+          return;
+        }
+      }
+    }
+    
     // we only have control if we're not executing a move
     if (this.moveRemaining <= 0) {
       
@@ -41,10 +57,10 @@ var OverworldPlayer = Object.extend(Sprite, {
     }
     
     // 
-    if (this.moveRemaining > 0) {
-      this.moveRemaining -= dt;
-      this.x += dt * this.vx;
-      this.y += dt * this.vy;
+    if (this.moveRemaining > 0 && timeLeft > 0) {
+      this.moveRemaining -= timeLeft;
+      this.x += timeLeft * this.vx;
+      this.y += timeLeft * this.vy;
       if (this.moveRemaining <= 0) {
         Game.overworld.findAndQueuePlayerExit();
       }

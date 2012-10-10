@@ -56,7 +56,6 @@ var Debug = {
   
   update: function() {
     this.shapesToDraw = [];
-    this.statusTextToDraw = [];
     if (this.logFrameTimer > 0) {
       this.log("--- Frame start ---");
       this.logFrameTimer--;
@@ -75,13 +74,15 @@ var Debug = {
   },
   
   render: function() {
-    _.each(this.shapesToDraw, function(shape) {
-      ctx.strokeStyle = shape.colour;
-      if (shape.type === 'rect') {
-        var rect = shape.rect;
-        ctx.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
-      }
-    });
+    if (Game.area) {
+      _.each(this.shapesToDraw, function(shape) {
+        ctx.strokeStyle = shape.colour;
+        if (shape.type === 'rect') {
+          var rect = shape.rect;
+          ctx.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
+        }
+      });
+    }
     
     var fps = App.fpsRender.measure().toFixed(1);
     this.statusbarPrint('FPS: ' + fps, 0);
@@ -104,6 +105,7 @@ var Debug = {
       ctx.fillStyle = value.colour;
       ctx.fillText(value.text, value.column * 6, canvas.height - 2);
     });
+    this.statusTextToDraw = [];
   },
   
   show: function() {

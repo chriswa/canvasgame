@@ -41,6 +41,13 @@ var Area = {
     this.maxX          = this.cols * this.tileSize;
     this.maxY          = this.rows * this.tileSize;
     
+    // experimental feature: palette shift
+    this.paletteShiftedImage = this.tileImg[0];
+    var paletteShift = R.areaPaletteShifts[this.areaData.palette];
+    if (paletteShift) {
+      this.paletteShiftedImage = ResourceManager.finalizeTexture(ResourceManager.replaceColours(this.tileImg[0], paletteShift));
+    }
+    
     // init groups
     this.allGroup   = Object.build(SpriteGroup);
     this.enemyGroup = Object.build(SpriteGroup);
@@ -168,7 +175,8 @@ var Area = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getBackgroundTile(x, y);
-        ctx.drawImage(this.tileImg[0], ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        //ctx.drawImage(this.tileImg[0], ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        ctx.drawImage(this.paletteShiftedImage, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
       ty += ts;

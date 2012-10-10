@@ -1,25 +1,64 @@
 <?php
-  
-  require_once "init.php";
-  
-  $textureName = array_pop($PATH);
-  
-  $texture = &$DATA['textures'][$textureName];
-  
-  if (@$_REQUEST['pack']) {
-    $algorithm = @$_REQUEST['pack'];
-    @list($slicesPacked, $width, $height, $filled) = packTexture($textureName, $algorithm);
-    if ($slicesPacked) {
-      $alerts = "<p style='color: green;'>SUCCESS: $algorithm filled $filled% packing $slicesPacked slices";
-    }
-    else {
-      $alerts = "<p style='color: red;'>FAIL: $algorithm";
-    }
+
+require_once "init.php";
+
+$textureName = array_pop($PATH);
+
+$texture = &$DATA['textures'][$textureName];
+
+if (@$_REQUEST['pack']) {
+  $algorithm = @$_REQUEST['pack'];
+  @list($slicesPacked, $width, $height, $filled) = packTexture($textureName, $algorithm);
+  if ($slicesPacked) {
+    $alerts = "<p style='color: green;'>SUCCESS: $algorithm filled $filled% packing $slicesPacked slices";
   }
   else {
-    $alerts = '<p>Select an algorithm...</p>';
+    $alerts = "<p style='color: red;'>FAIL: $algorithm";
   }
   
+  if ($slicesPacked) {
+    
+    $sourceImage = imagecreatefrompng("textures/$textureName.png");
+    
+    imagepng(flip_image_horizontally($sourceImage), "textures/$textureName-x.png");
+    
+    $pinkImage = colourize_image($sourceImage, 'pink');
+    imagepng($pinkImage, "textures/$textureName-pink.png");
+    imagepng(flip_image_horizontally($pinkImage), "textures/$textureName-pink-x.png");
+    
+    $cyanImage = colourize_image($sourceImage, 'cyan');
+    imagepng($cyanImage, "textures/$textureName-cyan.png");
+    imagepng(flip_image_horizontally($cyanImage), "textures/$textureName-cyan-x.png");
+    
+    $wackyImage = colourize_image($sourceImage, 'wacky');
+    imagepng($wackyImage, "textures/$textureName-wacky.png");
+    imagepng(flip_image_horizontally($wackyImage), "textures/$textureName-wacky-x.png");
+    
+  }
+}
+else {
+  $alerts = '<p>Select an algorithm...</p>';
+}
+
+function pink($r, $g, $b, $a) {
+  $r2 = 255 - $b;
+  $g2 = 255 - $r;
+  $b2 = 255 - $g;
+  return array($r2, $g2, $b2, $a);
+}
+function cyan($r, $g, $b, $a) {
+  $r2 = $g;
+  $g2 = $b;
+  $b2 = $r;
+  return array($r2, $g2, $b2, $a);
+}
+function wacky($r, $g, $b, $a) {
+  $r2 = $b;
+  $g2 = $r;
+  $b2 = $g;
+  return array($r2, $g2, $b2, $a);
+}
+
 ?>
 
 <?php showHeader(); ?>
@@ -43,7 +82,11 @@
   | <a href="?pack=random">random</a>
 </p>
 
-<a href="<?php echo "$BASEURL/textures/$textureName.png" ?>" class="imgcontainer" style="display: inline-block;"><img src="<?php echo "$BASEURL/textures/$textureName.png?" . time() ?>"></a>
+<?php foreach (array('', '-pink', '-cyan', '-wacky') as $suffix): ?>
+  <a href="<?php echo "$BASEURL/textures/$textureName$suffix.png"   ?>" class="imgcontainer" style="display: inline-block;"><img src="<?php echo "$BASEURL/textures/$textureName$suffix.png?"   . time() ?>"></a>
+  <a href="<?php echo "$BASEURL/textures/$textureName$suffix-x.png" ?>" class="imgcontainer" style="display: inline-block;"><img src="<?php echo "$BASEURL/textures/$textureName$suffix-x.png?" . time() ?>"></a><br/>
+  <div style="height: 4px;"></div>
+<?php endforeach ?>
 
 <script>
 $(function() {

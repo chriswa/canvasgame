@@ -106,7 +106,9 @@ var Game = {
     this.areaTransition = null;
     
     // paint it black
-    App.paintScreen('#000');
+    if (delayTime > 0) {
+      App.paintScreen('#000');
+    }
     
   },
   render: function() {

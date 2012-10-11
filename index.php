@@ -20,9 +20,14 @@
       </Directory>
     
     TODO:
-      
+      - Sprite coord improvements: maybe x,y should be the centre and all my animation slice offsets should be moved. sprite hitboxes could have width, height, left, right, top, bottom methods
+      - getting hit from the back should push you forward, not backward
+      - make Bot inch in sync with its animation
       - consider dropping or improving SpriteGroup
       - elevators!
+      - make it work in ie?
+    ONGOING:
+      - add a couple more enemies
       
   */
   
@@ -48,75 +53,31 @@
   ob_start();
   
 ?>
+<!--DOCTYPE html-->
+<html>
+<head>
+
+<title>canvasgame</title>
 <link rel="Shortcut Icon" href="index.ico" />
 <link rel="stylesheet" href="index.css" type="text/css" media="all" />
 
-<!-- INCLUDE SCRIPTS -->
-<?php /* not even sure if this IE-specific canvas shim is useful... */ ?>
-<!--[if lt IE 9]>
-  <script src="excanvas.compiled.js"></script>
-<![endif]-->
-<?php foreach (glob('lib/*.js') as $jsFile): ?>
-  <?php if ($jsFile == 'lib/excanvas.compiled.js') { continue; } ?>
-  <script src="<?php echo $jsFile ?>"></script>
-<?php endforeach ?>
-<?php
-  // include all src/*.js files
-  $jsFiles = array_unique(array_merge(
-    
-    // load files which define base classes first!
-    array(
-      'src/util.js',
-      'src/R.js',
-      'src/game/Sprite.js',
-      'src/game/area/PhysicsSprite.js',
-      'src/game/area/Enemy.js',
-    ),
-    
-    // now load all other .js files
-    recurseDir('src')
-  ));
-?>
-<?php foreach ($jsFiles as $jsFile): ?>
-  <script src="<?php echo $jsFile ?>"></script>
-<?php endforeach ?>
-
-<!-- INIT CODE -->
-<script>
-  
-  console.log("Build took: " + (<?php echo $buildTime ?>).toFixed(1) + "ms");
-  
-  var forceMobile = true;
-  
-  var isProduction = (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html");
-  
-  // init App
-  App.BUILD_TIME = <?php echo time() ?>;
-  window.onload = function() {
-    Mobile.init(function() {
-      App.init();
-      
-      if (isProduction) {
-        Debug.showStatusbar = false;
-        $('.production-toggle').toggle();
-        if (Mobile.isMobile) { $('.production-toggle.mobile-toggle').toggle(); }
-      }
-      
-    }, forceMobile);
-  };
-  
-</script>
+</head>
+<body>
 
 <!-- DEBUG PANEL -->
-<div id="debug-panel" class="mobile-toggle production-toggle" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left;">
+<div id="debug-panel" class="development-toggle mobile-off" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left; display: none;">
   
   <div style="float: right;"><a href="#" onclick="$('.production-toggle').toggle(); return false;" style="color: #ccc; font: 10px bold monospace; padding: 5px; margin-right: -6px;">X</a></div>
   
   <button onclick="Game.reset();">Reset Game</button>
-  Area: <select id="areaDropdown" onchange="Debug.teleportToArea($(this).val());"></select>
+  Area: <select id="areaDropdown"></select>
+  <button id="leaveToOverworld" onclick="Game.setState('overworld');" disabled="disabled">Leave</button>
   <br/>
   
-  <label><input type="checkbox" onclick="Debug.clickToTeleport = $(this).is(':checked');"> Click to teleport</label><br/>
+  <label><input type="checkbox" onclick="Debug.clickToTeleport = $(this).is(':checked');"> Click to teleport</label>
+  <button onclick="Game.player.health = Game.player.healthMax;">Heal</button>
+  <button id="godmode" onclick="Game.area.playerSprite.invincibleTimer = Infinity; $(this).attr('disabled', true)" disabled="disabled">Godmode</button>
+  <br/>
   
   Simulation Speed: <input id="simSpeed" value="1.0000000000" onchange="var s = parseFloat($(this).val()); if (s > 0) { App.SIM_SPEED = s; }" onkeydown="$(this).change();">
   <button onclick="$('#simSpeed').val(($('#simSpeed').val() * 2).toFixed(10)).change();">+</button>
@@ -148,25 +109,57 @@
 </canvas>
 
 <!-- INSTRUCTIONS -->
-<div class="mobile-toggle">
+<div class="mobile-off">
 
   <table style="margin: auto; margin-top: 10px;" id="controls">
-    <!--
-    <tr><th>Move</th>  <td>&lt;left&gt; and &lt;right&gt;</td></tr>
-    <tr><th>Crouch</th><td>&lt;down&gt;</td></tr>
-    <tr><th>Jump</th>  <td>&lt;shift&gt; or &lt;Z&gt;</td></tr>
-    <tr><th>Attack</th><td>&lt;ctrl&gt;  or &lt;X&gt;</td></tr>
-    -->
     <tr><th><span>Move &amp; Crouch</span></th><td><span>arrow keys</span></td></tr>
     <tr><th><span>Jump</span></th><td><span>spacebar <i>or</i> shift <i>or</i> Z</span></td></tr>
     <tr><th><span>Attack</span></th><td><span>ctrl <i>or</i> X</span></td></tr>
   </table>
   
   <div class="production-toggle" style="background-color: #ddd; padding: 10px; border: 1px solid #999; display: inline-block; margin-top: 10px;">
-    <strong style="color: red;">THIS IS THE DEVELOPMENT VERSION!</strong><br/>If things are broken, <a href="http://dl.dropbox.com/u/29873255/aolbackup/index.html">try the latest stable version</a>
+    <strong>THIS IS THE DEVELOPMENT VERSION!</strong><br/>If things are broken, <a href="http://dl.dropbox.com/u/29873255/aolbackup/index.html">try the latest stable version</a>
   </div>
   
 </div>
+
+<script>
+  var BUILD_TIME_ELAPSED = <?php echo $buildTime ?>;
+  var BUILD_DATE = <?php echo time() ?>;
+</script>
+
+<!-- INCLUDE SCRIPTS -->
+<?php /* not even sure if this IE-specific canvas shim is useful... */ ?>
+<!--[if lt IE 9]>
+  <script src="lib/excanvas.compiled.js"></script>
+<![endif]-->
+<?php foreach (glob('lib/*.js') as $jsFile): ?>
+  <?php if ($jsFile == 'lib/excanvas.compiled.js') { continue; } ?>
+  <script src="<?php echo $jsFile ?>"></script>
+<?php endforeach ?>
+<?php
+  // include all src/*.js files
+  $jsFiles = array_unique(array_merge(
+    
+    // load files which define base classes first!
+    array(
+      'src/util.js',
+      'src/R.js',
+      'src/game/Sprite.js',
+      'src/game/area/PhysicsSprite.js',
+      'src/game/area/Enemy.js',
+    ),
+    
+    // now load all other .js files
+    recurseDir('src')
+  ));
+?>
+<?php foreach ($jsFiles as $jsFile): ?>
+  <script src="<?php echo $jsFile ?>"></script>
+<?php endforeach ?>
+
+</body>
+</html>
 
 <?php
   $html = ob_get_clean();

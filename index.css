@@ -2,6 +2,7 @@ body {
   background-color: #eeeeee;
   text-align: center;
   margin: 0px;
+  padding: 0px;
 }
 a, a:visited {
   color: blue;
@@ -9,8 +10,8 @@ a, a:visited {
 }
 
 #canvas {
-  background-color: #fff;
   margin-top: 10px;
+margin-bottom: 0px;
   border: 10px solid black;
   image-rendering: optimizeSpeed;
   image-rendering:-o-crisp-edges;

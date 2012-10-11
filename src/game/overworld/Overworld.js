@@ -22,6 +22,28 @@ var Overworld = {
   SPAWN_DELAY_REPEAT:  10000,
   ENCOUNTER_LIFETIME:   6000,
   
+  terrainTypes: {
+    WATER:      0,
+    ROAD:       1,
+    GRASS:      2,
+    FOREST:     3,
+    MOUNTAIN:   4,
+    DESERT:     5,
+    SWAMP:      6,
+    EVILSWAMP:  7,
+    TOWN1:      8,
+    TOWN2:      9,
+    TOWN3:      10,
+    PALACE:     11,
+    GRAVEYARD:  12,
+    BOULDER:    13,
+    DOCK:       14,
+    CAVE:       15,
+    isEncounterSafe: function(t) {
+      return t === this.WATER || t === this.ROAD || t === this.TOWN1 || t === this.TOWN2 || t === this.TOWN3 || t === this.CAVE;
+    },
+  },
+  
   init: function() {
     
     this.areaData      = R.areas['overworld'];
@@ -63,8 +85,9 @@ var Overworld = {
     
     // spawn encounters?
     this.spawnTimer -= dt;
-    if (this.spawnTimer <= 0 && (playerTileIndex !== 1 && playerTileIndex !== 8 && playerTileIndex !== 9 && playerTileIndex !== 10 && playerTileIndex !== 15)) { // road or towns or cave
-      this.spawnEncounters(4);
+    if (this.spawnTimer <= 0 && !this.terrainTypes.isEncounterSafe(playerTileIndex)) {
+      var encounterDistance = 4;
+      this.spawnEncounters(encounterDistance);
       this.spawnTimer = this.SPAWN_DELAY_REPEAT;
     }
     
@@ -141,16 +164,16 @@ var Overworld = {
   startEncounter: function(encounter, tileIndex) {
     var areaId = undefined;
     if (encounter.type === 'fairy') {
-      if      (tileIndex === 1) { areaId = 'road'; } // road already satisfies fairy area requirements!
-      else if (tileIndex === 2) { areaId = 'fairy_grass'; }
-      if      (tileIndex === 3) { areaId = 'fairy_forest'; }
-      else if (tileIndex === 5) { areaId = 'fairy_desert'; }
+      if      (tileIndex === this.terrainTypes.ROAD)   { areaId = 'road'; } // road already satisfies fairy area requirements!
+      else if (tileIndex === this.terrainTypes.GRASS)  { areaId = 'fairy_grass'; }
+      if      (tileIndex === this.terrainTypes.FOREST) { areaId = 'fairy_forest'; }
+      else if (tileIndex === this.terrainTypes.DESERT) { areaId = 'fairy_desert'; }
     }
     else {
-      if (tileIndex === 1) { areaId = 'road'; }
-      if (tileIndex === 2) { areaId = 'grass'; }
-      if (tileIndex === 3) { areaId = 'forest'; }
-      if (tileIndex === 5) { areaId = 'desert'; }
+      if (tileIndex === this.terrainTypes.ROAD)   { areaId = 'road'; }
+      if (tileIndex === this.terrainTypes.GRASS)  { areaId = 'grass'; }
+      if (tileIndex === this.terrainTypes.FOREST) { areaId = 'forest'; }
+      if (tileIndex === this.terrainTypes.DESERT) { areaId = 'desert'; }
     }
     if (!areaId) { return false; }
     Game.queueAreaTransition({ area: areaId, side: 'centre', encounter: encounter.type });

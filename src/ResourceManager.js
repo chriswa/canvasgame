@@ -39,7 +39,7 @@ var ResourceManager = {
     var loadImage = function(filepath, obj, key) {
       var img    = new Image();
       img.onload = resourceLoad;
-      img.src    = filepath + '?' + App.BUILD_TIME;
+      img.src    = filepath + '?' + BUILD_DATE;
       obj[key]   = img;
     };
     
@@ -138,9 +138,8 @@ var ResourceManager = {
   replaceColours: function(img, colourTransformMap) {
     var canvas = this.cloneImage(img);
     var ctx    = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(img, 0, 0, img.width, img.height);
     
-    // invert colors
     var imgData = ctx.getImageData(0, 0, img.width, img.height);
     for (var i = 0; i < imgData.data.length; i += 4) {
       var rgb = imgData.data[i] + (imgData.data[i+1] << 8) + (imgData.data[i+2] << 16);
@@ -157,8 +156,8 @@ var ResourceManager = {
   //
   cloneImage: function(img) {
     var canvas = document.createElement('canvas');
-    canvas.setAttribute('width', img.width);
-    canvas.setAttribute('height', img.height);
+    canvas.width  = img.width;
+    canvas.height = img.height;
     //$(canvas).appendTo('body');
     return canvas;
   },

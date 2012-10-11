@@ -13,17 +13,33 @@ var Debug = {
   init: function() {
     
     // fill area
+    $('#areaDropdown').append('<option></option>');
     for (var areaId in R.areas) {
       if (areaId === 'overworld') { continue; }
       $('#areaDropdown').append('<option>'+areaId+'</option>');
     }
     
-    // hook App.game.loadArea to update dropdown
-    var originalLoadArea = App.game.loadArea;
-    App.game.loadArea = function(exitObject) {
-      $('#areaDropdown').val(exitObject.area);
-      originalLoadArea.apply(App.game, Array.prototype.slice.call(arguments));
+    // hook App.game.setState to update UI
+    var originalSetState = App.game.setState;
+    App.game.setState = function(newState, exitObject) {
+      if (newState === 'area') {
+        $('#areaDropdown').val(exitObject.area);
+        $('#leaveToOverworld').removeAttr('disabled');
+        $('#godmode').removeAttr('disabled');
+      }
+      else {
+        $('#areaDropdown').val('');
+        $('#leaveToOverworld').attr('disabled', 'disabled');
+        $('#godmode').attr('disabled', 'disabled');
+      }
+      originalSetState.apply(App.game, Array.prototype.slice.call(arguments));
     };
+    
+    //
+    $('#areaDropdown').change(function() {
+      if (!$(this).val()) { return; }
+      App.game.setState('area', { area: $(this).val() }, 'centre');
+    })
     
     // clicking on the canvas teleports you to that point
     $(canvas).click(function(e) {
@@ -43,10 +59,6 @@ var Debug = {
       }
     });
     
-  },
-  
-  teleportToArea: function(areaId) {
-    App.game.loadArea({ area: areaId });
   },
   
   drawRect: function(rect, colour) {

@@ -10,7 +10,10 @@ var Mobile = {
     this.isMobile = ('ontouchstart' in window) || force;
     if (this.isMobile) {
       
-      $('#canvas').attr('width', 598).attr('height', 360).css({ border: 'none', margin: 0 }); // height=340 seems perfect
+      // galaxy nexus is 598 x 360 (?)
+      $('#canvas').attr('width', 598).attr('height', 360).css({ border: 'none', margin: 0 });
+      // iphone 4 is 320 x 460
+      //$('#canvas').attr('width', 480).attr('height', 300).css({ border: 'none', margin: 0 });
       
       var wasPressing = {};
       var lastDpadTouch = undefined;
@@ -93,9 +96,6 @@ var Mobile = {
           if (x > 0 && x < 175 && y > 175) { lastDpadTouch = [x - 0, y - 200]; }
           if (x > 400 && y > 140) { isPressing[ (x - 400 > y - 140) ? 'attack' : 'jump' ] = true; }
           
-          //ctx.arc(touch.pageX, touch.pageY, 20, 0, 2*Math.PI, true);
-          //ctx.fill();
-          //ctx.stroke();
         }
         for (var buttonName in buttons) {
           var button = buttons[buttonName];
@@ -112,20 +112,6 @@ var Mobile = {
       document.addEventListener('touchstart', multitoucher);
       document.addEventListener('touchend', multitoucher);
       
-      /*$('.touch').on('touchstart', function(event) {
-        event.preventDefault();
-        var keyCode = $(this).data('keycode');
-        Input.touchDown(keyCode);
-        return false;
-      });
-      $('.touch').on('touchend', function(event) {
-        event.preventDefault();
-        var keyCode = $(this).data('keycode');
-        Input.touchUp(keyCode);
-        return false;
-      });*/
-      
-      $('.mobile-toggle').toggle();
     }
     
     callback();

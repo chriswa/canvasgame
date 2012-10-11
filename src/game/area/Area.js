@@ -45,7 +45,7 @@ var Area = {
     this.paletteShiftedImage = this.tileImg[0];
     var paletteShift = R.areaPaletteShifts[this.areaData.palette];
     if (paletteShift) {
-      this.paletteShiftedImage = ResourceManager.finalizeTexture(ResourceManager.replaceColours(this.tileImg[0], paletteShift));
+      this.paletteShiftedImage = ResourceManager.replaceColours(this.tileImg[0], paletteShift); // XXX: i removed finalizeTexture call for testing!
     }
     
     // init groups

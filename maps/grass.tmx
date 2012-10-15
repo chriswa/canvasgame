@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="64" height="15" tilewidth="32" tileheight="32">
- <properties>
-  <property name="palette" value="road"/>
- </properties>
- <tileset firstgid="1" name="tiles-old" tilewidth="32" tileheight="32">
-  <image source="../res/tiles-old.png" width="512" height="192"/>
- </tileset>
- <tileset firstgid="97" name="physicsTiles" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="64" height="15" tilewidth="32" tileheight="32" backgroundcolor="#3cbcfc">
+ <tileset firstgid="1" name="physicsTiles" tilewidth="32" tileheight="32">
   <image source="physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="tiles-new" tilewidth="32" tileheight="32">
+  <image source="../res/tiles-new.png" trans="5c94fc" width="512" height="320"/>
  </tileset>
  <layer name="background" width="64" height="15">
   <data encoding="base64" compression="zlib">
-   eJwLYWBgCBnFoxgLZgVitkHgDmr5hX0QuGMk4YFIP4MlzXpB8WD3rxcDbrcS4wdc+Ype/h8ueKDLp8GSb0bxKKY35sHD5kESw8ZHV4vORlcXQoR+bHYRcjM2ddjMQLebe4Rj3lE8ojEAJIj32g==
+   eJxjYBgFowA7cAJi54F2BJUAyC8uA+2IQQxoET4DkX6GU5olBgy0f0fzFXXAaDiOglEwMCAEihmQaBAIheIQHHxsatHZ6OqQ+bj0I/ORxZD1oKtFtwObe7HpTxnhOHUUj2gMAM1oWes=
   </data>
  </layer>
  <layer name="physics" width="64" height="15" opacity="0.74">
   <data encoding="base64" compression="zlib">
-   eJztwwEJAAAAAqCu9v9EQ1IwAQAA+FCvD/LQMIE=
+   eJztwwEJAAAAAqD6f7ohKZgAAAB8qNcHkAAAgQ==
   </data>
  </layer>
  <objectgroup name="objects" width="64" height="15">

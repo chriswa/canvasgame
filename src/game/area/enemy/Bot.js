@@ -4,7 +4,6 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   
   behaviour: 'inch',
   behaviourTimer: 0,
-  inchTimer: 0,
   direction: 0,
   
   init: function() {
@@ -18,8 +17,8 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
     this.behaviour = 'inch';
     this.behaviourTimer = 0;
     this.direction = (Game.area.playerSprite.x < this.x) ? -1 : 1;
-    this.vx = this.direction * 4;
-    this.vy = -9.5;
+    this.vx = this.direction * 3;
+    this.vy = -6.5;
     this.touchingBottom = false;
   },
   
@@ -33,7 +32,7 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
       this.vx = 0;
       
       // jump?
-      if (Math.random() < 0.005) {
+      if (Math.random() < 0.0025) {
         this.jump();
       }
       
@@ -44,24 +43,18 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
         }
         else if (Math.random() < 0.5) {
           this.behaviour = 'inch';
-          this.behaviourTimer = 20 + Math.random() * 50;
+          this.behaviourTimer = 60 + Math.random() * 150;
           this.direction = Math.random() < 0.5 ? 1 : -1;
-          this.inchTimer = 0;
         }
         else {
           this.behaviour = 'twitch';
-          this.behaviourTimer = 20 + Math.random() * 20;
+          this.behaviourTimer = 40 + Math.random() * 40;
           this.direction = Math.random() < 0.5 ? 1 : -1;
         }
       }
       
       this.playAnimation(this.behaviour);
-      this.inchTimer++
       
-      if (this.touchingBottom && this.behaviour === 'inch' && this.inchTimer === 10) {
-        this.vx = this.direction * 10;
-        this.inchTimer = 0;
-      }
     }
     else {
       this.playAnimation('jump');
@@ -76,4 +69,13 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
     if (this.touchingBottom || this.touchingTop) { this.vy = 0; }
     
   },
+  
+  onAnimationFrameAdvance: function(animationName, frameIndex) {
+    if (this.touchingBottom && animationName === 'inch' && frameIndex === 1) {
+      this.translateWithTileCollisions( this.direction * 10, this.gravity );
+      this.vx = this.direction * 5;
+      //this.touchingBottom = true;
+    }
+  }
+  
 });

@@ -8,7 +8,7 @@ R.spawnableSprites['DesertFireballGenerator'] = Object.extend(Enemy, {
   
   FIXED_STEP: 1000 / 2,
   
-  FIREBALL_SPEED: 5,
+  FIREBALL_SPEED: 2.5,
   
   updateFixedStep: function() {
     

@@ -8,21 +8,18 @@
  </tileset>
  <layer name="background" width="24" height="15">
   <data encoding="base64" compression="zlib">
-   eJxzZGBgcBzFA46dgNh5AM2ghv3k2usyCMJ/pGBPIPaCYm8i9YRAMbpYJBCHQnEkGo3MhumB8UOQzEhBw5FI7EwsbGxiuPggnDrEMQDXA2cT
+   eJy1kD0OgDAIhbma1UVddeiuQxfO4NGtCcMLKRRNbPIFws8DSvTvGwwwnyqjU2uROvneTk//9GIW7vjlD6J36j4r5sU9ro9EtaM3RXsjsOH35s6VpbIadez0tnKkNLPEc+D+yB+R0izil84tDPqtvbEXNdHH2VrfenpvauhvYnewWeKsdscbWGoyaGj7cDg2gqdx/swNDyJYow==
   </data>
  </layer>
  <layer name="physics" width="24" height="15" opacity="0.61">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjBTAiIYpNQudjU0MF59YMykxH92/Qw0DACrgAEA=
+   eJxjYBgFIw0wkomJNZsSd1FDLynmEPIfPrPw6UE3lxK/4bIX3Xx8fiEUPrjcjO5+UtICNvNxmYWPxudeYvXiool1Oz7zaYkBkvwAXw==
   </data>
  </layer>
  <objectgroup name="objects" width="24" height="15">
-  <object name="overworld" type="exit" x="-64" y="64" width="64" height="416"/>
-  <object name="HeartContainer" type="spawn" x="544" y="384" width="32" height="32">
-   <properties>
-    <property name="once" value="ever"/>
-   </properties>
-  </object>
-  <object name="overworld" type="exit" x="768" y="64" width="64" height="416"/>
+  <object name="overworld" type="exit" x="-64" y="0" width="64" height="480"/>
+  <object name="TestBotSpawner" type="spawn" x="416" y="192" width="32" height="32"/>
+  <object name="overworld" type="exit" x="768" y="0" width="64" height="480"/>
+  <object name="TestBotSpawner" type="spawn" x="320" y="192" width="32" height="32"/>
  </objectgroup>
 </map>

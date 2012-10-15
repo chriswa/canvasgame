@@ -22,7 +22,10 @@
     TODO:
       - Sprite coord improvements: maybe x,y should be the centre and all my animation slice offsets should be moved. sprite hitboxes could have width, height, left, right, top, bottom methods
       - getting hit from the back should push you forward, not backward
+      - falling off bottom of some areas should kill you
+          (or maybe it's a physics tile index that does you in)
       - make Bot inch in sync with its animation
+      - fix key entities
       - consider dropping or improving SpriteGroup
       - elevators!
       - make it work in ie?
@@ -37,14 +40,21 @@
   $buildTime = time() - $startTime;
   
   //
-  function recurseDir($initialDir) {
+  function recurseDir($initialDir, $filePattern) {
+    if (!$filePattern) { $filePattern = '//'; }
     $results = array();
     $queue = array('src');
     while ($queue) {
       $file = array_shift($queue);
       if ($file === '.' || $file === '..') { continue; }
-      if (is_dir($file)) { $queue = array_merge($queue, glob("$file/*")); }
-      else { array_push($results, $file); }
+      if (is_dir($file)) {
+        $queue = array_merge($queue, glob("$file/*"));
+      }
+      else {
+        if (preg_match($filePattern, $file)) {
+          array_push($results, $file);
+        }
+      }
     }
     return $results;
   }
@@ -64,13 +74,21 @@
 </head>
 <body>
 
+<!-- STATIC LOADING BOX -->
+<table id="static-loading" width="100%" height="100%">
+  <tr><td valign="middle" align="center" style="font: bold 50px sans-serif;">Loading...</td></tr>
+</table>
+
 <!-- DEBUG PANEL -->
-<div id="debug-panel" class="development-toggle mobile-off" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left; display: none;">
+<div class="development-toggle" style="float: left;"><a href="#" onclick="$('.production-toggle').toggle(); $('.development-toggle').toggle(); return false;" style="position: absolute; color: #eee; font: 10px bold monospace; padding: 5px;">X</a></div>
+<div id="debug-panel" class="development-toggle mobile-off" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left; display: none; width: 260px;">
   
-  <div style="float: right;"><a href="#" onclick="$('.production-toggle').toggle(); return false;" style="color: #ccc; font: 10px bold monospace; padding: 5px; margin-right: -6px;">X</a></div>
+  <div style="float: right;"><a href="#" onclick="$('.production-toggle').toggle(); $('.development-toggle').toggle(); return false;" style="color: #ccc; font: 10px bold monospace; padding: 5px; margin-right: -6px;">X</a></div>
   
   <button onclick="Game.reset();">Reset Game</button>
-  Area: <select id="areaDropdown"></select>
+  <br/>
+  
+  <select id="areaDropdown"></select>
   <button id="leaveToOverworld" onclick="Game.setState('overworld');" disabled="disabled">Leave</button>
   <br/>
   
@@ -79,18 +97,18 @@
   <button id="godmode" onclick="Game.area.playerSprite.invincibleTimer = Infinity; $(this).attr('disabled', true)" disabled="disabled">Godmode</button>
   <br/>
   
-  Simulation Speed: <input id="simSpeed" value="1.0000000000" onchange="var s = parseFloat($(this).val()); if (s > 0) { App.SIM_SPEED = s; }" onkeydown="$(this).change();">
-  <button onclick="$('#simSpeed').val(($('#simSpeed').val() * 2).toFixed(10)).change();">+</button>
-  <button onclick="$('#simSpeed').val(($('#simSpeed').val() / 2).toFixed(10)).change();">-</button><br/>
+  Speed: <input id="simSpeed" value="1.00000" onchange="var s = parseFloat($(this).val()); if (s > 0) { App.SIM_SPEED = s; }" onkeydown="$(this).change();" size="8">
+  <button onclick="$('#simSpeed').val(($('#simSpeed').val() * 2).toFixed(5)).change();">+</button>
+  <button onclick="$('#simSpeed').val(($('#simSpeed').val() / 2).toFixed(5)).change();">-</button><br/>
   
-  Time Step: <select onchange="Debug.timestep = $(this).val();">
+  Time Step: <select onchange="Debug.setTimestep($(this).val());">
     <option>variable</option>
     <option>1/30</option>
     <option>1/60</option>
   </select><br/>
   
-  Render Strategy: <select onchange="Debug.updateLoop = $(this).val();">
-    <option>setTimeout</option>
+  Timing: <select onchange="Debug.updateLoop = $(this).val();">
+    <option>setTimeout(0)</option>
     <option>requestAnimationFrame</option>
     <option>aggressive</option>
   </select><br/>
@@ -100,7 +118,7 @@
 </div>
 
 <!-- CANVAS -->
-<canvas id="canvas" width="640" height="480">
+<canvas id="canvas" width="640" height="480" class="default-on" style="display: none;">
   <div id="nocanvas">
     This page uses the <a href="http://en.wikipedia.org/wiki/Canvas_element">HTML5 Canvas Element</a>,
     which is supported by virtually all modern web browsers and the newest Internet Explorer.
@@ -109,7 +127,7 @@
 </canvas>
 
 <!-- INSTRUCTIONS -->
-<div class="mobile-off">
+<div class="default-on mobile-off" style="display: none;">
 
   <table style="margin: auto; margin-top: 10px;" id="controls">
     <tr><th><span>Move &amp; Crouch</span></th><td><span>arrow keys</span></td></tr>
@@ -151,7 +169,7 @@
     ),
     
     // now load all other .js files
-    recurseDir('src')
+    recurseDir('src', '/\.js$/')
   ));
 ?>
 <?php foreach ($jsFiles as $jsFile): ?>

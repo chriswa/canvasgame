@@ -23,33 +23,35 @@ var Overworld = {
   ENCOUNTER_LIFETIME:   6000,
   
   terrainTypes: {
-    WATER:      0,
-    ROAD:       1,
-    GRASS:      2,
-    FOREST:     3,
-    MOUNTAIN:   4,
-    DESERT:     5,
-    SWAMP:      6,
-    EVILSWAMP:  7,
-    TOWN1:      8,
-    TOWN2:      9,
-    TOWN3:      10,
-    PALACE:     11,
-    GRAVEYARD:  12,
-    BOULDER:    13,
-    DOCK:       14,
-    CAVE:       15,
+    WATER:         0,
+    ROAD:          1,
+    GRASS:         2,
+    FOREST:        3,
+    MOUNTAIN:      4,
+    DESERT:        5,
+    SWAMP:         6,
+    EVILSWAMP:     7,
+    TOWN1:         8,
+    TOWN2:         9,
+    TOWN3:         10,
+    PALACE:        11,
+    GRAVEYARD:     12,
+    BOULDER:       13,
+    DOCK:          14,
+    CAVE:          15,
+    FAKE_WATER:    16,
+    FAKE_MOUNTAIN: 17,
     isEncounterSafe: function(t) {
-      return t === this.WATER || t === this.ROAD || t === this.TOWN1 || t === this.TOWN2 || t === this.TOWN3 || t === this.CAVE;
-    },
+      return t === this.WATER || t === this.ROAD || t === this.TOWN1 || t === this.TOWN2 || t === this.TOWN3 || t === this.CAVE || t === this.FAKE_WATER || t === this.FAKE_MOUNTAIN;
+    }
   },
   
   init: function() {
     
     this.areaData      = R.areas['overworld'];
-    this.tileImg       = R.images['overworld-tiles.png'];
+    this.tileImg       = R.tilesetImages['overworld-tiles.png'];
     this.tileSize      = this.areaData.tileSize;
-    this.tileImgCols   = Math.floor(this.tileImg[0].width / this.tileSize);
+    this.tileImgCols   = Math.floor(this.tileImg.width / this.tileSize);
     
     this.cols          = this.areaData.cols;
     this.rows          = Math.floor(this.areaData.background.length / this.cols);
@@ -95,30 +97,34 @@ var Overworld = {
     this.allGroup.update(dt);
     
     // center camera on playerSprite
+    this.updateCamera();
+    
+    // do collisions
+    var currentExit = this.findPlayerExit();
+    this.enemyGroup.each(function(e) {
+      var etx = Math.round(e.x / 32);
+      var ety = Math.round(e.y / 32);
+      if (etx === ptx && ety === pty) {
+        if (currentExit) {
+          e.kill();
+        }
+        else {
+          var started = Game.overworld.startEncounter(e, playerTileIndex);
+          if (!started) {
+            e.kill();
+          }
+        }
+      }
+    });
+    
+    // cull entities while have been "killed"
+    _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
+  },
+  updateCamera: function() {
     var px = Math.round(this.player.x);
     var py = Math.round(this.player.y);
     this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width));
     this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py + 32 - canvas.height / 2)), this.rows * this.tileSize - canvas.height));
-    
-    // do collisions
-    if (!this.findPlayerExit()) {
-      this.enemyGroup.each(function(e) {
-        var etx = Math.round(e.x / 32);
-        var ety = Math.round(e.y / 32);
-        if (etx === ptx && ety === pty) {
-          var started = Game.overworld.startEncounter(e, playerTileIndex);
-          if (started) {
-            Game.overworld.resetEncounters();
-          }
-          else {
-            e.kill();
-          }
-        }
-      });
-    }
-    
-    // cull entities while have been "killed"
-    _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
   },
   render: function() {
     var ts = this.tileSize;
@@ -136,7 +142,7 @@ var Overworld = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getTile(x, y);
-        ctx.drawImage(this.tileImg[0], ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        ctx.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
       ty += ts;
@@ -176,7 +182,7 @@ var Overworld = {
       if (tileIndex === this.terrainTypes.DESERT) { areaId = 'desert'; }
     }
     if (!areaId) { return false; }
-    Game.queueAreaTransition({ area: areaId, side: 'centre', encounter: encounter.type });
+    this.queueExit({ area: areaId, side: 'centre', encounter: encounter.type });
     return true;
   },
   
@@ -188,8 +194,7 @@ var Overworld = {
   findAndQueuePlayerExit: function() {
     var exitObject = this.findPlayerExit();
     if (exitObject) {
-      Game.overworld.resetEncounters();
-      Game.queueAreaTransition(exitObject);
+      this.queueExit(exitObject);
       return true;
     }
     return false;
@@ -207,5 +212,17 @@ var Overworld = {
     });
     return match;
   },
+  
+  queueExit: function(exitObject) {
+    this.resetEncounters();
+    Game.queueExit(exitObject);
+  },
+  
+  movePlayerTo: function(x, y) {
+    Game.player.overworldX = x;
+    Game.player.overworldY = y;
+    this.player.finishMove();
+    this.updateCamera();
+  }
   
 };

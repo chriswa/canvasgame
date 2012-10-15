@@ -20,13 +20,13 @@ var Sprite = {
     this.uniqueId = getUniqueId();
     this.groups = [];
     this.setAnimationCharacter(characterName);
-    this.startAnimation(_.keys(R.animationGroups[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state, ready to be rendered
+    this.startAnimation(_.keys(R.spriteCharacters[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state, ready to be rendered
     this.advanceAnimation(0);
     
     // support for updateFixedStep
     if (this.updateFixedStep) {
       if (!this.FIXED_STEP) {
-        this.FIXED_STEP = 1000 / 30;
+        this.FIXED_STEP = 1000 / 60;
       }
       this.simTime = 0;
       this.age     = 0;
@@ -56,9 +56,6 @@ var Sprite = {
     var x = Math.round( this.x );
     var y = Math.round( this.y );
     
-    // debug for galaxy nexus weirdness
-    //this.imageModifier = R.IMG_PINK;
-    
     var t = this.texture[this.imageModifier];
     
     if (this.imageModifier & R.IMG_FLIPX) {
@@ -76,13 +73,13 @@ var Sprite = {
   },
   
   setAnimationCharacter: function(characterName) {
-    if (!R.animationGroups[characterName]) { throw new Error("setAnimationCharacter: characterName unknown: " + characterName); }
+    if (!R.spriteCharacters[characterName]) { throw new Error("setAnimationCharacter: characterName unknown: " + characterName); }
     this.characterName = characterName;
-    this.texture       = R.images[R.animationGroups[this.characterName].image];
+    this.texture       = R.spriteTextures[R.spriteCharacters[this.characterName].image];
   },
   startAnimation: function(animationName) {
     this.animationName = animationName;
-    this.animation = R.animationGroups[this.characterName].sequences[this.animationName];
+    this.animation = R.spriteCharacters[this.characterName].sequences[this.animationName];
     if (!this.animation) { throw new Error("Sprite: character " + this.characterName + " has no animation named " + this.animationName); }
     this.frameIndex = 0;
     this.frameDelayRemaining = this.animation.frames[this.frameIndex].duration;
@@ -97,6 +94,12 @@ var Sprite = {
   advanceAnimation: function(dt) {
     this.frameDelayRemaining -= dt;
     while (this.frameDelayRemaining < 0) {
+      
+      // provide an optional event for sprites
+      if (this.onAnimationFrameAdvance) {
+        this.onAnimationFrameAdvance(this.animationName, this.frameIndex);
+      }
+      
       this.frameIndex++;
       if (this.frameIndex === this.animation.frames.length) {
         if (this.animation.loop) {
@@ -109,7 +112,7 @@ var Sprite = {
       }
       this.frameDelayRemaining += this.animation.frames[this.frameIndex].duration;
     }
-    this.slice = R.imageSlices[R.animationGroups[this.characterName].image][this.animation.frames[this.frameIndex].slice];
+    this.slice = R.spriteSlices[R.spriteCharacters[this.characterName].image][this.animation.frames[this.frameIndex].slice];
   },
 
   // this may be safely called from anywhere

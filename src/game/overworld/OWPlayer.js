@@ -111,6 +111,8 @@ var OverworldPlayer = Object.extend(Sprite, {
     this.moveRemaining = 0;
     this.x = Game.player.overworldX * 32;
     this.y = Game.player.overworldY * 32;
+    this.startAnimation('stand');
+    this.advanceAnimation(0);
   },
   
 });

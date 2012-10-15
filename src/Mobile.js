@@ -37,16 +37,16 @@ var Mobile = {
         // draw dpad
         // up
         ctx.fillStyle = wasPressing.up ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(50-0.5, 250-0.5); ctx.lineTo(50-0.5, 200-0.5); ctx.lineTo(100-0.5, 200-0.5); ctx.lineTo(100-0.5, 250-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(50+0.5, 250+0.5); ctx.lineTo(50+0.5, 200+0.5); ctx.lineTo(100+0.5, 200+0.5); ctx.lineTo(100+0.5, 250+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
         // down
         ctx.fillStyle = wasPressing.down ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(50-0.5, 300-0.5); ctx.lineTo(50-0.5, 350-0.5); ctx.lineTo(100-0.5, 350-0.5); ctx.lineTo(100-0.5, 300-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(50+0.5, 300+0.5); ctx.lineTo(50+0.5, 350+0.5); ctx.lineTo(100+0.5, 350+0.5); ctx.lineTo(100+0.5, 300+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
         // left
         ctx.fillStyle = wasPressing.left ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(50-0.5, 250-0.5); ctx.lineTo(0-0.5, 250-0.5); ctx.lineTo(0-0.5, 300-0.5); ctx.lineTo(50-0.5, 300-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(50+0.5, 250+0.5); ctx.lineTo(0+0.5, 250+0.5); ctx.lineTo(0+0.5, 300+0.5); ctx.lineTo(50+0.5, 300+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
         // right
         ctx.fillStyle = wasPressing.right ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75-0.5, 275-0.5); ctx.lineTo(100-0.5, 250-0.5); ctx.lineTo(150-0.5, 250-0.5); ctx.lineTo(150-0.5, 300-0.5); ctx.lineTo(100-0.5, 300-0.5); ctx.lineTo(75-0.5, 275-0.5); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(100+0.5, 250+0.5); ctx.lineTo(150+0.5, 250+0.5); ctx.lineTo(150+0.5, 300+0.5); ctx.lineTo(100+0.5, 300+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
         
         // draw attack/jump buttons
         // attack
@@ -81,7 +81,7 @@ var Mobile = {
             if (!refreshButtonTimeout) {
               refreshButtonTimeout = setTimeout(function() {
                 App.pause();
-                App.drawTextScreen("Refreshing...", "#ccc", "#fff");
+                App.drawTextScreen("Refresh!", "#000", "#f0f");
                 setTimeout(function() { window.location.reload(); }, 0);
               }, 750);
             }

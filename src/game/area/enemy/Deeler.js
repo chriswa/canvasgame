@@ -10,9 +10,11 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   DESCEND_SPEED: 4,
   ASCEND_SPEED:  2,
   
-  init: function() {
+  init: function(spawnInfo) {
     Enemy.init.call(this, 'deeler');
     this.startAnimation('canopy');
+    this.advanceAnimation(0);
+    this.canopyY = spawnInfo.y;
   },
   
   updateFixedStep: function() {
@@ -21,7 +23,6 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     if (this.behaviour === 'canopy') {
-      this.canopyY = this.y;
       var distanceToPlayer = Game.area.playerSprite.x - this.x;
       if (Math.abs(distanceToPlayer) < 100 && Math.random() < 0.01) {
         this.behaviour = 'descend';

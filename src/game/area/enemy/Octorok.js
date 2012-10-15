@@ -6,7 +6,7 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
   
   isReadyToFire: false,
   
-  FIREBALL_SPEED: 6,
+  FIREBALL_SPEED: 3,
   
   init: function() {
     Enemy.init.call(this, 'octorok');
@@ -27,16 +27,16 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     this.imageModifier = facing === 1 ? R.IMG_ORIGINAL : R.IMG_FLIPX;
     
     this.behaviourTimer++;
-    if (this.behaviourTimer === 60) {
-      this.vy = -9.5;
+    if (this.behaviourTimer === 120) {
+      this.vy = -6.5;
       this.isReadyToFire = true;
     }
-    if (this.behaviourTimer === 65) {
+    if (this.behaviourTimer === 130) {
       if (this.isReadyToFire) {
-        Game.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x, y: this.y, vx: facing * this.FIREBALL_SPEED });
+        Game.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x + 6, y: this.y + 6, vx: facing * this.FIREBALL_SPEED });
       }
     }
-    if (this.behaviourTimer === 80) {
+    if (this.behaviourTimer === 160) {
       this.behaviourTimer = 0;
     }
     

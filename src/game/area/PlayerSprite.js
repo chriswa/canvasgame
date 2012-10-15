@@ -121,7 +121,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       
       // if you're dead after your hurtTimer expires, die!
       if (Game.player.health <= 0) {
-        Game.gameover();
+        Game.queueGameover();
       }
       
       // player can always change their facing, even during an attack (except when hurt)

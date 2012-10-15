@@ -1,16 +1,17 @@
 var R = {
   
-  // imageModifiers
+  // spriteImageModifiers
   IMG_ORIGINAL: 0,
   IMG_FLIPX:    1,
   IMG_PINK:     2,
   IMG_CYAN:     4,
   
   //
-  areaPaletteShifts: {
-    road: {
-      0: (92) + (148 <<8) + (252 <<16), // black -> sky blue
-    },
+  tilesetImages: {
+    'overworld-tiles.png': null,
+    'tiles-old.png':       null,
+    'tiles3.png':          null,
+    'tiles-new.png':       null,
   },
   
   //
@@ -18,10 +19,3 @@ var R = {
   
 };
 
-// add some extra stuff after R.sprites.js builds things
-R.beforeLoad = function() {
-  R.images['tiles3.png']          = { "imageModifiers": [], };
-  R.images['tiles-old.png']       = { "imageModifiers": [], };
-  R.images['overworld-tiles.png'] = { "imageModifiers": [], };
-  //R.images['ui.png']              = { "imageModifiers": [], };
-};

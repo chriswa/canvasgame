@@ -1,15 +1,8 @@
 var ResourceManager = {
   init: function(callback) {
     
-    R.beforeLoad();
-    
-    //ctx.strokeStyle = '#666';
-    //ctx.fillRect(canvas.width / 2 - 115, canvas.height * 2 / 3, 230, 5);
-    
     var progressCallback = function(percentComplete) {
       ctx.fillStyle = '#999';
-      //ctx.fillRect(canvas.width / 2 - 115, canvas.height * 2 / 3, 230 * percentComplete, 5);
-      
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(0, 0);
@@ -17,7 +10,7 @@ var ResourceManager = {
       ctx.lineTo(canvas.width / 2 - 115 + 230 * percentComplete, canvas.height);
       ctx.lineTo(0, canvas.height);
       ctx.clip();
-      ctx.fillText("Loading...", canvas.width / 2, canvas.height / 2 + 20);
+      ctx.fillText("Loading...", canvas.width / 2, canvas.height / 2 + 16);
       ctx.restore();
     };
     
@@ -39,16 +32,21 @@ var ResourceManager = {
     var loadImage = function(filepath, obj, key) {
       var img    = new Image();
       img.onload = resourceLoad;
-      img.src    = filepath + '?' + BUILD_DATE;
+      img.src    = filepath + '?' + BUILD_DATE; // attempt to avoid caching between builds
       obj[key]   = img;
     };
     
-    // load images
-    totalToLoad = 0;
-    _.each(R.images, function(value, key, obj) {
+    // first, determine how many images we need to load (for progressCallback)
+    totalToLoad += _.keys(R.tilesetImages).length;
+    _.each(R.spriteTextures, function(value, key, obj) {
       totalToLoad += Math.pow(2, value.imageModifiers.length);
     });
-    _.each(R.images, function(value, key, obj) {
+    
+    // now start loading things
+    _.each(R.tilesetImages, function(value, key, obj) {
+      loadImage('res/' + key, obj, key);
+    });
+    _.each(R.spriteTextures, function(value, key, obj) {
       var textureName = key.split('.')[0];
       var imageModifiers = _.reduce(value.imageModifiers, function(acc, num) { return acc | num; }, 0);
       loadImage('res/' + textureName + '.png',         obj[key], R.IMG_ORIGINAL);

@@ -1,5 +1,5 @@
 var PhysicsSprite = Object.extend(Sprite, {
-  gravity: 1.2,
+  gravity: 0.6,
   
   hitbox: { x1: 0, y1: 0, x2: 32, y2: 32 }, // default size of 1x1 tiles
   

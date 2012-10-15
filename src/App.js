@@ -5,9 +5,6 @@ var canvas, ctx;
 var App = {
   
   isRunning: false,
-  age: 0,
-  game: null,
-  fpsUpdate: null,
   fpsRender: null,
   
   SIM_SPEED:           1.0,
@@ -17,21 +14,15 @@ var App = {
   simTime: null,
   
   init: function() {
-    this.game = Game;
-    
-    var startTime = now();
     
     // initialize video globals
     canvas = document.getElementById('canvas');
     canvas.onselectstart = function () { return false; } // prevent text selection on doubleclick
     ctx    = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    //ctx.imageSmoothingEnabled = false;
     
     // show loading screen
     this.drawTextScreen('Loading...', '#ccc', '#fff');
-    
-    this.fpsUpdate = Object.build(FPSCounter);
-    this.fpsRender = Object.build(FPSCounter);
     
     // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
     $(window).blur(function() { App.pause(); });
@@ -42,15 +33,13 @@ var App = {
     
     Input.init();
     
-    console.log("App init: " + (now() - startTime).toFixed(1) + "ms"); startTime = now();
-    
     // load resources, then call callback
+    var startTime = now();
     ResourceManager.init( function() {
-      console.log("ResourceManager: " + (now() - startTime).toFixed(1) + "ms"); startTime = now();
-      App.game.init();
+      console.log("ResourceManager: " + (now() - startTime).toFixed(1) + "ms");
+      Game.init();
       Debug.init();
       App.start();
-      console.log("Game init: " + (now() - startTime).toFixed(1) + "ms"); startTime = now();
     });
   },
   
@@ -79,33 +68,18 @@ var App = {
   
   // 
   update: function(dt) {
-    this.age += dt;
     Debug.update();
     Input.update();
-    this.game.update(dt);
-    //$('#fps-update').text(this.fpsUpdate.measure().toFixed(1));
+    Game.update(dt);
   },
   render: function() {
-    this.game.render();
+    Game.render();
     Mobile.render();
     Debug.render();
   },
   
   updateLoop: function() {
     if (!this.isRunning) { return; }
-    
-    if (Debug.timestep === '1/30') {
-      this.SIM_STEP_MIN = 1000 / 30;
-      this.SIM_STEP_MAX = 1000 / 30;
-    }
-    else if (Debug.timestep === '1/60') {
-      this.SIM_STEP_MIN = 1000 / 60;
-      this.SIM_STEP_MAX = 1000 / 60;
-    }
-    else {
-      this.SIM_STEP_MIN = 1000 / 60;
-      this.SIM_STEP_MAX = 1000 / 30;
-    }
     
     var dt = (now() - this.simTime) * this.SIM_SPEED;
     
@@ -147,7 +121,6 @@ var App = {
     }
   },
 
-  
   //
   paintScreen: function(colour) {
     ctx.fillStyle = colour;
@@ -172,15 +145,15 @@ var App = {
     ctx.font      = 'bold 50px sans-serif';
     ctx.fillStyle = colour;
     ctx.textAlign = 'center';
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 16);
   },
   
   blitSliceByFilename: function(sliceFilename, x, y, w, h) {
-    var slice = R.sliceNames[sliceFilename];
+    var slice = R.spriteSlicesByOriginalFilename[sliceFilename];
     var textureName = slice[4];
     if (!w) { w = slice[2]; }
     if (!h) { h = slice[3]; }
-    ctx.drawImage(R.images[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
+    ctx.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
   },
   
 };
@@ -190,18 +163,3 @@ function getUniqueId() {
   return getUniqueId.counter++;
 }
 getUniqueId.counter = 0;
-
-//
-var FPSCounter = {
-  fps: 0,
-  now: null,
-  lastUpdate: 0,
-  fpsFilter: 20, // debounce: the higher this value, the less the FPS will be affected by quick changes
-  measure: function() {
-    var thisFrameFPS = 1000 / ((this.now = now()) - this.lastUpdate);
-    if (!isFinite(thisFrameFPS)) { return this.fps; } // no time passed, skip this check
-    this.fps += (thisFrameFPS - this.fps) / this.fpsFilter;
-    this.lastUpdate = this.now;
-    return this.fps;
-  }
-};

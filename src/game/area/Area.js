@@ -5,6 +5,7 @@ var Area = {
   allGroup: null,   // all sprites (for updating and rendering)
   enemyGroup: null, // things which collide with the player
   
+  areaId: null,
   areaData: null,
   tileImg: null,
   tileSize: null,
@@ -27,26 +28,19 @@ var Area = {
   init: function(exitObject, sideHintFromLastExit) {
     Game.area = this;
     
-    var areaId = exitObject.area;
+    this.areaId        = exitObject.area;
     
-    this.areaData      = R.areas[areaId];
-    if (!this.areaData) { throw new Error("could not find areaId " + areaId); }
+    this.areaData      = R.areas[this.areaId];
+    if (!this.areaData) { throw new Error("could not find areaId " + this.areaId); }
     
-    this.tileImg       = R.images[ this.areaData.image ];
+    this.tileImg       = R.tilesetImages[ this.areaData.image ];
     this.tileSize      = this.areaData.tileSize;
-    this.tileImgCols   = Math.floor(this.tileImg[0].width / this.tileSize);
+    this.tileImgCols   = Math.floor(this.tileImg.width / this.tileSize);
     
     this.cols          = this.areaData.cols;
     this.rows          = Math.floor(this.areaData.physics.length / this.cols);
     this.maxX          = this.cols * this.tileSize;
     this.maxY          = this.rows * this.tileSize;
-    
-    // experimental feature: palette shift
-    this.paletteShiftedImage = this.tileImg[0];
-    var paletteShift = R.areaPaletteShifts[this.areaData.palette];
-    if (paletteShift) {
-      this.paletteShiftedImage = ResourceManager.replaceColours(this.tileImg[0], paletteShift); // XXX: i removed finalizeTexture call for testing!
-    }
     
     // init groups
     this.allGroup   = Object.build(SpriteGroup);
@@ -60,6 +54,7 @@ var Area = {
       
       // have we already "completed" (i.e. defeated/collected) this spawn?
       if (spawnInfo.oncePerDungeon && Game.player.dungeonFlags[spawnInfo.oncePerDungeon]) { return; }
+      if (spawnInfo.onceEver       && Game.player.worldFlags[spawnInfo.onceEver])         { return; }
       
       // is this an encounter-type dependant spawn and the wrong type of encounter?
       if (exitObject.encounter === 'fairy') { return; }
@@ -74,6 +69,7 @@ var Area = {
       
       // do we need to do anything when the spawn is completed?
       if (spawnInfo.oncePerDungeon) { e.onComplete = function() { Game.player.dungeonFlags[spawnInfo.oncePerDungeon] = true; } }
+      if (spawnInfo.onceEver)       { e.onComplete = function() { Game.player.worldFlags[spawnInfo.onceEver]         = true; } }
       
     }, this);
     
@@ -118,6 +114,9 @@ var Area = {
       this.playerSprite.facing = (side === 'left') ? 1 : -1;
       this.playerSprite.startAnimation('walk');
     }
+    
+    //
+    this.update(0);
   },
   getPhysicsTile: function(tx, ty) {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return -1; } // out of bounds
@@ -133,6 +132,23 @@ var Area = {
     // update all entities
     this.allGroup.update(dt);
     
+    // offset the area to center on the player
+    this.updateCamera();
+    
+    // do collisions
+    var p = this.playerSprite;
+    this.enemyGroup.each(function(e) {
+      if (!e.isHurt && e.x + e.hitbox.x2 > p.x + p.hitbox.x1 && e.x + e.hitbox.x1 < p.x + p.hitbox.x2 && e.y + e.hitbox.y2 > p.y + p.hitbox.y1 && e.y + e.hitbox.y1 < p.y + p.hitbox.y2) {
+        p.onCollisionWithEnemy(e);
+      }
+    });
+    
+    // cull entities while have been "killed"
+    _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
+    
+    Debug.statusbarPrint("SPR: " + _.keys(this.allGroup.collection).length, 71);
+  },
+  updateCamera: function() {
     var px = Math.round(Game.area.playerSprite.x);
     var py = Math.round(Game.area.playerSprite.y);
     
@@ -147,20 +163,13 @@ var Area = {
     this.stdY1 = Math.min(Math.max(0, Math.floor(py + 32 - stdH / 2)), this.rows * this.tileSize - stdH);
     this.stdX2 = this.stdX1 + stdW;
     this.stdY2 = this.stdY1 + stdH;
-    
-    // do collisions
-    var p = this.playerSprite;
-    this.enemyGroup.each(function(e) {
-      if (!e.isHurt && e.x + e.hitbox.x2 > p.x + p.hitbox.x1 && e.x + e.hitbox.x1 < p.x + p.hitbox.x2 && e.y + e.hitbox.y2 > p.y + p.hitbox.y1 && e.y + e.hitbox.y1 < p.y + p.hitbox.y2) {
-        p.onCollisionWithEnemy(e);
-      }
-    });
-    
-    // cull entities while have been "killed"
-    _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
   },
   render: function() {
     var ts = this.tileSize;
+    
+    // clear screen
+    ctx.fillStyle = this.areaData.bgColour;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // find background tiles overlapping canvas
     var leftCol   = Math.max(Math.floor(this.renderOffsetX / ts), 0);
@@ -175,8 +184,8 @@ var Area = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getBackgroundTile(x, y);
-        //ctx.drawImage(this.tileImg[0], ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
-        ctx.drawImage(this.paletteShiftedImage, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        //ctx.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        ctx.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
       ty += ts;
@@ -199,7 +208,7 @@ var Area = {
     _.each(this.areaData.exits, function(exitObject) {
       var exitHitbox = exitObject.hitbox;
       if (p.x + p.hitbox.x2 > exitHitbox.x1 && p.x + p.hitbox.x1 < exitHitbox.x2 && p.y + p.hitbox.y2 > exitHitbox.y1 && p.y + p.hitbox.y1 < exitHitbox.y2) {
-        Game.queueAreaTransition(exitObject);
+        Game.queueExit(exitObject);
         success = true;
       }
     });

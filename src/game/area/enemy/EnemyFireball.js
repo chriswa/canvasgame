@@ -17,9 +17,9 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
   onBlock: function() {
     this.isDangerous = false;
     this.isBlockable = false;
-    this.vx = -this.vx / 2;
-    this.vy = -6;
-    this.ay = 2;
+    this.vx = -this.vx * 0.7;
+    this.vy = -4;
+    this.ay = 0.6;
   },
   
   onPlayerCollision: function(playerSprite) {

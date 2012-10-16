@@ -5,15 +5,15 @@ R.spawnableSprites['HeartContainer'] = Object.extend(Enemy, {
   isStabbable:   false,
   isDangerous:   false,
   
-  init: function(spawn) {
-    Enemy.init.call(this, 'heart-container');
+  init: function(area, spawn) {
+    Enemy.init.call(this, area, 'heart-container');
   },
   
   onPlayerCollision: function(playerSprite) {
+    R.sfx['AOL_LevelUp_GetItem'].play();
     Game.player.healthMax += 2;
     Game.player.health    =  Game.player.healthMax;
     playerSprite.poseWithItem(this);
-
   },
   
   update: function(dt) {

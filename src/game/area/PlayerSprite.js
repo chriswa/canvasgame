@@ -41,8 +41,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // init
   // ====
   
-  init: function() {
-    PhysicsSprite.init.call(this, 'link');
+  init: function(area) {
+    PhysicsSprite.init.call(this, area, 'link');
     this.startAnimation('stand');
     this.JUMP_X_BOOST /= this.MAX_X_SPEED; // XXX: decouple this constant for simpler tweaking
   },
@@ -78,6 +78,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       var facingAgainstMotion = (sign(entity.vx) !== this.facing);
       
       if (shieldAtRightHeight && (facingEntity || facingAgainstMotion)) {
+        R.sfx['AOL_Deflect'].play();
         entity.onBlock();
       }
     }
@@ -92,6 +93,12 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
         this.playAnimation('hurt');
         this.vx = this.facing * -this.HURT_IMPULSE_X;
         this.vy = -this.HURT_IMPULSE_Y;
+      }
+      if (Game.player.health <= 0) {
+        R.sfx['AOL_Die'].play();
+      }
+      else {
+        R.sfx['AOL_Hurt'].play();
       }
       
       // tell the entity it hurt us (e.g. fireballs will want to kill themselves)
@@ -121,7 +128,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       
       // if you're dead after your hurtTimer expires, die!
       if (Game.player.health <= 0) {
-        Game.queueGameover();
+        Game.queuePlayerDeath();
+        return;
       }
       
       // player can always change their facing, even during an attack (except when hurt)
@@ -129,14 +137,14 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       else if (Input.keyDown.right) { this.facing =  1; }
       
       // just landed from a jump/fall?
-      if (this.isAirborne && this.touchingBottom) {
+      if (this.isAirborne && this.touching.bottom) {
         this.isAirborne  = false;
         this.isAttacking = false;
         this.startAnimation('stand');
       }
       
       // unintentionally falling?
-      if (!this.isAirborne && !this.touchingBottom) {
+      if (!this.isAirborne && !this.touching.bottom) {
         this.isAirborne = true;
       }
       
@@ -159,13 +167,13 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
         else                  { this.updateUprightAttack();   }
         
         // unless we're in the air, attacking stops all movement instantly
-        if (this.touchingBottom) { this.vx = 0; }
+        if (this.touching.bottom) { this.vx = 0; }
       }
       
       // horizontal controls (different behaviour depending on whether we're on the ground)
       else {
-        if (this.touchingBottom) { this.updateOnGround(dt); }
-        else                     { this.updateInAir(dt);    }
+        if (this.touching.bottom) { this.updateOnGround(dt); }
+        else                      { this.updateInAir(dt);    }
       }
       
     }
@@ -176,13 +184,26 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       // move sprite
       this.integrateAndTranslate(dt);
       
+      // check for lava
+      if (Game.player.health > 0 && this.tilesTouched[ Area.physicsTileTypes.LAVA ]) {
+        R.sfx['AOL_Die'].play();
+        Game.player.health = 0;
+        this.playAnimation('hurt');
+        //this.frozenTimer = 1000;
+        this.hurtTimer = 1000;
+        this.invincibleTimer = 1000;
+        this.vx = 0;
+        this.vy = 0.015;
+        this.GRAVITY = 0;
+      }
+      
       // update animation
       this.advanceAnimation( dt );
     }
     
     // check for area transitions
-    if (this.outOfBounds) {
-      Game.area.findAndQueuePlayerExit();
+    if (this.touching.outOfBounds) {
+      this.area.findAndQueuePlayerExit();
     }
     
     // visual effects (hurting and invincibility)
@@ -205,7 +226,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       // jump!
       this.vy             = -this.JUMP_IMPULSE;
       this.isAirborne     = true;
-      this.touchingBottom = false;
+      this.touching.bottom = false;
       this.fallStopwatch  = 9999; // invalidate fallStopwatch (also prevents a double-jump)
       this.playAnimation('jump');
       //this.debugStartJumpY = this.debugHighestY = this.y;
@@ -299,8 +320,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
     // move sprite
     this.translateWithTileCollisions( deltaX, deltaY );
-    if (this.touchingBottom || this.touchingTop)   { this.vy = 0; }
-    if (this.touchingLeft   || this.touchingRight) { this.vx = 0; }
+    if (this.touching.bottom || this.touching.top)   { this.vy = 0; }
+    if (this.touching.left   || this.touching.right) { this.vx = 0; }
   },
   
   // attacking
@@ -313,7 +334,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     if (this.frameIndex === 1) {
       var absHitbox = { x1: this.x + this.facing*32, y1: this.y + 18, x2: this.x + 32 + this.facing*32, y2: this.y + 28 };
-      Game.area.handlePlayerAttack(absHitbox);
+      this.area.handlePlayerAttack(absHitbox);
     }
   },
   
@@ -324,7 +345,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     if (this.frameIndex === 0) {
       var absHitbox = { x1: this.x + this.facing*32, y1: this.y + 38, x2: this.x + 32 + this.facing*32, y2: this.y + 48 };
-      Game.area.handlePlayerAttack(absHitbox);
+      this.area.handlePlayerAttack(absHitbox);
     }
   },
   
@@ -351,7 +372,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     
     // flash transparent if invincible
-    else if (this.invincibleTimer > 0 && this.invincibleTimer % 2*f < 1*f) {
+    else if (this.invincibleTimer > 0 && this.invincibleTimer % 4*f < 2*f) {
       this.imageModifier = -1;
     }
   },

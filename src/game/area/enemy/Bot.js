@@ -6,8 +6,8 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   behaviourTimer: 0,
   direction: 0,
   
-  init: function() {
-    Enemy.init.call(this, 'blob');
+  init: function(area) {
+    Enemy.init.call(this, area, 'blob');
     this.y += 8;
     //this.startAnimation('idle');
     //this.vx = Math.random() < 0.5 ? 1 : -1;
@@ -16,10 +16,10 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   jump: function() {
     this.behaviour = 'inch';
     this.behaviourTimer = 0;
-    this.direction = (Game.area.playerSprite.x < this.x) ? -1 : 1;
+    this.direction = (this.area.playerSprite.x < this.x) ? -1 : 1;
     this.vx = this.direction * 3;
     this.vy = -6.5;
-    this.touchingBottom = false;
+    this.touching.bottom = false;
   },
   
   updateFixedStep: function() {
@@ -27,7 +27,7 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
-    if (this.touchingBottom) {
+    if (this.touching.bottom) {
       this.behaviourTimer--;
       this.vx = 0;
       
@@ -64,17 +64,17 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
     this.vy += this.gravity;
     this.translateWithTileCollisions( this.vx, this.vy );
     this.advanceAnimation( this.FIXED_STEP );
-    if (this.outOfBounds) { this.kill(); }
+    if (this.touching.outOfBounds) { this.kill(); }
     
-    if (this.touchingBottom || this.touchingTop) { this.vy = 0; }
+    if (this.touching.bottom || this.touching.top) { this.vy = 0; }
     
   },
   
   onAnimationFrameAdvance: function(animationName, frameIndex) {
-    if (this.touchingBottom && animationName === 'inch' && frameIndex === 1) {
+    if (this.touching.bottom && animationName === 'inch' && frameIndex === 1) {
       this.translateWithTileCollisions( this.direction * 10, this.gravity );
       this.vx = this.direction * 5;
-      //this.touchingBottom = true;
+      //this.touching.bottom = true;
     }
   }
   

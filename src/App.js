@@ -1,7 +1,4 @@
-// globals
-var canvas, ctx;
-
-// App object
+// App object (singleton)
 var App = {
   
   isRunning: false,
@@ -78,6 +75,7 @@ var App = {
     Debug.render();
   },
   
+  // main loop
   updateLoop: function() {
     if (!this.isRunning) { return; }
     

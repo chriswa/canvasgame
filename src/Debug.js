@@ -157,7 +157,8 @@ var FPSCounter = {
   init: function(maxTicks) {
     this.MAX_TICKS = maxTicks;
     this.lastUpdate = now();
-    this.tickList = _.map(_.range(this.MAX_TICKS), function(i) { return 0; });
+    this.tickList = _.map(_.range(this.MAX_TICKS), function(i) { return 100000; });
+    this.tickSum  = this.MAX_TICKS * 100000;
   },
   update: function() {
     var thisFrameFPS = (this.now = now()) - this.lastUpdate;

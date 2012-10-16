@@ -16,6 +16,9 @@ var Sprite = {
   vx: 0.0,
   vy: 0.0,
   
+  drawOffsetX: 0,
+  drawOffsetY: 0,
+  
   init: function(characterName) {
     this.uniqueId = getUniqueId();
     this.groups = [];
@@ -53,8 +56,8 @@ var Sprite = {
     var frame = this.animation.frames[this.frameIndex];
     if (!slice || !frame || this.imageModifier === -1) { return; } 
     
-    var x = Math.round( this.x );
-    var y = Math.round( this.y );
+    var x = Math.round( this.x + this.drawOffsetX );
+    var y = Math.round( this.y + this.drawOffsetY );
     
     var t = this.texture[this.imageModifier];
     

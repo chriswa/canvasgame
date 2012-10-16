@@ -118,7 +118,7 @@ var Overworld = {
     });
     
     // cull entities while have been "killed"
-    _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
+    this.allGroup.cull();
   },
   updateCamera: function() {
     var px = Math.round(this.player.x);
@@ -149,9 +149,7 @@ var Overworld = {
     }
     
     // render all entities
-    this.allGroup.each(function(e) {
-      e.render(Game.overworld.renderOffsetX, Game.overworld.renderOffsetY);
-    });
+    this.allGroup.render(Game.overworld.renderOffsetX, Game.overworld.renderOffsetY);
   },
   
   spawnEncounters: function(distance) {
@@ -182,6 +180,7 @@ var Overworld = {
       if (tileIndex === this.terrainTypes.DESERT) { areaId = 'desert'; }
     }
     if (!areaId) { return false; }
+    //R.sfx['AOL_Battle'].play();
     this.queueExit({ area: areaId, side: 'centre', encounter: encounter.type });
     return true;
   },

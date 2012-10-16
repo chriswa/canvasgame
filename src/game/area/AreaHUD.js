@@ -18,5 +18,10 @@ var AreaHUD = {
     for (var i = 0; i < p.dungeonFlags.keys; i++) {
       App.blitSliceByFilename('key.png', 5 + 20 * i, 25);
     }
+    
+    // draw extra lives
+    //for (var i = 0; i < p.lives; i++) {
+    //  App.blitSliceByFilename('extralife.png', canvas.width - 16 - (5 + 20 * i), 5);
+    //}
   },
 };

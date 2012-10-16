@@ -4,8 +4,8 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
   isBlockable: true,
   isStabbable: false,
   
-  init: function(spawn) {
-    Enemy.init.call(this, 'fireball');
+  init: function(area, spawn) {
+    Enemy.init.call(this, area, 'fireball');
     this.x  = spawn.x;
     this.y  = spawn.y;
     this.vx = spawn.vx;
@@ -38,7 +38,7 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
     this.advanceAnimation( this.FIXED_STEP );
     
     // kill when out of bounds
-    if (this.x < -16 || this.y < -16 || this.x > Game.area.maxX || this.y > Game.area.maxY ) {
+    if (this.x < -16 || this.y < -16 || this.x > this.area.maxX || this.y > this.area.maxY ) {
       this.kill();
     }
     

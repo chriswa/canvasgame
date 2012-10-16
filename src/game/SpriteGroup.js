@@ -9,12 +9,20 @@ var SpriteGroup = {
   invoke: function(methodName, context) {
     _.invoke(this.collection, methodName, context);
   },
-  render: function(context) {
-    this.invoke('render', context);
+  render: function(renderOffsetX, renderOffsetY) {
+    this.each(function(spr) {
+      spr.render(renderOffsetX, renderOffsetY);
+    });
   },
   update: function(dt) {
     _.each(this.collection, function(spr) {
       spr.update(dt);
     });
   },
+  cull: function() {
+    _.invoke(_.filter(this.collection, function(spr) { return spr.readyToCull; }), 'destroy');
+  },
+  count: function() {
+    return _.keys(this.collection).length;
+  }
 };

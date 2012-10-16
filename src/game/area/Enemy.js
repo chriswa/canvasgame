@@ -4,18 +4,18 @@ var Enemy = Object.extend(PhysicsSprite, {
   isDangerous: true,
   isStabbable: true,
   
-  init: function() {
-    Sprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
-    this.addToGroup(Game.area.enemyGroup);
+  init: function(area) {
+    PhysicsSprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
+    this.addToGroup(this.area.enemyGroup);
   },
   
   getStandardizedOffscreenDist: function() {
-    //return Math.max(Math.abs( this.x - Game.area.playerSprite.x ), Math.abs( this.y - Game.area.playerSprite.y ));
+    //return Math.max(Math.abs( this.x - this.area.playerSprite.x ), Math.abs( this.y - this.area.playerSprite.y ));
     var result = 0;
-    if (this.x + this.hitbox.x2 < Game.area.stdX1) { result = Math.max(result, Game.area.stdX1 - (this.x + this.hitbox.x2)); }
-    if (this.x + this.hitbox.x1 > Game.area.stdX2) { result = Math.max(result, (this.x + this.hitbox.x1) - Game.area.stdX2); }
-    if (this.y + this.hitbox.y2 < Game.area.stdY1) { result = Math.max(result, Game.area.stdY1 - (this.y + this.hitbox.y2)); }
-    if (this.y + this.hitbox.y1 < Game.area.stdY2) { result = Math.max(result, (this.y + this.hitbox.y1) - Game.area.stdY2); }
+    if (this.x + this.hitbox.x2 < this.area.stdX1) { result = Math.max(result, this.area.stdX1 - (this.x + this.hitbox.x2)); }
+    if (this.x + this.hitbox.x1 > this.area.stdX2) { result = Math.max(result, (this.x + this.hitbox.x1) - this.area.stdX2); }
+    if (this.y + this.hitbox.y2 < this.area.stdY1) { result = Math.max(result, this.area.stdY1 - (this.y + this.hitbox.y2)); }
+    if (this.y + this.hitbox.y1 < this.area.stdY2) { result = Math.max(result, (this.y + this.hitbox.y1) - this.area.stdY2); }
     return result;
   },
   
@@ -29,18 +29,25 @@ var Enemy = Object.extend(PhysicsSprite, {
       this.hurtTimer           = 0;
       this.updateFixedStep     = this.updateWhenHurtFixedStep;
     }
-    if (this.health <= 0) { this.onComplete(); }
+    if (this.health <= 0) {
+      this.onComplete();
+    }
+    
+    // sfx
+    if (this.health <= 0) {
+      R.sfx['AOL_Kill'].play();
+    }
   },
   
   onPlayerCollision: function(playerSprite) {},
   
   updateWhenHurtFixedStep: function() {
     this.hurtTimer++;
-    if (this.hurtTimer > 8 && this.health <= 0) {
+    if (this.hurtTimer > 16 && this.health <= 0) {
       this.kill();
       return;
     }
-    if (this.hurtTimer > 16) {
+    if (this.hurtTimer > 32) {
       this.isHurt            = false;
       this.updateFixedStep   = this.origUpdateFixedStep;
       this.imageModifier     = this.origImageModifier;

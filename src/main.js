@@ -1,5 +1,8 @@
 //console.log("Build took: " + BUILD_TIME_ELAPSED.toFixed(1) + "ms");
 
+// globals
+var canvas, ctx;
+
 var forceMobile     = false;
 var forceProduction = false;
 

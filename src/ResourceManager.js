@@ -1,5 +1,7 @@
 var ResourceManager = {
-  init: function(callback) {
+  init: function(onComplete) {
+    
+    this.audioFormat = document.createElement('audio').canPlayType('audio/mpeg') ? 'mp3' : 'ogg';
     
     var progressCallback = function(percentComplete) {
       ctx.fillStyle = '#999';
@@ -14,9 +16,92 @@ var ResourceManager = {
       ctx.restore();
     };
     
-    this.loadImages( progressCallback, callback );
+    var loaded, totalToLoad;
+    var onResourceLoad = function() {
+      loaded += 1;
+      progressCallback(loaded / totalToLoad);
+      if (loaded === totalToLoad) {
+        onComplete();
+      }
+    };
+    var loadList = this.generateLoadList(onResourceLoad);
+    loaded       = 0;
+    totalToLoad  = loadList.length;
+    
+    _.each(loadList, function(loadElement) { loadElement(onResourceLoad); });
   },
   
+  generateLoadList: function(onResourceLoad) {
+    var loadList = [];
+    
+    // sound effects
+    _.each(R.sfx, function(value, key, obj) {
+      loadList.push( _.bind( this.loadAudio, this, 'res/sfx/' + key, obj, key, onResourceLoad) );
+    }, this);
+    
+    // tileset images
+    _.each(R.tilesetImages, function(value, key, obj) {
+      loadList.push( _.bind( this.loadImage, this, 'res/' + key, obj, key, onResourceLoad) );
+    }, this);
+    
+    // sprite textures (images)
+    _.each(R.spriteTextures, function(value, key, obj) {
+      var textureName = key.split('.')[0];
+      var imageModifiers = _.reduce(value.imageModifiers, function(acc, num) { return acc | num; }, 0);
+      if (true) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '.png', obj[key], R.IMG_ORIGINAL, onResourceLoad) );
+      }
+      if (imageModifiers & R.IMG_FLIPX) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-x.png', obj[key], R.IMG_FLIPX, onResourceLoad) );
+      }
+      if (imageModifiers & R.IMG_PINK) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-pink.png', obj[key], R.IMG_PINK, onResourceLoad) );
+      }
+      if (imageModifiers & (R.IMG_PINK | R.IMG_FLIPX)) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-pink-x.png', obj[key], R.IMG_PINK | R.IMG_FLIPX, onResourceLoad) );
+      }
+      if (imageModifiers & R.IMG_CYAN) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-cyan.png', obj[key], R.IMG_CYAN, onResourceLoad) );
+      }
+      if (imageModifiers & (R.IMG_CYAN | R.IMG_FLIPX)) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-cyan-x.png', obj[key], R.IMG_CYAN | R.IMG_FLIPX, onResourceLoad) );
+      }
+      if (imageModifiers & (R.IMG_PINK | R.IMG_CYAN)) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-wacky.png', obj[key], R.IMG_PINK | R.IMG_CYAN, onResourceLoad) );
+      }
+      if (imageModifiers & (R.IMG_PINK | R.IMG_CYAN | R.IMG_FLIPX)) {
+        loadList.push( _.bind( this.loadImage, this, 'res/' + textureName + '-wacky-x.png', obj[key], R.IMG_PINK | R.IMG_CYAN | R.IMG_FLIPX, onResourceLoad) );
+      }
+    }, this);
+    
+    return loadList;
+  },
+  
+  loadImage: function(filepath, obj, key, onLoad) {
+    var img    = new Image();
+    img.onload = onLoad;
+    img.src    = filepath + '?' + BUILD_DATE; // attempt to avoid caching between builds
+    obj[key]   = img;
+  },
+  
+  loadAudio: function(filepath, obj, key, onLoad) {
+    var audio = document.createElement('audio');
+    var listener = audio.addEventListener('canplaythrough', function (e) {
+      this.removeEventListener('canplaythrough', listener, false)
+      onLoad();
+    }, false);
+    audio.addEventListener('error', function (ev) {
+      alert('audio error loading ' + filepath + '.' + ResourceManager.audioFormat);
+      console.log(ev)
+    }, false);
+    audio.autobuffer = true;
+    audio.preload    = 'auto';
+    audio.src        = filepath + '.' + ResourceManager.audioFormat;
+    audio.load();
+    obj[key] = audio;
+  },
+  
+  /*
   loadImages: function(progressCallback, callback) {
     // count resources as they load and call callback after the last one
     var loaded      = 0;
@@ -74,7 +159,9 @@ var ResourceManager = {
     });
     
   },
+  */
   
+  /*
   //
   flipImageHorizontally: function(img) {
     var canvas = this.cloneImage(img);
@@ -159,14 +246,6 @@ var ResourceManager = {
     //$(canvas).appendTo('body');
     return canvas;
   },
+  */
   
-  // for bugs on galaxy nexus
-  finalizeTexture: function(canvas) {
-    if (!Mobile.isMobile) { return canvas; }
-    var image = document.createElement('img');
-    image.src = canvas.toDataURL("image/png");
-    return image;
-  },
-
-
 };

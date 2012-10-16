@@ -4,9 +4,10 @@ R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
   isCollectable: true,
   isStabbable:   false,
   isDangerous:   false,
+  hasPlayedSfx:  false,
   
-  init: function(spawn) {
-    Enemy.init.call(this, 'fairy');
+  init: function(area, spawn) {
+    Enemy.init.call(this, area, 'fairy');
     this.x += 8;
   },
   
@@ -17,6 +18,10 @@ R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
   },
   
   update: function(dt) {
+    if ( !this.hasPlayedSfx && dt > 0 ) {
+      this.hasPlayedSfx = true;
+      R.sfx['AOL_Fairy'].play();
+    }
     this.advanceAnimation(dt);
   },
 });

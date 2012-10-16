@@ -43,10 +43,10 @@ var OverworldPlayer = Object.extend(Sprite, {
       this.y = Game.player.overworldY * 32;
       
       // move?
-      if      (Input.keyDown.left)  { if (this.startMove( -1,  0)) { this.lastDir = 'west';  } }
-      else if (Input.keyDown.right) { if (this.startMove(  1,  0)) { this.lastDir = 'east';  } }
-      else if (Input.keyDown.up)    { if (this.startMove(  0, -1)) { this.lastDir = 'north'; } }
-      else if (Input.keyDown.down)  { if (this.startMove(  0,  1)) { this.lastDir = 'south'; } }
+      if ( Input.keyDown.up    && this.moveRemaining <= 0 ) { if (this.startMove(  0, -1)) { this.lastDir = 'north'; } }
+      if ( Input.keyDown.down  && this.moveRemaining <= 0 ) { if (this.startMove(  0,  1)) { this.lastDir = 'south'; } }
+      if ( Input.keyDown.left  && this.moveRemaining <= 0 ) { if (this.startMove( -1,  0)) { this.lastDir = 'west';  } }
+      if ( Input.keyDown.right && this.moveRemaining <= 0 ) { if (this.startMove(  1,  0)) { this.lastDir = 'east';  } }
       
       // we haven't started a move? stand still
       if (this.moveRemaining <= 0) {

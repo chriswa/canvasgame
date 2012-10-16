@@ -1,7 +1,10 @@
 var Input = {
+  
   keyDown: {},
-  _keyJustPressed: {},
   keyPressed: {},
+  
+  _keyJustPressed: {},
+  
   keysToCapture: {
     
     // system control
@@ -18,11 +21,12 @@ var Input = {
     16:  'jump',   // <shift>
     17:  'attack', // <ctrl>
     
-    // game alternates
+    // game alternatives
     90:  'jump',   // <Z>
     88:  'attack', // <X>
     32:  'jump',   // <spacebar>
   },
+  
   init: function() {
     window.onkeydown = function(e) {
       var evt = e ? e:event;
@@ -57,16 +61,20 @@ var Input = {
       delete Input.keyDown[keyName];
     };
   },
+  
   update: function() {
     this.keyPressed = this._keyJustPressed;
     this._keyJustPressed = {};
   },
+  
   touchDown: function(keyName) {
     Input.keyDown[keyName] = true;
     Input._keyJustPressed[keyName] = true;
   },
+  
   touchUp: function(keyName) {
     delete Input.keyDown[keyName];
   },
+  
 };
 

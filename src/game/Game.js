@@ -1,4 +1,4 @@
-// Game object
+// Game object (singleton)
 var Game = {
   overworld: null,
   area: null,
@@ -19,12 +19,14 @@ var Game = {
   reset: function() {
     //this.player = Object.build(Player);
     this.player = {
+      lives:        3,
       health:       6,
       healthMax:    6,
       overworldX:   52,   // zelda's palace == (28, 25)
       overworldY:   25,
       dungeonFlags: {},
-      worldFlags:   {}
+      worldFlags:   {},
+      lastArea:     undefined // for respawning after player death
     };
     this.overworld.reset();
     this.setState('overworld');
@@ -37,7 +39,7 @@ var Game = {
   
   // update and render are delegated to the active state
   update: function(dt) {
-    this.processStateQueue();
+    this.updateState();
     if (this.activeState.update) { this.activeState.update(dt); }
   },
   render: function() {
@@ -45,22 +47,26 @@ var Game = {
   },
   
   // FSM
-  setState: function(newState) {
-    if (this.activeState && this.activeState.onleavestate) { this.activeState.onleavestate(newState); }
-    this.activeState = this.states[newState];
-    if (this.activeState.onenterstate) { this.activeState.onenterstate.apply(this.activeState, Array.prototype.slice.call(arguments, 1)); }
-  },
   queuedState: undefined,
   queueState: function(newState) {
     this.queuedState = Array.prototype.slice.call(arguments, 0);
   },
-  processStateQueue: function() {
+  updateState: function() {
     if (this.queuedState) {
       this.setState.apply(this, this.queuedState);
       this.queuedState = undefined;
     }
   },
+  setState: function(newState) {
+    if (this.activeState && this.activeState.onleavestate) { this.activeState.onleavestate(newState); }
+    this.activeState = this.states[newState];
+    if (this.activeState.onenterstate) { this.activeState.onenterstate.apply(this.activeState, Array.prototype.slice.call(arguments, 1)); }
+  },
+  
+  // FSM states
   states: {
+    
+    // 
     area: {
       onenterstate: function(newArea) {
         Game.area = newArea;
@@ -73,6 +79,8 @@ var Game = {
         Game.areaHud.render();
       }
     },
+    
+    // 
     overworld: {
       onenterstate: function() {
         Game.overworld.player.finishMove();
@@ -87,24 +95,40 @@ var Game = {
         Game.areaHud.render();
       }
     },
+    
+    //
+    nextlife: {
+      onenterstate: function(newArea) {
+        this.newArea = newArea;
+        App.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
+        setTimeout(function() {
+          Game.setState('area', newArea);
+        }, 1500);
+      }
+    },
+    
+    // 
     gameover: {
       onenterstate: function() {
+        R.sfx['AOL_Ganon_Laugh'].play();
         App.drawTextScreen("GAME OVER");
         setTimeout(function() {
           Game.reset();
-        }, 2000);
+        }, 3000);
       }
     },
-    overworldTransition: {
-      onenterstate: function(doTransition, newArea) {
-        this.stateTimer   = 0;
-        this.doTransition = doTransition;
-        this.newArea      = newArea;
+    
+    // 
+    overworldWipe: {
+      onenterstate: function(nextTransition, newArea) {
+        this.stateTimer     = 0;
+        this.nextTransition = nextTransition;
+        this.newArea        = newArea;
       },
       update: function(dt) {
         this.stateTimer += dt;
         if (this.stateTimer > 500) {
-          this.doTransition();
+          this.nextTransition();
         }
         else if (this.newArea && this.stateTimer > 325) {
           this.newArea.update(dt);
@@ -126,9 +150,20 @@ var Game = {
         ctx.fillRect(0, canvas.height - (canvas.height/2) * h, canvas.width, (canvas.height/2) * h);
       }
     }
-  },
+    
+  }, // (end of FSM states)
   
   // API
+  queuePlayerDeath: function() {
+    Game.player.lives -= 1;
+    if (Game.player.lives > 0) {
+      Game.player.health = Game.player.healthMax;
+      this.queueState('nextlife', Object.build(Area, Game.player.lastArea.exitObject, Game.player.lastArea.sideHint));
+    }
+    else {
+      this.queueState('gameover');
+    }
+  },
   queueGameover: function() {
     this.queueState('gameover');
   },
@@ -173,7 +208,8 @@ var Game = {
       if (exitObject.sideeast  && lastDir === 'east' ) { sideHint = exitObject.sideeast;  }
       if (exitObject.sidewest  && lastDir === 'west' ) { sideHint = exitObject.sidewest;  }
       
-      // 
+      //
+      Game.player.lastArea = { exitObject: exitObject, sideHint: sideHint };
       var newArea = Object.build(Area, exitObject, sideHint);
       
       // prepare transition code
@@ -189,7 +225,16 @@ var Game = {
     
     // otherwise, do a timed animation
     else {
-      this.queueState('overworldTransition', doTransition, newArea);
+      if (exitObject.encounter === 'fairy') {
+        // do nothing: the fairy itself will make a sound
+      }
+      else if (exitObject.encounter) {
+        R.sfx['AOL_Battle'].play();
+      }
+      else {
+        R.sfx['AOL_Map'].play();
+      }
+      this.queueState('overworldWipe', doTransition, newArea);
     }
     
   }

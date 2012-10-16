@@ -3,8 +3,8 @@ R.spawnableSprites['Key'] = Object.extend(Enemy, {
   
   isDangerous: false,
   
-  init: function(spawn) {
-    Enemy.init.call(this, 'key');
+  init: function(area, spawn) {
+    Enemy.init.call(this, area, 'key');
     this.x += 8;
     this.y += 2;
   },

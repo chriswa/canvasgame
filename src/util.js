@@ -116,5 +116,19 @@ function showme() {
   //console.trace();
 }
 
+// checks AABB overlaps
+// accepts an absolute hitbox {x1,y1,x2,y2} and a collection of objects which are optionally mapped to yield a collection of absolute hitboxes, calls the callback on overlaps
+function overlapOneToManyAABBs(oneAbsHitbox, many, callback, map) {
+  if (!map)   { map  = _.identity; }
+  _.each(many, function(other) {
+    var otherAbsHitbox = map(other);
+    if (otherAbsHitbox && oneAbsHitbox.x2 > otherAbsHitbox.x1 && oneAbsHitbox.x1 < otherAbsHitbox.x2 && oneAbsHitbox.y2 > otherAbsHitbox.y1 && oneAbsHitbox.y1 < otherAbsHitbox.y2) {
+      callback(other);
+    }
+  });
+}
+  
+
+
 //
 // console.assert()!

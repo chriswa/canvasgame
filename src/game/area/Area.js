@@ -1,5 +1,11 @@
 var Area = {
   
+  physicsTileTypes: {
+    EMPTY: 0,
+    SOLID: 1,
+    LAVA:  2
+  },
+  
   playerSprite: null,
   
   allGroup: null,   // all sprites (for updating and rendering)
@@ -26,8 +32,6 @@ var Area = {
   age: 0,
   
   init: function(exitObject, sideHintFromLastExit) {
-    Game.area = this;
-    
     this.areaId        = exitObject.area;
     
     this.areaData      = R.areas[this.areaId];
@@ -137,20 +141,16 @@ var Area = {
     
     // do collisions
     var p = this.playerSprite;
-    this.enemyGroup.each(function(e) {
-      if (!e.isHurt && e.x + e.hitbox.x2 > p.x + p.hitbox.x1 && e.x + e.hitbox.x1 < p.x + p.hitbox.x2 && e.y + e.hitbox.y2 > p.y + p.hitbox.y1 && e.y + e.hitbox.y1 < p.y + p.hitbox.y2) {
-        p.onCollisionWithEnemy(e);
-      }
-    });
+    overlapOneToManyAABBs(p.getAbsHitbox(), this.enemyGroup.collection, function(e) { p.onCollisionWithEnemy(e); }, function(e) { return e.isHurt ? false : e.getAbsHitbox(); });
     
     // cull entities while have been "killed"
-    _.invoke(_.filter(this.allGroup.collection, function(spr) { return spr.readyToCull; }), 'destroy');
+    this.allGroup.cull();
     
-    Debug.statusbarPrint("SPR: " + _.keys(this.allGroup.collection).length, 71);
+    Debug.statusbarPrint("SPR: " + this.allGroup.count(), 71);
   },
   updateCamera: function() {
-    var px = Math.round(Game.area.playerSprite.x);
-    var py = Math.round(Game.area.playerSprite.y);
+    var px = Math.round(this.playerSprite.x);
+    var py = Math.round(this.playerSprite.y);
     
     // center camera on playerSprite
     this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width));
@@ -192,34 +192,29 @@ var Area = {
     }
     
     // render all entities
-    this.allGroup.each(function(e) {
-      e.render(Game.area.renderOffsetX, Game.area.renderOffsetY);
-    });
+    this.allGroup.render(this.renderOffsetX, this.renderOffsetY);
   },
   spawn: function(classObject, spawnInfo) {
-    var e = Object.build(classObject, spawnInfo);
-    e.addToGroup(Game.area.allGroup);
+    var e = Object.build(classObject, this, spawnInfo);
+    e.addToGroup(this.allGroup);
     return e;
   },
   findAndQueuePlayerExit: function() {
     var p = this.playerSprite;
     // find an overlapping area exit object
     var success = false;
-    _.each(this.areaData.exits, function(exitObject) {
-      var exitHitbox = exitObject.hitbox;
-      if (p.x + p.hitbox.x2 > exitHitbox.x1 && p.x + p.hitbox.x1 < exitHitbox.x2 && p.y + p.hitbox.y2 > exitHitbox.y1 && p.y + p.hitbox.y1 < exitHitbox.y2) {
-        Game.queueExit(exitObject);
-        success = true;
-      }
-    });
+    overlapOneToManyAABBs(p.getAbsHitbox(), this.areaData.exits, function(exitObject) { Game.queueExit(exitObject); success = true; }, function(exitObject) { return exitObject.hitbox; });
     if (!success) { console.log("Player is out of bounds, but no exitObject could be found!"); }
   },
   handlePlayerAttack: function(absHitbox) {
     Debug.drawRect(absHitbox, '#f00');
-    this.enemyGroup.each(function(e) {
-      if (e.x + e.hitbox.x2 > absHitbox.x1 && e.x + e.hitbox.x1 < absHitbox.x2 && e.y + e.hitbox.y2 > absHitbox.y1 && e.y + e.hitbox.y1 < absHitbox.y2) {
-        e.onStabbed();
-      }
-    });
+    var hitSomething = false;
+    overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, function(e) { e.onStabbed(); hitSomething = true; }, function(e) { return e.getAbsHitbox(); });
+    if (hitSomething) {
+      R.sfx['AOL_Sword_Hit'].play();
+    }
+    else {
+      R.sfx['AOL_Sword'].play();
+    }
   },
 };

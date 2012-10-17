@@ -17,23 +17,23 @@ var R = {
   //
   sfx: {
     // game
-    'AOL_Die':              null,
-    'AOL_Ganon_Laugh':      null,
+    'AOL_Die':              1,
+    'AOL_Ganon_Laugh':      1,
     
     // overworld
-    'AOL_Battle':           null,
-    'AOL_Map':              null,
+    'AOL_Battle':           1,
+    'AOL_Map':              1,
     
     // player
-    'AOL_Deflect':          null,
-    'AOL_Hurt':             null,
-    'AOL_LevelUp_GetItem':  null,
-    'AOL_Sword':            null,
-    'AOL_Sword_Hit':        null,
+    'AOL_Deflect':          3,
+    'AOL_Hurt':             1,
+    'AOL_LevelUp_GetItem':  1,
+    'AOL_Sword':            1,
+    'AOL_Sword_Hit':        3,
     
     // enemies
-    'AOL_Kill':             null,
-    'AOL_Fairy':            null,
+    'AOL_Kill':             3,
+    'AOL_Fairy':            1,
   },
   
   //

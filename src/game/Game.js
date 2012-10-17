@@ -110,7 +110,7 @@ var Game = {
     // 
     gameover: {
       onenterstate: function() {
-        R.sfx['AOL_Ganon_Laugh'].play();
+        App.playSfx('AOL_Ganon_Laugh');
         App.drawTextScreen("GAME OVER");
         setTimeout(function() {
           Game.reset();
@@ -229,10 +229,10 @@ var Game = {
         // do nothing: the fairy itself will make a sound
       }
       else if (exitObject.encounter) {
-        R.sfx['AOL_Battle'].play();
+        App.playSfx('AOL_Battle');
       }
       else {
-        R.sfx['AOL_Map'].play();
+        App.playSfx('AOL_Map');
       }
       this.queueState('overworldWipe', doTransition, newArea);
     }

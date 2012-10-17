@@ -154,6 +154,23 @@ var App = {
     ctx.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
   },
   
+  playSfx: function(filename) {
+    var samples = R.sfx[filename];
+    for (var i = 0; i < samples.length; i += 1) {
+      var sample = samples[i];
+      if (sample.paused || sample.ended) {
+        sample.currentTime = 0;
+        sample.play();
+        return sample;
+      }
+    }
+    samples[0].pause();
+    samples[0].currentTime = 0.1; // force the next line to seek!
+    samples[0].currentTime = 0;
+    samples[0].play();
+    return samples[0];
+  }
+  
 };
 
 //

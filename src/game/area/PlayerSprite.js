@@ -78,7 +78,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       var facingAgainstMotion = (sign(entity.vx) !== this.facing);
       
       if (shieldAtRightHeight && (facingEntity || facingAgainstMotion)) {
-        R.sfx['AOL_Deflect'].play();
+        App.playSfx('AOL_Deflect');
         entity.onBlock();
       }
     }
@@ -95,10 +95,10 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
         this.vy = -this.HURT_IMPULSE_Y;
       }
       if (Game.player.health <= 0) {
-        R.sfx['AOL_Die'].play();
+        App.playSfx('AOL_Die');
       }
       else {
-        R.sfx['AOL_Hurt'].play();
+        App.playSfx('AOL_Hurt');
       }
       
       // tell the entity it hurt us (e.g. fireballs will want to kill themselves)
@@ -150,6 +150,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       
       // start attack?
       if (Input.keyPressed.attack && !this.isAttacking) {
+        this.area.currentAttackSfx = App.playSfx('AOL_Sword');
         this.isAttacking = true;
         this.isCrouching = Input.keyDown.down && !this.isAirborne;
         if (this.isCrouching) { this.startAnimation('crouch-attack'); }
@@ -186,7 +187,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       
       // check for lava
       if (Game.player.health > 0 && this.tilesTouched[ Area.physicsTileTypes.LAVA ]) {
-        R.sfx['AOL_Die'].play();
+        App.playSfx('AOL_Die');
         Game.player.health = 0;
         this.playAnimation('hurt');
         //this.frozenTimer = 1000;

@@ -180,7 +180,7 @@ var Overworld = {
       if (tileIndex === this.terrainTypes.DESERT) { areaId = 'desert'; }
     }
     if (!areaId) { return false; }
-    //R.sfx['AOL_Battle'].play();
+    //App.playSfx('AOL_Battle');
     this.queueExit({ area: areaId, side: 'centre', encounter: encounter.type });
     return true;
   },

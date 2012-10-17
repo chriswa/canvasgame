@@ -20,7 +20,7 @@ R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
   update: function(dt) {
     if ( !this.hasPlayedSfx && dt > 0 ) {
       this.hasPlayedSfx = true;
-      R.sfx['AOL_Fairy'].play();
+      App.playSfx('AOL_Fairy');
     }
     this.advanceAnimation(dt);
   },

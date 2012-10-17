@@ -30,12 +30,14 @@ var Enemy = Object.extend(PhysicsSprite, {
       this.updateFixedStep     = this.updateWhenHurtFixedStep;
     }
     if (this.health <= 0) {
+      this.isStabbable = false;
+      
+      // callback
       this.onComplete();
-    }
-    
-    // sfx
-    if (this.health <= 0) {
-      R.sfx['AOL_Kill'].play();
+      
+      // sfx
+      if (this.area.currentAttackSfx) { this.area.currentAttackSfx.pause(); }
+      this.area.currentAttackSfx = App.playSfx('AOL_Kill');
     }
   },
   

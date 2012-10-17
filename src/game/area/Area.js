@@ -184,7 +184,6 @@ var Area = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getBackgroundTile(x, y);
-        //ctx.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         ctx.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
@@ -210,11 +209,9 @@ var Area = {
     Debug.drawRect(absHitbox, '#f00');
     var hitSomething = false;
     overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, function(e) { e.onStabbed(); hitSomething = true; }, function(e) { return e.getAbsHitbox(); });
-    if (hitSomething) {
-      R.sfx['AOL_Sword_Hit'].play();
-    }
-    else {
-      R.sfx['AOL_Sword'].play();
+    if (hitSomething && this.currentAttackSfx && this.currentAttackSfx.getAttribute('name') === 'AOL_Sword') {
+      this.currentAttackSfx.pause();
+      this.currentAttackSfx = App.playSfx('AOL_Sword_Hit');
     }
   },
 };

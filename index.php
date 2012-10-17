@@ -71,8 +71,8 @@
 <head>
 
 <title>canvasgame</title>
-<link rel="Shortcut Icon" href="index.ico" />
-<link rel="stylesheet" href="index.css" type="text/css" media="all" />
+<link rel="Shortcut Icon" href="html/index.ico" />
+<link rel="stylesheet" href="html/index.css" type="text/css" media="all" />
 
 </head>
 <body>
@@ -130,7 +130,12 @@
 </canvas>
 
 <!-- INSTRUCTIONS -->
-<div class="default-on mobile-off" style="display: none;">
+<div class="default-on mobile-off" style="display: none; width: 660px; margin: auto;">
+  
+  <div style="width: 660px; position: absolute; text-align: right; margin-top: -8px;" onclick="App.audioEnabled = !App.audioEnabled; $(this).children().toggle();">
+    <img src="html/speaker_on.png">
+    <img src="html/speaker_off.png" style="display: none;">
+  </div>
 
   <table style="margin: auto; margin-top: 10px;" id="controls">
     <tr><th><span>Move &amp; Crouch</span></th><td><span>arrow keys</span></td></tr>

@@ -209,9 +209,5 @@ var Area = {
     Debug.drawRect(absHitbox, '#f00');
     var hitSomething = false;
     overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, function(e) { e.onStabbed(); hitSomething = true; }, function(e) { return e.getAbsHitbox(); });
-    if (hitSomething && this.currentAttackSfx && this.currentAttackSfx.getAttribute('name') === 'AOL_Sword') {
-      this.currentAttackSfx.pause();
-      this.currentAttackSfx = App.playSfx('AOL_Sword_Hit');
-    }
   },
 };

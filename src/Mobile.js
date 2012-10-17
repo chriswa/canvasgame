@@ -76,6 +76,10 @@ var Mobile = {
           var x = touch.pageX;
           var y = touch.pageY;
           
+          if (y < 50 && x < 50) {
+            Debug.showStatusbar = !Debug.showStatusbar;
+          }
+          
           if (y < 50 && x > 275 && x < 325) {
             isHoldingReset = true;
             if (!refreshButtonTimeout) {

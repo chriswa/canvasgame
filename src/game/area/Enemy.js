@@ -3,6 +3,7 @@ var Enemy = Object.extend(PhysicsSprite, {
   health: 2,
   isDangerous: true,
   isStabbable: true,
+  invincibleTimer: 0,
   
   init: function(area) {
     PhysicsSprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
@@ -21,29 +22,47 @@ var Enemy = Object.extend(PhysicsSprite, {
   
   onStabbed: function() {
     if (!this.isStabbable) { return; }
-    if (!this.isHurt) {
+    if (this.invincibleTimer <= 0) {
       this.health--;
       this.isHurt              = true;
-      this.origUpdateFixedStep = this.updateFixedStep;
-      this.origImageModifier   = this.imageModifier;
       this.hurtTimer           = 0;
-      this.updateFixedStep     = this.updateWhenHurtFixedStep;
-    }
-    if (this.health <= 0) {
-      this.isStabbable = false;
+      this.invincibleTimer     = 16;
       
-      // callback
-      this.onComplete();
+      if (this.updateFixedStep !== this.updateWhenHurtFixedStep) {
+        this.origImageModifier   = this.imageModifier;
+        this.origUpdateFixedStep = this.updateFixedStep;
+        this.updateFixedStep     = this.updateWhenHurtFixedStep;
+      }
       
-      // sfx
-      if (this.area.currentAttackSfx) { this.area.currentAttackSfx.pause(); }
-      this.area.currentAttackSfx = App.playSfx('AOL_Kill');
+      // death!
+      if (this.health <= 0) {
+        
+        // no spurious onStabbed calls
+        this.isStabbable = false;
+        
+        // callback for game flags
+        this.onComplete();
+        
+        // explosion particle(s)
+        this.area.spawn(EnemyDeathExplosion, { x: this.x, y: this.y });
+        
+        // sfx
+        if (this.area.currentAttackSfx) { this.area.currentAttackSfx.pause(); }
+        this.area.currentAttackSfx = App.playSfx('AOL_Kill');
+      }
+      else {
+        if (this.area.currentAttackSfx && this.area.currentAttackSfx.getAttribute('name') === 'AOL_Sword') {
+          this.area.currentAttackSfx.pause();
+          this.area.currentAttackSfx = App.playSfx('AOL_Sword_Hit');
+        }
+      }
     }
   },
   
   onPlayerCollision: function(playerSprite) {},
   
   updateWhenHurtFixedStep: function() {
+    this.invincibleTimer--;
     this.hurtTimer++;
     if (this.hurtTimer > 16 && this.health <= 0) {
       this.kill();

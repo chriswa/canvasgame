@@ -1,6 +1,8 @@
 // App object (singleton)
 var App = {
   
+  audioEnabled: true,
+  
   isRunning: false,
   fpsRender: null,
   
@@ -155,6 +157,7 @@ var App = {
   },
   
   playSfx: function(filename) {
+    if (!this.audioEnabled) { return; }
     var samples = R.sfx[filename];
     for (var i = 0; i < samples.length; i += 1) {
       var sample = samples[i];

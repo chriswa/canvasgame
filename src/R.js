@@ -28,7 +28,7 @@ var R = {
     'AOL_Deflect':          3,
     'AOL_Hurt':             1,
     'AOL_LevelUp_GetItem':  1,
-    'AOL_Sword':            1,
+    'AOL_Sword':            3,
     'AOL_Sword_Hit':        3,
     
     // enemies

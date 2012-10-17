@@ -6,7 +6,7 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   behaviour: 'canopy',
   canopyY: 0,
   
-  CANOPY_SPEED:  1.5,
+  CANOPY_SPEED:  1,
   DESCEND_SPEED: 4,
   ASCEND_SPEED:  2,
   
@@ -24,7 +24,7 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
     
     if (this.behaviour === 'canopy') {
       var distanceToPlayer = this.area.playerSprite.x - this.x;
-      if (Math.abs(distanceToPlayer) < 100 && Math.random() < 0.01) {
+      if (Math.abs(distanceToPlayer) < 80 && Math.random() < 0.02) {
         this.behaviour = 'descend';
         this.startAnimation('attack');
       }

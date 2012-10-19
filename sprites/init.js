@@ -82,13 +82,17 @@ var Preview = {
           var slice = slices[animFrame.slice];
           
           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          this.ctx.fillStyle = '#' + Math.floor(Math.random()*16777215).toString(16);
           
           this.ctx.drawImage(this.texture, slice[0], slice[1], slice[2], slice[3], 50 - animFrame.x,        25 + animFrame.y,   slice[2], slice[3]);
+          this.ctx.fillRect(50, 25, 1, 1);
           
           this.ctx.translate(this.canvas.width + 0.5, 0.5); // XXX: ?
           this.ctx.scale(-1, 1);
           this.ctx.drawImage(this.texture, slice[0], slice[1], slice[2], slice[3], 0.5 + 50 + animFrame.x_flipped - slice[2], -0.5 + 150 + animFrame.y, slice[2], slice[3]);
           this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+          
+          this.ctx.fillRect(this.canvas.width - 50, 150, 1, 1);
         }
       }
     }

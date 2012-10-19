@@ -31,10 +31,22 @@ var Game = {
     this.overworld.reset();
     this.setState('overworld');
     
-    // TESTING
-    //this.queueExit({area: 'northeast_tunnel', x: 690, y: 352}); // octorok and bot
-    //this.queueExit({area: 'testbotspawner'});
-    //this.overworld.startEncounter({type: 'blob'}, this.overworld.terrainTypes.FOREST); // encounter
+    // DEVELOPMENT: allow query string to start an area or encounter
+    var R = App.requestQuery;
+    if (R['area']) {
+      var exitObject = { area: R['area'] };
+      if (R['side']) { exitObject['side'] = R['side']; }
+      if (R['x'])    { exitObject['x']    = parseInt(R['x'], 10); }
+      if (R['y'])    { exitObject['y']    = parseInt(R['y'], 10); }
+      this.queueExit(exitObject);
+    }
+    if (R['encounter']) {
+      var terrainType     = this.overworld.terrainTypes[R['encounter']] || this.overworld.terrainTypes['FOREST'];
+      var encounterObject = { type: 'blob' };
+      if (R['type']) { encounterObject['type'] = R['type']; }
+      console.log(encounterObject);
+      this.overworld.startEncounter(encounterObject, terrainType);
+    }
   },
   
   // update and render are delegated to the active state
@@ -218,8 +230,10 @@ var Game = {
       };
     }
     
-    // if the player is going between two areas, simply queue the transition now
-    if (this.activeState === this.states.area && exitObject.area !== 'overworld') {
+    // if the player is moving between two areas (or overworld spots!), do the transition instantly
+    var isInArea   = this.activeState === this.states.area;
+    var isDestArea = exitObject.area !== 'overworld';
+    if (isInArea === isDestArea) {
       doTransition();
     }
     

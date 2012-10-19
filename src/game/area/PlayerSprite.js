@@ -4,13 +4,13 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // ====
   
   // important
-  hitbox:  { x1: 4, y1: 4, x2: 28, y2: 64, STANDING_Y1: 4, CROUCHING_Y1: 14 }, // sprite is 0, 0, 32, 64
+  hitbox:  { x1: -12, y1: -30, x2: 12, y2: 30, STANDING_Y1: -30, CROUCHING_Y1: -20 }, // sprite is 0, 0, 32, 64
   facing:  1, // values: 1, -1
   
   // timers
   hurtTimer:        0,
   invincibleTimer:  0,
-  frozenTimer:     0,
+  frozenTimer:      0,
   fallStopwatch:    9999,
   
   // flags
@@ -64,8 +64,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     if (entity.isBlockable) {
       
       // shield must be at the right height to block something
-      var shieldCenterY = this.y   + (this.isCrouching ? 52 : 16);
-      var entityCenterY = entity.y + (entity.hitbox.y1 + entity.hitbox.y2) / 2;
+      var shieldCenterY = this.y   + (this.isCrouching ? 18 : -18);
+      var entityCenterY = entity.y;
       var shieldAtRightHeight = (Math.abs(entityCenterY - shieldCenterY) < 20);
       
       // if you're facing towards its midpoint, you can deflect it
@@ -334,7 +334,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       return;
     }
     if (this.frameIndex === 1) {
-      var absHitbox = { x1: this.x + this.facing*32, y1: this.y + 18, x2: this.x + 32 + this.facing*32, y2: this.y + 28 };
+      var absHitbox = { x1: this.x + this.facing*24 - 24, y1: this.y - 16, x2: this.x + this.facing*24 + 24, y2: this.y - 6 };
       this.area.handlePlayerAttack(absHitbox);
     }
   },
@@ -345,7 +345,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       return;
     }
     if (this.frameIndex === 0) {
-      var absHitbox = { x1: this.x + this.facing*32, y1: this.y + 38, x2: this.x + 32 + this.facing*32, y2: this.y + 48 };
+      var absHitbox = { x1: this.x + this.facing*24 - 24, y1: this.y + 4, x2: this.x + this.facing*24 + 24, y2: this.y + 14 };
       this.area.handlePlayerAttack(absHitbox);
     }
   },
@@ -390,7 +390,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     this.collectEntityHandle = entity;
     entity.isCollectable = false;
     entity.x = this.x;
-    entity.y = this.y - 32;
+    entity.y = this.y - 66 + entity.hitbox.y2;
     
     this.playAnimation('collect');
     this.advanceAnimation( 0 );

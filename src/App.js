@@ -12,7 +12,16 @@ var App = {
   SIM_STEP_HARD_LIMIT: 1000 * 3/30, // for playability, each render frame will not advance simulation time more than this (avoiding the death spiral!)
   simTime: null,
   
+  requestQuery: {},
+  
   init: function() {
+    
+    // parse query string
+    var queryElements = document.location.search.substring(1).split(/\&/);
+    for (var i in queryElements) {
+      var nameVal = queryElements[i].split(/\=/);
+      this.requestQuery[unescape(nameVal[0])] = unescape(nameVal[1]);
+    }	
     
     // initialize video globals
     canvas = document.getElementById('canvas');

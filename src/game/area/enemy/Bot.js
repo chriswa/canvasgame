@@ -1,6 +1,6 @@
 R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   
-  hitbox: { x1: 4, y1: 0, x2: 28, y2: 24 },
+  hitbox: { x1: -12, y1: -12, x2: 12, y2: 12 },
   
   health: 2,
   

@@ -1,5 +1,5 @@
 R.spawnableSprites['HeartContainer'] = Object.extend(Enemy, {
-  hitbox: { x1: 0, y1: 0, x2: 32, y2: 32 },
+  hitbox: { x1: -16, y1: -16, x2: 16, y2: 16 },
   
   isCollectable: true,
   isStabbable:   false,

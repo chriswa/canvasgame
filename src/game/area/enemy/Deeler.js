@@ -1,7 +1,7 @@
 R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   
   FIXED_STEP: 1000 / 60,
-  hitbox: { x1: 0, y1: 0, x2: 32, y2: 32 },
+  hitbox: { x1: -16, y1: -16, x2: 16, y2: 16 },
   
   behaviour: 'canopy',
   canopyY: 0,
@@ -59,9 +59,9 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
     
     if (this.y > this.canopyY) {
     
-      var x = Math.round( this.x + 16 );
-      var y = Math.round( this.y );
-      var canopyY = Math.round( this.canopyY );
+      var x = Math.round( this.x );
+      var y = Math.round( this.y - 16 );
+      var canopyY = Math.round( this.canopyY - 16 );
       
       ctx.strokeStyle = '#fff';
       ctx.lineWidth   = 2;

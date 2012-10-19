@@ -195,10 +195,11 @@ $(function() {
   
   // when add button is clicked, open slice dialog to pick a new one
   $('#add').click(function() {
-    sliceSelector(function(slice) {
+    sliceSelector(function(sliceName) {
+      var slice = slices[sliceName];
       console.log(slice);
-      var duration = thisAnimationFrames.length ? thisAnimationFrames[thisAnimationFrames.length-1].duration : 5;
-      thisAnimationFrames.push({ x: 0, x_flipped: 0, y: 0, duration: duration, slice: slice });
+      var duration = thisAnimationFrames.length ? thisAnimationFrames[thisAnimationFrames.length-1].duration : 167;
+      thisAnimationFrames.push({ x: Math.floor(slice[2] / 2), x_flipped: Math.floor(slice[2] / 2), y: Math.floor(-slice[3] / 2), duration: duration, slice: sliceName });
       redrawAll();
     });
   });

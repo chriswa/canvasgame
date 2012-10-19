@@ -1,5 +1,5 @@
 R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
-  hitbox: { x1: 4, y1: 0, x2: 28, y2: 32 },
+  hitbox: { x1: -12, y1: -16, x2: 12, y2: 16 },
   
   behaviourTimer: 0,
   direction: 0,
@@ -33,7 +33,7 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     }
     if (this.behaviourTimer === 130) {
       if (this.isReadyToFire) {
-        this.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x + 6, y: this.y + 6, vx: facing * this.FIREBALL_SPEED });
+        this.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x, y: this.y, vx: facing * this.FIREBALL_SPEED });
       }
     }
     if (this.behaviourTimer === 160) {

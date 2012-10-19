@@ -1,0 +1,4 @@
+build
+tools/sprites
+src/js
+src/maps

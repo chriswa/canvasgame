@@ -20,15 +20,9 @@
       </Directory>
     
     TODO:
-      - sfx
-        - hitting an enemy which is already "hurt" and will ignore the hit shouldn't cause a sword_hit noise
-        - multiple samples need to be available for some sfx (e.g. sword, sword_hit, enemydeath, deflect)
-        - sword_hit doesn't need to play if enemydeath plays
-      - Sprite coord improvements: maybe x,y should be the centre and all my animation slice offsets should be moved. sprite hitboxes could have width, height, left, right, top, bottom methods
-        - Sprite.drawOffsetX, Sprite.drawOffsetY
-        - all Sprite-derived classes should be changed to have a hitbox that centres on (0,0) [or the origin should be at (middle, feet)?] and use drawOffsets!
       - getting hit from the back should push you forward, not backward
       - fix keys (tie them to dungeons with a uniqueId on the entrance area?)
+        - exit objects on overworld should specify dungeon since ultimately I'll need to know in order to pay the dungeon theme song
       - elevators!
       - audio on android? (or at least don't waste time downloading the samples)
       - make it work in ie?

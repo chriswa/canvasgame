@@ -1,25 +1,16 @@
-R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
+R.spawnableSprites['ProjHammer'] = Object.extend(Enemy, {
   hitbox: { x1: -8, y1: -8, x2: 8, y2: 8 },
   
-  isBlockable: true,
   isStabbable: false,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'fireball');
+    Enemy.init.call(this, area, 'proj-hammer');
     this.x  = spawn.x;
     this.y  = spawn.y;
     this.vx = spawn.vx;
-    this.vy = 0;
+    this.vy = spawn.vy;
     this.ax = 0;
-    this.ay = 0;
-  },
-  
-  onBlock: function() {
-    this.isDangerous = false;
-    this.isBlockable = false;
-    this.vx = -this.vx * 0.7;
-    this.vy = -4;
-    this.ay = 0.6;
+    this.ay = this.gravity;
   },
   
   onPlayerCollision: function(playerSprite) {
@@ -27,7 +18,6 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
   },
   
   updateFixedStep: function() {
-    this.behaviourTimer++;
     
     // translate without tile collisions
     this.vx += this.ax;
@@ -39,11 +29,6 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
     
     // kill when out of bounds
     if (this.x < -8 || this.y < -8 || this.x > this.area.maxX + 8 || this.y > this.area.maxY + 8 ) {
-      this.kill();
-    }
-    
-    // kill when off screen
-    if ( this.getStandardizedOffscreenDist() > 10 ) {
       this.kill();
     }
     

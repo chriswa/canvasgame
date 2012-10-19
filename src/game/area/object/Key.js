@@ -1,12 +1,10 @@
 R.spawnableSprites['Key'] = Object.extend(Enemy, {
-  hitbox: { x1: 0, y1: 0, x2: 16, y2: 30 },
+  hitbox: { x1: -8, y1: -15, x2: 8, y2: 15 },
   
   isDangerous: false,
   
   init: function(area, spawn) {
     Enemy.init.call(this, area, 'key');
-    this.x += 8;
-    this.y += 2;
   },
   
   onStabbed: function() {

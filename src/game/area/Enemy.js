@@ -44,7 +44,13 @@ var Enemy = Object.extend(PhysicsSprite, {
         this.onComplete();
         
         // explosion particle(s)
-        this.area.spawn(EnemyDeathExplosion, { x: this.x, y: this.y });
+        if (this.hitbox.y2 - this.hitbox.y1 > 48) {
+          this.area.spawn(EnemyDeathExplosion, { x: this.x, y: this.y - 16 });
+          this.area.spawn(EnemyDeathExplosion, { x: this.x, y: this.y + 16 });
+        }
+        else {
+          this.area.spawn(EnemyDeathExplosion, { x: this.x, y: this.y });
+        }
         
         // sfx
         if (this.area.currentAttackSfx) { this.area.currentAttackSfx.pause(); }

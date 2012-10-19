@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="64" height="15" tilewidth="32" tileheight="32" backgroundcolor="#5c94fc">
+ <tileset firstgid="1" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="../art/physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="tiles-new" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles-new.png" trans="5c94fc" width="512" height="320"/>
+ </tileset>
+ <layer name="background" width="64" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxzZGBgcBzFdMVOQOw8CNyB7iaXQeCOUUx6vA2mtDSajoYnpnc6o0U6Gk2bo3gUU46DhoiZpJobDMXY5AKR2El4zAgkwXxCZgbi0Uus3UkEzChCwslQXIQFJyKxk3CoQVeHjtHNJ2RmIh69xNqdRMCM4lE8ojEASB4Zog==
+  </data>
+ </layer>
+ <layer name="physics" width="64" height="15" opacity="0.74">
+  <data encoding="base64" compression="zlib">
+   eJztzyEOAEAIA0H4/6fP4DGISzqTrG2gCgAAMvX04/7FbdtG4v+t6B6/sACR
+  </data>
+ </layer>
+ <objectgroup name="objects" width="64" height="15">
+  <object name="overworld" type="exit" x="2048" y="0" width="64" height="480"/>
+  <object name="overworld" type="exit" x="-64" y="0" width="64" height="480"/>
+  <object name="DesertFireballGenerator" type="spawn" x="1024" y="-32" width="32" height="32"/>
+  <object name="DesertFireballGenerator" type="hardSpawn" x="1056" y="-32" width="32" height="32"/>
+  <object name="Bot" type="hardSpawn" x="192" y="384" width="32" height="32"/>
+  <object name="Bot" type="hardSpawn" x="1824" y="384" width="32" height="32"/>
+  <object name="Bot" type="hardSpawn" x="352" y="384" width="32" height="32"/>
+  <object name="Bot" type="hardSpawn" x="1664" y="384" width="32" height="32"/>
+ </objectgroup>
+</map>

@@ -1,0 +1,17 @@
+http://localhost/dropbox/canvasgame/index.php
+http://dl.dropbox.com/u/29873255/canvasgame/index.html
+http://dl.dropbox.com/u/29873255/aolbackup/index.html
+http://jsfiddle.net/XxnuD/3/
+
+reference URLs for tiled:
+  https://github.com/bjorn/tiled/wiki/Automapping
+  https://github.com/bjorn/tiled/wiki/Keyboard-Shortcuts
+
+httpd.conf code:
+  Alias /dropbox "C:/Users/Chris/Dropbox/Public/"
+  <Directory "C:/Users/Chris/Dropbox/Public/">
+    Options Indexes FollowSymLinks
+    AllowOverride all
+    Order allow,deny
+    Allow from all
+  </Directory>

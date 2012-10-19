@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteRule ^cms/$ /dropbox/canvasgame/tools/sprites/index.php [L]
+RewriteRule ^pack/[^/]+/$ /dropbox/canvasgame/tools/sprites/pack.php [L]
+RewriteRule ^cms/[^/]+/$ /dropbox/canvasgame/tools/sprites/texture.php [L]
+RewriteRule ^cms/[^/]+/[^/]+/$ /dropbox/canvasgame/tools/sprites/character.php [L]
+RewriteRule ^cms/[^/]+/[^/]+/[^/]+/$ /dropbox/canvasgame/tools/sprites/animation.php [L]

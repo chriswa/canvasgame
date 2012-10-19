@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32" backgroundcolor="#3cbcfc">
+ <tileset firstgid="1" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="../art/physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="tiles-new" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles-new.png" trans="5c94fc" width="512" height="320"/>
+ </tileset>
+ <layer name="background" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxzZGBgcBzFFGEnIHYeBO4YjBgUNi6DwB2DBYcCcQgWtiOaOIwfisRH1gNTm0JlnDrIMQA6sFV6
+  </data>
+ </layer>
+ <layer name="physics" width="20" height="15" opacity="0.74">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjAIIYBzkGAARgAAp
+  </data>
+ </layer>
+ <objectgroup name="objects" width="20" height="15">
+  <object name="overworld" type="exit" x="640" y="0" width="64" height="480"/>
+  <object name="overworld" type="exit" x="-64" y="0" width="64" height="480"/>
+ </objectgroup>
+</map>

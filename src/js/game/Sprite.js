@@ -62,10 +62,10 @@ var Sprite = {
     var t = this.texture[this.imageModifier];
     
     if (this.imageModifier & R.IMG_FLIPX) {
-      ctx.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - ox, y + frame.y - oy, slice[2], slice[3]);
+      GFX.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - ox, y + frame.y - oy, slice[2], slice[3]);
     }
     else {
-      ctx.drawImage(t, slice[0], slice[1], slice[2], slice[3], x - frame.x - ox, y + frame.y - oy, slice[2], slice[3]);
+      GFX.drawImage(t, slice[0], slice[1], slice[2], slice[3], x - frame.x - ox, y + frame.y - oy, slice[2], slice[3]);
     }
   },
   

@@ -32,18 +32,17 @@ var Game = {
     this.setState('overworld');
     
     // DEVELOPMENT: allow query string to start an area or encounter
-    var R = App.requestQuery;
-    if (R['area']) {
-      var exitObject = { area: R['area'] };
-      if (R['side']) { exitObject['side'] = R['side']; }
-      if (R['x'])    { exitObject['x']    = parseInt(R['x'], 10); }
-      if (R['y'])    { exitObject['y']    = parseInt(R['y'], 10); }
+    if (REQUEST['area']) {
+      var exitObject = { area: REQUEST['area'] };
+      if (REQUEST['side']) { exitObject['side'] = REQUEST['side']; }
+      if (REQUEST['x'])    { exitObject['x']    = parseInt(REQUEST['x'], 10); }
+      if (REQUEST['y'])    { exitObject['y']    = parseInt(REQUEST['y'], 10); }
       this.queueExit(exitObject);
     }
-    if (R['encounter']) {
-      var terrainType     = this.overworld.terrainTypes[R['encounter']] || this.overworld.terrainTypes['FOREST'];
+    if (REQUEST['encounter']) {
+      var terrainType     = this.overworld.terrainTypes[REQUEST['encounter']] || this.overworld.terrainTypes['FOREST'];
       var encounterObject = { type: 'blob' };
-      if (R['type']) { encounterObject['type'] = R['type']; }
+      if (REQUEST['type']) { encounterObject['type'] = REQUEST['type']; }
       console.log(encounterObject);
       this.overworld.startEncounter(encounterObject, terrainType);
     }
@@ -157,9 +156,9 @@ var Game = {
           // render destination
           if (this.newArea) { this.newArea.render(); } else { Game.overworld.render(); }
         }
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvas.width, (canvas.height/2) * h);
-        ctx.fillRect(0, canvas.height - (canvas.height/2) * h, canvas.width, (canvas.height/2) * h);
+        GFX.fillStyle = '#000';
+        GFX.fillRect(0, 0, CANVAS.width, (CANVAS.height/2) * h);
+        GFX.fillRect(0, CANVAS.height - (CANVAS.height/2) * h, CANVAS.width, (CANVAS.height/2) * h);
       }
     }
     

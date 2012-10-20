@@ -21,7 +21,7 @@ var AreaHUD = {
     
     // draw extra lives
     //for (var i = 0; i < p.lives; i++) {
-    //  App.blitSliceByFilename('extralife.png', canvas.width - 16 - (5 + 20 * i), 5);
+    //  App.blitSliceByFilename('extralife.png', CANVAS.width - 16 - (5 + 20 * i), 5);
     //}
   },
 };

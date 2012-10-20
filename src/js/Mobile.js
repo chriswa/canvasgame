@@ -4,7 +4,7 @@ var Mobile = {
   
   render: function() {},
   
-  init: function(callback, force) {
+  init: function(force) {
     
     // mobile device support?
     this.isMobile = ('ontouchstart' in window) || force;
@@ -31,38 +31,38 @@ var Mobile = {
       this.render = function() {
         renderAge++;
         
-        ctx.globalAlpha = 0.5;
-        ctx.strokeStyle = '#fff';
+        GFX.globalAlpha = 0.5;
+        GFX.strokeStyle = '#fff';
         
         // draw dpad
         // up
-        ctx.fillStyle = wasPressing.up ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(50+0.5, 250+0.5); ctx.lineTo(50+0.5, 200+0.5); ctx.lineTo(100+0.5, 200+0.5); ctx.lineTo(100+0.5, 250+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
+        GFX.fillStyle = wasPressing.up ? '#fff' : '#000';
+        GFX.beginPath(); GFX.moveTo(75+0.5, 275+0.5); GFX.lineTo(50+0.5, 250+0.5); GFX.lineTo(50+0.5, 200+0.5); GFX.lineTo(100+0.5, 200+0.5); GFX.lineTo(100+0.5, 250+0.5); GFX.lineTo(75+0.5, 275+0.5); GFX.fill(); GFX.stroke();
         // down
-        ctx.fillStyle = wasPressing.down ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(50+0.5, 300+0.5); ctx.lineTo(50+0.5, 350+0.5); ctx.lineTo(100+0.5, 350+0.5); ctx.lineTo(100+0.5, 300+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
+        GFX.fillStyle = wasPressing.down ? '#fff' : '#000';
+        GFX.beginPath(); GFX.moveTo(75+0.5, 275+0.5); GFX.lineTo(50+0.5, 300+0.5); GFX.lineTo(50+0.5, 350+0.5); GFX.lineTo(100+0.5, 350+0.5); GFX.lineTo(100+0.5, 300+0.5); GFX.lineTo(75+0.5, 275+0.5); GFX.fill(); GFX.stroke();
         // left
-        ctx.fillStyle = wasPressing.left ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(50+0.5, 250+0.5); ctx.lineTo(0+0.5, 250+0.5); ctx.lineTo(0+0.5, 300+0.5); ctx.lineTo(50+0.5, 300+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
+        GFX.fillStyle = wasPressing.left ? '#fff' : '#000';
+        GFX.beginPath(); GFX.moveTo(75+0.5, 275+0.5); GFX.lineTo(50+0.5, 250+0.5); GFX.lineTo(0+0.5, 250+0.5); GFX.lineTo(0+0.5, 300+0.5); GFX.lineTo(50+0.5, 300+0.5); GFX.lineTo(75+0.5, 275+0.5); GFX.fill(); GFX.stroke();
         // right
-        ctx.fillStyle = wasPressing.right ? '#fff' : '#000';
-        ctx.beginPath(); ctx.moveTo(75+0.5, 275+0.5); ctx.lineTo(100+0.5, 250+0.5); ctx.lineTo(150+0.5, 250+0.5); ctx.lineTo(150+0.5, 300+0.5); ctx.lineTo(100+0.5, 300+0.5); ctx.lineTo(75+0.5, 275+0.5); ctx.fill(); ctx.stroke();
+        GFX.fillStyle = wasPressing.right ? '#fff' : '#000';
+        GFX.beginPath(); GFX.moveTo(75+0.5, 275+0.5); GFX.lineTo(100+0.5, 250+0.5); GFX.lineTo(150+0.5, 250+0.5); GFX.lineTo(150+0.5, 300+0.5); GFX.lineTo(100+0.5, 300+0.5); GFX.lineTo(75+0.5, 275+0.5); GFX.fill(); GFX.stroke();
         
         // draw attack/jump buttons
         // attack
-        ctx.fillStyle = wasPressing.attack ? '#fff' : '#000';
-        ctx.beginPath(); ctx.arc(550, 240, 40, 0, Math.PI*2, true); ctx.fill(); ctx.stroke();
+        GFX.fillStyle = wasPressing.attack ? '#fff' : '#000';
+        GFX.beginPath(); GFX.arc(550, 240, 40, 0, Math.PI*2, true); GFX.fill(); GFX.stroke();
         // jump
-        ctx.fillStyle = wasPressing.jump ? '#fff' : '#000';
-        ctx.beginPath(); ctx.arc(480, 310, 40, 0, Math.PI*2, true); ctx.fill(); ctx.stroke();
+        GFX.fillStyle = wasPressing.jump ? '#fff' : '#000';
+        GFX.beginPath(); GFX.arc(480, 310, 40, 0, Math.PI*2, true); GFX.fill(); GFX.stroke();
         
-        ctx.fillStyle = '#fff';
-        ctx.font      = 'bold 10px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText("attack", 550, 240 + 3);
-        ctx.fillText("jump", 480, 310 + 3);
+        GFX.fillStyle = '#fff';
+        GFX.font      = 'bold 10px sans-serif';
+        GFX.textAlign = 'center';
+        GFX.fillText("attack", 550, 240 + 3);
+        GFX.fillText("jump", 480, 310 + 3);
         
-        ctx.globalAlpha = 1;
+        GFX.globalAlpha = 1;
         
       };
 
@@ -117,7 +117,5 @@ var Mobile = {
       document.addEventListener('touchend', multitoucher);
       
     }
-    
-    callback();
   }
 };

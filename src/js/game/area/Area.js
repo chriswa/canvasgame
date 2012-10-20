@@ -32,6 +32,9 @@ var Area = {
   age: 0,
   
   init: function(exitObject, sideHintFromLastExit) {
+    this.getPhysicsTile    = this.getPhysicsTile.bind(this);
+    this.getBackgroundTile = this.getBackgroundTile.bind(this);
+    
     this.areaId        = exitObject.area;
     
     this.areaData      = R.areas[this.areaId];
@@ -153,8 +156,8 @@ var Area = {
     var py = Math.round(this.playerSprite.y);
     
     // center camera on playerSprite
-    this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - canvas.width  / 2)), this.cols * this.tileSize - canvas.width));
-    this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py + 32 - canvas.height / 2)), this.rows * this.tileSize - canvas.height));
+    this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - CANVAS.width  / 2)), this.cols * this.tileSize - CANVAS.width));
+    this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py + 32 - CANVAS.height / 2)), this.rows * this.tileSize - CANVAS.height));
     
     // provide standardized aabb for game logic to provide identical gameplay on devices with different display sizes
     var stdW = 640;
@@ -165,17 +168,26 @@ var Area = {
     this.stdY2 = this.stdY1 + stdH;
   },
   render: function() {
+    
+    // clear screen
+    GFX.fillStyle = this.areaData.bgColour;
+    GFX.fillRect(0, 0, CANVAS.width, CANVAS.height);
+    
+    // blit background tiles
+    renderTiles(CANVAS, GFX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getBackgroundTile, this.tileImg, this.tileImgCols)
+    
+    /*
     var ts = this.tileSize;
     
     // clear screen
-    ctx.fillStyle = this.areaData.bgColour;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    GFX.fillStyle = this.areaData.bgColour;
+    GFX.fillRect(0, 0, CANVAS.width, CANVAS.height);
     
     // find background tiles overlapping canvas
     var leftCol   = Math.max(Math.floor(this.renderOffsetX / ts), 0);
-    var rightCol  = Math.min(Math.ceil((this.renderOffsetX + canvas.width) / ts), this.cols);
+    var rightCol  = Math.min(Math.ceil((this.renderOffsetX + CANVAS.width) / ts), this.cols);
     var topRow    = Math.max(Math.floor(this.renderOffsetY / ts), 0);
-    var bottomRow = Math.min(Math.ceil((this.renderOffsetY + canvas.height) / ts), this.rows);
+    var bottomRow = Math.min(Math.ceil((this.renderOffsetY + CANVAS.height) / ts), this.rows);
     
     // blit background tiles
     var tx, ty, tileIndex;
@@ -184,11 +196,12 @@ var Area = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getBackgroundTile(x, y);
-        ctx.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        GFX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
       ty += ts;
     }
+    */
     
     // render all entities
     this.allGroup.render(this.renderOffsetX, this.renderOffsetY);

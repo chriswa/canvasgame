@@ -46,7 +46,7 @@ var Debug = {
     })
     
     // clicking on the canvas teleports you to that point
-    $(canvas).click(function(e) {
+    $(CANVAS).click(function(e) {
       if (Debug.clickToTeleport) {
         var x = e.pageX - $(this).offset().left;
         var y = e.pageY - $(this).offset().top;
@@ -92,10 +92,10 @@ var Debug = {
   render: function() {
     if (Game.area) {
       _.each(this.shapesToDraw, function(shape) {
-        ctx.strokeStyle = shape.colour;
+        GFX.strokeStyle = shape.colour;
         if (shape.type === 'rect') {
           var rect = shape.rect;
-          ctx.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
+          GFX.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
         }
       });
     }
@@ -113,16 +113,16 @@ var Debug = {
   },
   
   renderStatusbar: function() {
-    var statusbarTop = Mobile.isMobile ? 0 : canvas.height - 10;
+    var statusbarTop = Mobile.isMobile ? 0 : CANVAS.height - 10;
     
-    ctx.fillStyle = '#333';
-    ctx.fillRect(0, statusbarTop, canvas.width, 10);
-    ctx.font      = 'bold 10px monospace';
-    ctx.textAlign = 'left';
+    GFX.fillStyle = '#333';
+    GFX.fillRect(0, statusbarTop, CANVAS.width, 10);
+    GFX.font      = 'bold 10px monospace';
+    GFX.textAlign = 'left';
     
     _.each(this.statusTextToDraw, function(value) {
-      ctx.fillStyle = value.colour;
-      ctx.fillText(value.text, value.column * 6, statusbarTop + 9);
+      GFX.fillStyle = value.colour;
+      GFX.fillText(value.text, value.column * 6, statusbarTop + 9);
     });
     this.statusTextToDraw = [];
   },

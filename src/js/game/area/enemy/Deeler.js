@@ -63,13 +63,13 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
       var y = Math.round( this.y - 16 );
       var canopyY = Math.round( this.canopyY - 16 );
       
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth   = 2;
-      ctx.beginPath();
-      ctx.moveTo( x - ox, canopyY - oy );
-      ctx.lineTo( x - ox, y - oy );
-      ctx.stroke();
-      ctx.lineWidth = 1;
+      GFX.strokeStyle = '#fff';
+      GFX.lineWidth   = 2;
+      GFX.beginPath();
+      GFX.moveTo( x - ox, canopyY - oy );
+      GFX.lineTo( x - ox, y - oy );
+      GFX.stroke();
+      GFX.lineWidth = 1;
     }
   },
   

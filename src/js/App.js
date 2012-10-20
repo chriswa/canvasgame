@@ -12,29 +12,39 @@ var App = {
   SIM_STEP_HARD_LIMIT: 1000 * 3/30, // for playability, each render frame will not advance simulation time more than this (avoiding the death spiral!)
   simTime: null,
   
-  requestQuery: {},
-  
-  init: function() {
+  init: function(isProduction) {
     
-    // parse query string
-    var queryElements = document.location.search.substring(1).split(/\&/);
-    for (var i in queryElements) {
-      var nameVal = queryElements[i].split(/\=/);
-      this.requestQuery[unescape(nameVal[0])] = unescape(nameVal[1]);
-    }	
+    // show/hide dom elements
+    {
+      // toggle default elements
+      $('#static-loading').hide();
+      $('.default-on').show();
+      
+      // toggle elements for production/development mode
+      if (isProduction) {
+        Debug.showStatusbar = false;
+        $('.production-toggle').toggle();
+      }
+      else {
+        $('.development-toggle').toggle();
+      }
+      
+      // toggle mobile-unfriendly elements off in mobile mode
+      if (Mobile.isMobile) { $('.mobile-off').hide(); }
+    }
     
     // initialize video globals
-    canvas = document.getElementById('canvas');
-    canvas.onselectstart = function () { return false; } // prevent text selection on doubleclick
-    ctx    = canvas.getContext('2d');
-    //ctx.imageSmoothingEnabled = false;
+    CANVAS = document.getElementById('canvas');
+    CANVAS.onselectstart = function () { return false; } // prevent text selection on doubleclick
+    GFX    = CANVAS.getContext('2d');
+    //GFX.imageSmoothingEnabled = false;
     
     // show loading screen
     this.drawTextScreen('Loading...', '#ccc', '#fff');
     
     // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
     $(window).blur(function() { App.pause(); });
-    $(canvas).click(function() { App.start(); });
+    $(CANVAS).click(function() { App.start(); });
     if (Mobile.isMobile) {
       $(window).focus(function() { App.start(); });
     }
@@ -117,7 +127,7 @@ var App = {
     
     // loop!
     if (Debug.updateLoop === 'requestAnimationFrame') {
-      window.requestAnimationFrame( this.updateLoop.bind(this), canvas );
+      window.requestAnimationFrame( this.updateLoop.bind(this), CANVAS );
     }
     else if (Debug.updateLoop === 'aggressive') {
       if (!this.recursionCount) { this.recursionCount = 0; }
@@ -132,29 +142,29 @@ var App = {
 
   //
   paintScreen: function(colour) {
-    ctx.fillStyle = colour;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    GFX.fillStyle = colour;
+    GFX.fillRect(0, 0, CANVAS.width, CANVAS.height);
   },
   
   // 
   drawPausedScreen: function() {
     this.paintScreen('rgba(0, 0, 0, 0.5)')
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    ctx.beginPath();
-    ctx.moveTo(canvas.width * 0.40, canvas.height * 0.35);
-    ctx.lineTo(canvas.width * 0.60, canvas.height * 0.50);
-    ctx.lineTo(canvas.width * 0.40, canvas.height * 0.65);
-    ctx.fill();
+    GFX.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    GFX.beginPath();
+    GFX.moveTo(CANVAS.width * 0.40, CANVAS.height * 0.35);
+    GFX.lineTo(CANVAS.width * 0.60, CANVAS.height * 0.50);
+    GFX.lineTo(CANVAS.width * 0.40, CANVAS.height * 0.65);
+    GFX.fill();
   },
   
   drawTextScreen: function(text, colour, backgroundColour) {
     colour           = colour           || '#900';
     backgroundColour = backgroundColour || '#000';
     this.paintScreen(backgroundColour);
-    ctx.font      = 'bold 50px sans-serif';
-    ctx.fillStyle = colour;
-    ctx.textAlign = 'center';
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 16);
+    GFX.font      = 'bold 50px sans-serif';
+    GFX.fillStyle = colour;
+    GFX.textAlign = 'center';
+    GFX.fillText(text, CANVAS.width / 2, CANVAS.height / 2 + 16);
   },
   
   blitSliceByFilename: function(sliceFilename, x, y, w, h) {
@@ -162,7 +172,7 @@ var App = {
     var textureName = slice[4];
     if (!w) { w = slice[2]; }
     if (!h) { h = slice[3]; }
-    ctx.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
+    GFX.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
   },
   
   playSfx: function(filename) {

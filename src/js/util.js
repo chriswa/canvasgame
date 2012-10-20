@@ -110,10 +110,43 @@ function sign(value) {
 }
 
 //
+function loadQueryString() {
+  var params = {};
+  var queryElements = document.location.search.substring(1).split(/\&/);
+  for (var i in queryElements) {
+    var nameVal = queryElements[i].split(/\=/);
+    params[unescape(nameVal[0])] = unescape(nameVal[1]);
+  }
+  return params;
+}
+
+//
 function showme() {
   var args = Array.prototype.slice.call(arguments, 0);
   console.log(args);
   //console.trace();
+}
+
+//
+function renderTiles(canvas, ctx, cols, rows, renderOffsetX, renderOffsetY, ts, getTile, tileImg, tileImgCols) {
+  // find background tiles overlapping canvas
+  var leftCol   = Math.max(Math.floor(renderOffsetX / ts), 0);
+  var rightCol  = Math.min(Math.ceil((renderOffsetX + canvas.width) / ts), cols);
+  var topRow    = Math.max(Math.floor(renderOffsetY / ts), 0);
+  var bottomRow = Math.min(Math.ceil((renderOffsetY + canvas.height) / ts), rows);
+  
+  // blit background tiles
+  var tx, ty, tileIndex;
+  ty = Math.round(topRow * ts - renderOffsetY);
+  for (var y = topRow; y < bottomRow; y++) {
+    tx = Math.round(leftCol * ts - renderOffsetX);
+    for (var x = leftCol; x < rightCol; x++) {
+      tileIndex = getTile(x, y);
+      GFX.drawImage(tileImg, ts * (tileIndex % tileImgCols), ts * Math.floor(tileIndex / tileImgCols), ts, ts, tx, ty, ts, ts);
+      tx += ts;
+    }
+    ty += ts;
+  }
 }
 
 // checks AABB overlaps

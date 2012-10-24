@@ -59,8 +59,7 @@ if (!Object.create) {
 
 // Object.build is Object.create, plus an init(...) call
 // adapted from http://stackoverflow.com/a/6571266
-Object.build = function(o) {
-  var initArgs = Array.prototype.slice.call(arguments, 1);
+Object.buildArgs = function(o, initArgs) {
   function F() {
     if ((typeof o.init === 'function')) {
       o.init.apply(this, initArgs);
@@ -68,7 +67,11 @@ Object.build = function(o) {
   }
   F.prototype = o;
   return new F();
-}
+};
+
+Object.build = function(o) {
+  return Object.buildArgs(o, Array.prototype.slice.call(arguments, 1))
+};
 
 // Object.extend is Object.create, which then has properties merged into it
 Object.extend = function(BaseClass, properties) {

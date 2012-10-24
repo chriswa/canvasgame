@@ -1,10 +1,9 @@
 var Input = Object.extend(FiniteStateMachine, {
   
-  // NOTE: this FSM calls update, render, onkeydown, onkeyup, and onscreeninput on its activeState
+  // NOTE: this FSM calls update, render, onkeydown, onkeyup, and ontouch on its activeState
   
-  // track keyDowns at all times so we can ignore automatic key repeats
-  keyDown: {},
-  currentTouches: [],
+  keyDown: {}, // track keyDowns at all times so we can ignore automatic key repeats, as well as provide the current keyboard state during state transitions
+  currentTouches: [], // provide the current screen input state during state transitions
   isMouseDown: false,
   
   // system keys that App wants events for (App.onSystemKeyPress)
@@ -25,14 +24,19 @@ var Input = Object.extend(FiniteStateMachine, {
   
   //
   init: function() {
-    this.setState(this.noop);
+    // set initial state
+    this.setState(this.none);
+    
+    // set up all global input handlers
     window.onkeydown = this.onkeydown.bind(this);
     window.onkeyup   = this.onkeyup.bind(this);
-    var ontouch = this.ontouch.bind(this);
+    var ontouch      = this.ontouch.bind(this);
+    var ontouchend   = this.ontouchend.bind(this);
     if ('ontouchstart' in window) {
-      document.addEventListener('touchmove', ontouch);
       document.addEventListener('touchstart', ontouch);
-      document.addEventListener('touchend', ontouch);
+      document.addEventListener('touchmove', ontouch);
+      document.addEventListener('touchend', ontouchend);
+      document.addEventListener('touchcancel', ontouchend);
     }
     else {
       document.addEventListener('mousedown', this.onmousedown.bind(this));
@@ -62,7 +66,6 @@ var Input = Object.extend(FiniteStateMachine, {
       
       // update our representation of the state of the keyboard
       Input.keyDown[keyCode] = true;
-      //Input._keyJustPressed[keyCode] = true;
       
       // report event to activeState
       this.activeState.onkeydown(keyCode);
@@ -99,13 +102,18 @@ var Input = Object.extend(FiniteStateMachine, {
     this.onscreeninput([{x: e.pageX - $('#canvas')[0].offsetLeft, y: e.pageY - $('#canvas')[0].offsetTop}]);
   },
   onmousemove: function(e) {
+    var coords = {x: e.pageX - $('#canvas')[0].offsetLeft, y: e.pageY - $('#canvas')[0].offsetTop};
     if (this.isMouseDown) {
-      this.onscreeninput([{x: e.pageX - $('#canvas')[0].offsetLeft, y: e.pageY - $('#canvas')[0].offsetTop}]);
+      this.onscreeninput([coords]);
+    }
+    else {
+      this.activeState.onmouseover(coords);
     }
   },
   onmouseup: function(e) {
     this.isMouseDown = false;
     this.onscreeninput([]);
+    this.onscreenup({x: e.pageX - $('#canvas')[0].offsetLeft, y: e.pageY - $('#canvas')[0].offsetTop});
   },
   
   // gather touch information and pass it along to our generalized mouse/touch handler
@@ -116,6 +124,13 @@ var Input = Object.extend(FiniteStateMachine, {
       touches.push({ x: touch.pageX, y: touch.pageY });
     }
     this.onscreeninput(touches);
+  },
+  
+  ontouchend: function(event) {
+    if (this.currentTouches.length > 0) {
+      this.onscreenup(this.currentTouches[0]);
+    }
+    this.ontouch(event);
   },
   
   // generalized mouse/touch handler (XXX: also handles Debug buttons)
@@ -149,7 +164,12 @@ var Input = Object.extend(FiniteStateMachine, {
     this.currentTouches = touches;
     
     // report event to activeState
-    this.activeState.onscreeninput(touches);
+    this.activeState.ontouch(touches);
+  },
+  
+  //
+  onscreenup: function(coords) {
+    this.activeState.ontouchup(coords);
   }
   
 });

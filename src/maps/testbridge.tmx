@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32" backgroundcolor="#6294fc">
+<map version="1.0" orientation="orthogonal" width="56" height="15" tilewidth="32" tileheight="32" backgroundcolor="#6294fc">
  <tileset firstgid="1" name="physicsTiles" tilewidth="32" tileheight="32">
   <image source="../art/physicsTiles.png" width="256" height="256"/>
  </tileset>
- <tileset firstgid="65" name="tiles-new" tilewidth="32" tileheight="32">
-  <image source="../../res/tileset/tiles-new.png" trans="5c94fc" width="512" height="320"/>
+ <tileset firstgid="65" name="tiles4" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles4.png" trans="5c94fc" width="512" height="512"/>
  </tileset>
- <layer name="background" width="20" height="15">
+ <layer name="background" width="56" height="15">
   <data encoding="base64" compression="zlib">
-   eJxzZGBgcBzFdMFOQOw8CNwxmDEojFwGgTsGGvsSqa4IitH5hWh0LJK6Ihz6QGqLBzkGAAIUVtc=
+   eJztk90JgDAMhLtadQTBERzBEZxbCy2IeM2lTQv+HNyDDbn0S9G5d2s4PHXuDX1j4czafKvZLRhq3uLr8tGt1OptZuAnKewdcSzASQy3B66RtPfzt89wSHwsd+m7o372XjV8d33sfLRviaMnn9V8Tc7P9/OxfOj/y+Vd69ocJt+Cb41mz1Fdm2OVL3mLZs9RXZtjlZ+8A6aSovQ=
   </data>
  </layer>
- <layer name="physics" width="20" height="15" opacity="0.74">
+ <layer name="physics" width="56" height="15" opacity="0.74">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjAIIYBzkGAARgAAp
+   eJxjYBgFo2AUjALaAEYceKgBXP4g5L+B8jex7iKknlz/USveyTV/oP1Hrjmj/hv136j/Rv031P3HBMXEiuOSJ9UcapkPwwBtLwF/
   </data>
  </layer>
- <objectgroup name="objects" width="20" height="15">
-  <object name="overworld" type="exit" x="640" y="0" width="64" height="480">
+ <objectgroup name="objects" width="56" height="15">
+  <object name="overworld" type="exit" x="1792" y="0" width="64" height="480">
    <properties>
     <property name="x" value="66"/>
     <property name="y" value="31"/>
@@ -29,5 +29,6 @@
     <property name="y" value="29"/>
    </properties>
   </object>
+  <object name="BubbleGenerator" type="spawn" x="896" y="-32" width="32" height="32"/>
  </objectgroup>
 </map>

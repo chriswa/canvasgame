@@ -12,6 +12,7 @@ var R = {
     'tiles-old.png':       null,
     'tiles3.png':          null,
     'tiles-new.png':       null,
+    'tiles4.png':          null,
   },
   
   //

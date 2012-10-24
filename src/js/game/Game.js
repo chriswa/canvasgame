@@ -10,10 +10,29 @@ var Game = Object.extend(FiniteStateMachine, {
   init: function() {
     this.overworld = Object.build(Overworld);
     this.areaHud = Object.build(AreaHUD);
-    this.reset();
+    this.setState(this.states.mainmenu)
+    
+    // DEVELOPMENT: allow query string to start an area or encounter
+    if (App.request['area']) {
+      this.startNewGame();
+      var exitObject = { area: App.request['area'] };
+      if (App.request['side']) { exitObject['side'] = App.request['side']; }
+      if (App.request['x'])    { exitObject['x']    = parseInt(App.request['x'], 10); }
+      if (App.request['y'])    { exitObject['y']    = parseInt(App.request['y'], 10); }
+      this.queueExit(exitObject);
+    }
+    if (App.request['encounter']) {
+      this.startNewGame();
+      var terrainType     = this.overworld.terrainTypes[App.request['encounter']] || this.overworld.terrainTypes['FOREST'];
+      var encounterObject = { type: 'blob' };
+      if (App.request['type']) { encounterObject['type'] = App.request['type']; }
+      this.overworld.startEncounter(encounterObject, terrainType);
+    }
+    
+    // in case App fires a render before an update, make sure our activeState has been set (this seems to only happen on my netbook)
+    this.updateState();
   },
-  reset: function() {
-    //this.player = Object.build(Player);
+  startNewGame: function() {
     this.player = {
       lives:        3,
       health:       6,
@@ -26,27 +45,6 @@ var Game = Object.extend(FiniteStateMachine, {
     };
     this.overworld.reset();
     this.setState(this.states.overworld);
-    
-    // DEVELOPMENT: allow query string to start an area or encounter
-    if (App.request['mainmenu']) {
-      this.setState(this.states.mainmenu)
-    }
-    if (App.request['area']) {
-      var exitObject = { area: App.request['area'] };
-      if (App.request['side']) { exitObject['side'] = App.request['side']; }
-      if (App.request['x'])    { exitObject['x']    = parseInt(App.request['x'], 10); }
-      if (App.request['y'])    { exitObject['y']    = parseInt(App.request['y'], 10); }
-      this.queueExit(exitObject);
-    }
-    if (App.request['encounter']) {
-      var terrainType     = this.overworld.terrainTypes[App.request['encounter']] || this.overworld.terrainTypes['FOREST'];
-      var encounterObject = { type: 'blob' };
-      if (App.request['type']) { encounterObject['type'] = App.request['type']; }
-      console.log(encounterObject);
-      this.overworld.startEncounter(encounterObject, terrainType);
-    }
-    
-    this.updateState(); // in case App fires a render before an update, make sure our activeState has been set
   },
   
   // update and render are delegated to the active state
@@ -66,6 +64,9 @@ var Game = Object.extend(FiniteStateMachine, {
       onenterstate: function() {
         this.mainmenu = Object.build(MainMenu);
       },
+      onleavestate: function() {
+        this.mainmenu.destroy();
+      },
       update: function(dt) {
         this.mainmenu.update(dt);
       },
@@ -81,7 +82,7 @@ var Game = Object.extend(FiniteStateMachine, {
         Input.setState(Input.gamepad);
       },
       onleavestate: function() {
-        Input.setState(Input.noop);
+        Input.setState(Input.none);
       },
       update: function(dt) {
         Game.area.update(dt);
@@ -101,7 +102,7 @@ var Game = Object.extend(FiniteStateMachine, {
         Input.setState(Input.gamepad);
       },
       onleavestate: function() {
-        Input.setState(Input.noop);
+        Input.setState(Input.none);
       },
       update: function(dt) {
         Game.overworld.update(dt);
@@ -129,7 +130,7 @@ var Game = Object.extend(FiniteStateMachine, {
         App.playSfx('AOL_Ganon_Laugh');
         App.drawTextScreen("GAME OVER");
         setTimeout(function() {
-          Game.reset();
+          Game.setState(Game.states.mainmenu);
         }, 3000);
       }
     },
@@ -140,6 +141,10 @@ var Game = Object.extend(FiniteStateMachine, {
         this.stateTimer     = 0;
         this.nextTransition = nextTransition;
         this.newArea        = newArea;
+        Input.setState(Input.gamepad);
+      },
+      onleavestate: function() {
+        Input.setState(Input.none);
       },
       update: function(dt) {
         this.stateTimer += dt;

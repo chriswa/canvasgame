@@ -1,10 +1,14 @@
-Input.noop = {
+Input.none = {
   
   onkeydown: function(keycode) {
   },
   onkeyup: function(keycode) {
   },
-  onscreeninput: function(touches) {
+  ontouch: function(touches) {
+  },
+  ontouchup: function(coords) {
+  },
+  onmouseover: function(coords) {
   },
   update: function(dt) {
   },

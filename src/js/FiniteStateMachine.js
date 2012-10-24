@@ -15,6 +15,7 @@ var FiniteStateMachine = {
   setState: function(newState) {
     if (this.activeState && this.activeState.onleavestate) { this.activeState.onleavestate(newState); }
     this.activeState = newState;
+    if (!newState) { console.trace(); }
     if (this.activeState.onenterstate) { this.activeState.onenterstate.apply(this.activeState, Array.prototype.slice.call(arguments, 1)); }
   }
   

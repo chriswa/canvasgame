@@ -7,7 +7,7 @@ Input.gamepad = {
     this.held    = {};
     this.pressed = {};
     
-    this.onscreeninput(Input.currentTouches);
+    this.ontouch(Input.currentTouches);
     _.each(Object.keys(Input.keyDown), function(keycode) {
       Input.gamepad.onkeydown(keycode);
     });
@@ -46,7 +46,10 @@ Input.gamepad = {
   onkeyup: function(keycode) {
     delete Input.gamepad.held[ this.keys[keycode] ];
   },
-  onscreeninput: function(touches) {
+  onmouseover: function(coords) {
+  },
+  ontouch: function(touches) {
+    if (!App.isMobile) { return; }
     var isPressing = {};
     for (var i = 0; i < touches.length; i++) {
       var x = touches[i].x;
@@ -71,6 +74,8 @@ Input.gamepad = {
       }
     }
     Input.gamepad.held = isPressing;
+  },
+  ontouchup: function(coords) {
   },
   update: function(dt) {
     Input.gamepad.pressed    = this._buttonsJustPressed;

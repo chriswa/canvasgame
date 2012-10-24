@@ -60,13 +60,14 @@
   // include all src/js/*.js files
   $jsFiles = array_unique(array_merge(
     
-    // load files which define base classes first!
+    // sloppy dependancy ordering
     array(
       'src/js/util.js',
       'src/js/FiniteStateMachine.js',
       'src/js/input/Input.js',
       'src/js/R.js',
       'src/js/game/Sprite.js',
+      'src/js/game/Game.js',
       'src/js/game/area/PhysicsSprite.js',
       'src/js/game/area/Enemy.js',
     ),

@@ -113,7 +113,7 @@ var Debug = {
   },
   
   renderStatusbar: function() {
-    var statusbarTop = Mobile.isMobile ? 0 : CANVAS.height - 10;
+    var statusbarTop = App.isMobile ? 0 : CANVAS.height - 10;
     
     GFX.fillStyle = '#333';
     GFX.fillRect(0, statusbarTop, CANVAS.width, 10);

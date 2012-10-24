@@ -2,6 +2,9 @@
 
 require_once "init.php";
 
+set_time_limit(300);
+//ini_set('max_execution_time', 300);
+
 $textureName = array_pop($PATH);
 
 $texture = &$DATA['textures'][$textureName];

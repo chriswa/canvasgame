@@ -1,9 +1,23 @@
+
+NEW
+  - improve FSM?
+      ?fsm.event('update'); // -> fsm.activeState.update();
+      ?fsm.event('keydown', 123); // -> fsm.activeState.keydown(123);
+  - input state for a menu
+    - after setting the state, calling code should register buttons for both rendering and hittesting (position, size, text, colour, etc).
+      - don't bother with keyboard support.
+  - maybe App should own canvas and gfx instead of having globals?
+  - Enemy should publish a member variable isHurt when hurt, not prevent all actions (HammerThrower still wants to move and throw)
+  - get rid of all "super" methods in Sprite-derived classes
+    - or not! look at all the stuff that Sprite.init does!
+
 TODO
   - getting hit from the back should push you forward, not backward
   - fix keys (tie them to dungeons with a uniqueId on the entrance area?)
     - exit objects on overworld should specify dungeon since ultimately I'll need to know in order to pay the dungeon theme song
   - elevators!
-  - audio on android? (or at least don't waste time downloading the samples)
+  - audio on android?
   - make it work in ie?
+  
 ONGOING:
   - add a couple more enemies (especially bigger enemies -- more satisfying to kill!)

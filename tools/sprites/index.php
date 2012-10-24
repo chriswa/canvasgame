@@ -61,7 +61,7 @@
         (directory is missing)
       <?php else: ?>
         
-        <a href="../pack/<?php echo $textureName ?>/" class="imgcontainer" style="display: inline-block;"><img src="../textures/<?php echo $textureName ?>.png" height=70></a>
+        <a href="../pack/<?php echo $textureName ?>/" class="imgcontainer" style="display: inline-block;"><img src="<?php echo "$BASEURL/../../built/spritesheets/$textureName" ?>.png" height=70></a>
         
         <?php $arbitrarySlice = array_value(array_value(array_value(first(array_value(first(@$texture['characters']), 'animations')), 'frames'), 0), 'slice') ?>
         <?php if ($arbitrarySlice): ?>

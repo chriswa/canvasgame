@@ -3,7 +3,8 @@ var Enemy = Object.extend(PhysicsSprite, {
   health: 2,
   isDangerous: true,
   isStabbable: true,
-  invincibleTimer: 0,
+  invincibleTimer: 0, // this prevents multiple updates from the same attack from hurting us more than once
+  hurtTimer: 0,
   
   init: function(area) {
     PhysicsSprite.init.apply(this, Array.prototype.slice.call(arguments, 0));

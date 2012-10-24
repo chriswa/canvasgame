@@ -1,7 +1,9 @@
 // App object (singleton)
 var App = {
   
+  isMobile: null,
   audioEnabled: true,
+  request: null,
   
   isRunning: false,
   fpsRender: null,
@@ -14,6 +16,24 @@ var App = {
   
   init: function(isProduction) {
     
+    // load request object from ?query=string
+    this.request = loadQueryString();
+    
+    // check if we're on mobile first, since we may need to resize canvas element
+    var forceMobile = this.request['mobile'];
+    this.isMobile = ('ontouchstart' in window) || forceMobile;
+    
+    // allow isProduction to be forced from query string
+    if (this.request['production'])  { isProduction = true; }
+    if (this.request['development']) { isProduction = false; }
+    
+    if (this.isMobile) {
+      // galaxy nexus is 598 x 360 (?)
+      $('#canvas').attr('width', 598).attr('height', 360).css({ border: 'none', margin: 0 });
+      // iphone 4 is 320 x 460
+      //$('#canvas').attr('width', 480).attr('height', 300).css({ border: 'none', margin: 0 });
+    }
+
     // show/hide dom elements
     {
       // toggle default elements
@@ -30,13 +50,13 @@ var App = {
       }
       
       // toggle mobile-unfriendly elements off in mobile mode
-      if (Mobile.isMobile) { $('.mobile-off').hide(); }
+      if (this.isMobile) { $('.mobile-off').hide(); }
     }
     
     // initialize video globals
     CANVAS = document.getElementById('canvas');
     CANVAS.onselectstart = function () { return false; } // prevent text selection on doubleclick
-    GFX    = CANVAS.getContext('2d');
+    GFX = CANVAS.getContext('2d');
     //GFX.imageSmoothingEnabled = false;
     
     // show loading screen
@@ -45,7 +65,7 @@ var App = {
     // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
     $(window).blur(function() { App.pause(); });
     $(CANVAS).click(function() { App.start(); });
-    if (Mobile.isMobile) {
+    if (this.isMobile) {
       $(window).focus(function() { App.start(); });
     }
     
@@ -92,7 +112,7 @@ var App = {
   },
   render: function() {
     Game.render();
-    Mobile.render();
+    Input.render();
     Debug.render();
   },
   
@@ -139,6 +159,17 @@ var App = {
       setTimeout(this.updateLoop.bind(this), 0);
     }
   },
+  
+  //
+  onSystemKeyPress: function(keyName) {
+    if (keyName === 'esc') { if (this.isRunning) { this.pause(); } else { this.start(); } }
+    if (keyName === '6') { this.stepAndPause(1000 * 1 / 60); }
+    if (keyName === '3') { this.stepAndPause(1000 * 1 / 30); }
+  },
+  
+  
+  
+  
 
   //
   paintScreen: function(colour) {

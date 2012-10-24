@@ -133,8 +133,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       }
       
       // player can always change their facing, even during an attack (except when hurt)
-      if      (Input.keyDown.left)  { this.facing = -1;  }
-      else if (Input.keyDown.right) { this.facing =  1; }
+      if      (Input.gamepad.held.left)  { this.facing = -1;  }
+      else if (Input.gamepad.held.right) { this.facing =  1; }
       
       // just landed from a jump/fall?
       if (this.isAirborne && this.touching.bottom) {
@@ -149,16 +149,16 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       }
       
       // start attack?
-      if (Input.keyPressed.attack && !this.isAttacking) {
+      if (Input.gamepad.pressed.attack && !this.isAttacking) {
         this.area.currentAttackSfx = App.playSfx('AOL_Sword');
         this.isAttacking = true;
-        this.isCrouching = Input.keyDown.down && !this.isAirborne;
+        this.isCrouching = Input.gamepad.held.down && !this.isAirborne;
         if (this.isCrouching) { this.startAnimation('crouch-attack'); }
         else                  { this.startAnimation('attack');        }
       }
       
       // try to jump?
-      if (Input.keyPressed.jump) {
+      if (Input.gamepad.pressed.jump) {
         this.tryToJump();
       }
       
@@ -238,7 +238,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     this.fallStopwatch = 0;
     
     // press down to crouch
-    this.isCrouching = Input.keyDown.down;
+    this.isCrouching = Input.gamepad.held.down;
     if (this.isCrouching) {
       
       // if below a certain threshold of speed, full stop
@@ -257,11 +257,11 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.hitbox.y1 = this.hitbox.STANDING_Y1;
       
       // walk left or right
-      if (Input.keyDown.left && !Input.keyDown.right) {
+      if (Input.gamepad.held.left && !Input.gamepad.held.right) {
         this.ax = -this.WALK_ACCEL;
         this.playAnimation('walk');
       }
-      else if (Input.keyDown.right && !Input.keyDown.left) {
+      else if (Input.gamepad.held.right && !Input.gamepad.held.left) {
         this.ax = this.WALK_ACCEL;
         this.playAnimation('walk');
       }
@@ -290,17 +290,17 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.ay -= Math.abs(this.vx) * this.JUMP_X_BOOST;
       
       // hold jump for higher jump (diminished gravity during ascent)
-      if (Input.keyDown.jump) {
+      if (Input.gamepad.held.jump) {
         this.ay -= this.JUMP_HOLD_BOOST;
       }
       
     }
     
     // air control (x)
-    if (Input.keyDown.left && !Input.keyDown.right) {
+    if (Input.gamepad.held.left && !Input.gamepad.held.right) {
       this.ax = -this.AIR_ACCEL;
     }
-    else if (Input.keyDown.right && !Input.keyDown.left) {
+    else if (Input.gamepad.held.right && !Input.gamepad.held.left) {
       this.ax = this.AIR_ACCEL;
     }
     

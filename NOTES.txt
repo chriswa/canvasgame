@@ -5,7 +5,7 @@ src/js
 ------
 
 main.js
-  Loads the query string and initializes App
+  Initializes App and loads the ?query=string
 
 util.js
   Various polyfills and global functions
@@ -103,5 +103,5 @@ Alias /dropbox "C:/Users/Chris/Dropbox/Public/"
   Order allow,deny
   Allow from all
 </Directory>
-
 # also, turn on mod_rewrite
+

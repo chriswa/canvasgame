@@ -63,6 +63,8 @@
     // load files which define base classes first!
     array(
       'src/js/util.js',
+      'src/js/FiniteStateMachine.js',
+      'src/js/input/Input.js',
       'src/js/R.js',
       'src/js/game/Sprite.js',
       'src/js/game/area/PhysicsSprite.js',

@@ -1,15 +1,11 @@
 // Game object (singleton)
-var Game = {
+var Game = Object.extend(FiniteStateMachine, {
   overworld: null,
   area: null,
   areaHud: null,
   player: null,
   
   exitObject: null,
-  
-  activeState: null,
-  
-  state: null,
   
   init: function() {
     this.overworld = Object.build(Overworld);
@@ -29,23 +25,28 @@ var Game = {
       lastArea:     undefined // for respawning after player death
     };
     this.overworld.reset();
-    this.setState('overworld');
+    this.setState(this.states.overworld);
     
     // DEVELOPMENT: allow query string to start an area or encounter
-    if (REQUEST['area']) {
-      var exitObject = { area: REQUEST['area'] };
-      if (REQUEST['side']) { exitObject['side'] = REQUEST['side']; }
-      if (REQUEST['x'])    { exitObject['x']    = parseInt(REQUEST['x'], 10); }
-      if (REQUEST['y'])    { exitObject['y']    = parseInt(REQUEST['y'], 10); }
+    if (App.request['mainmenu']) {
+      this.setState(this.states.mainmenu)
+    }
+    if (App.request['area']) {
+      var exitObject = { area: App.request['area'] };
+      if (App.request['side']) { exitObject['side'] = App.request['side']; }
+      if (App.request['x'])    { exitObject['x']    = parseInt(App.request['x'], 10); }
+      if (App.request['y'])    { exitObject['y']    = parseInt(App.request['y'], 10); }
       this.queueExit(exitObject);
     }
-    if (REQUEST['encounter']) {
-      var terrainType     = this.overworld.terrainTypes[REQUEST['encounter']] || this.overworld.terrainTypes['FOREST'];
+    if (App.request['encounter']) {
+      var terrainType     = this.overworld.terrainTypes[App.request['encounter']] || this.overworld.terrainTypes['FOREST'];
       var encounterObject = { type: 'blob' };
-      if (REQUEST['type']) { encounterObject['type'] = REQUEST['type']; }
+      if (App.request['type']) { encounterObject['type'] = App.request['type']; }
       console.log(encounterObject);
       this.overworld.startEncounter(encounterObject, terrainType);
     }
+    
+    this.updateState(); // in case App fires a render before an update, make sure our activeState has been set
   },
   
   // update and render are delegated to the active state
@@ -57,30 +58,30 @@ var Game = {
     if (this.activeState.render) { this.activeState.render(); }
   },
   
-  // FSM
-  queuedState: undefined,
-  queueState: function(newState) {
-    this.queuedState = Array.prototype.slice.call(arguments, 0);
-  },
-  updateState: function() {
-    if (this.queuedState) {
-      this.setState.apply(this, this.queuedState);
-      this.queuedState = undefined;
-    }
-  },
-  setState: function(newState) {
-    if (this.activeState && this.activeState.onleavestate) { this.activeState.onleavestate(newState); }
-    this.activeState = this.states[newState];
-    if (this.activeState.onenterstate) { this.activeState.onenterstate.apply(this.activeState, Array.prototype.slice.call(arguments, 1)); }
-  },
-  
   // FSM states
   states: {
+    
+    //
+    mainmenu: {
+      onenterstate: function() {
+        this.mainmenu = Object.build(MainMenu);
+      },
+      update: function(dt) {
+        this.mainmenu.update(dt);
+      },
+      render: function() {
+        this.mainmenu.render();
+      }
+    },
     
     // 
     area: {
       onenterstate: function(newArea) {
         Game.area = newArea;
+        Input.setState(Input.gamepad);
+      },
+      onleavestate: function() {
+        Input.setState(Input.noop);
       },
       update: function(dt) {
         Game.area.update(dt);
@@ -97,6 +98,10 @@ var Game = {
         Game.overworld.player.finishMove();
         Game.overworld.updateCamera();
         Game.player.dungeonFlags = {};      // reset "oncePerDungeon" flags
+        Input.setState(Input.gamepad);
+      },
+      onleavestate: function() {
+        Input.setState(Input.noop);
       },
       update: function(dt) {
         Game.overworld.update(dt);
@@ -113,7 +118,7 @@ var Game = {
         this.newArea = newArea;
         App.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
         setTimeout(function() {
-          Game.setState('area', newArea);
+          Game.setState(Game.states.area, newArea);
         }, 1500);
       }
     },
@@ -169,14 +174,11 @@ var Game = {
     Game.player.lives -= 1;
     if (Game.player.lives > 0) {
       Game.player.health = Game.player.healthMax;
-      this.queueState('nextlife', Object.build(Area, Game.player.lastArea.exitObject, Game.player.lastArea.sideHint));
+      this.queueState(Game.states.nextlife, Object.build(Area, Game.player.lastArea.exitObject, Game.player.lastArea.sideHint));
     }
     else {
-      this.queueState('gameover');
+      this.queueState(Game.states.gameover);
     }
-  },
-  queueGameover: function() {
-    this.queueState('gameover');
   },
   
   queueExit: function(exitObject) {
@@ -198,7 +200,7 @@ var Game = {
       
       // prepare transition code
       doTransition = function() {
-        Game.queueState('overworld');
+        Game.queueState(Game.states.overworld);
       };
     }
     
@@ -225,7 +227,7 @@ var Game = {
       
       // prepare transition code
       doTransition = function() {
-        Game.queueState('area', newArea);
+        Game.queueState(Game.states.area, newArea);
       };
     }
     
@@ -247,9 +249,9 @@ var Game = {
       else {
         App.playSfx('AOL_Map');
       }
-      this.queueState('overworldWipe', doTransition, newArea);
+      this.queueState(Game.states.overworldWipe, doTransition, newArea);
     }
     
   }
   
-};
+});

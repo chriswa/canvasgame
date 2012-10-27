@@ -18,7 +18,13 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     Enemy.onStabbed.apply(this);
   },
   
-  updateFixedStep: function() {
+  updateFixedStep: function(dt) {
+    // update hurt timers, etc
+    if (this.isHurt) { this.updateWhenHurt(dt); }
+    
+    // do nothing while hurt
+    if (this.isHurt) { return; }
+    
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     

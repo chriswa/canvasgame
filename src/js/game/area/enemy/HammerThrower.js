@@ -19,12 +19,10 @@ R.spawnableSprites['HammerThrower'] = Object.extend(Enemy, {
     this.startAnimation('default');
   },
   
-  onStabbed: function() {
-    this.isReadyToFire = false;
-    Enemy.onStabbed.apply(this);
-  },
-  
-  updateFixedStep: function() {
+  updateFixedStep: function(dt) {
+    // update hurt timers, etc
+    if (this.isHurt) { this.updateWhenHurt(dt); }
+    
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     

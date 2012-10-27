@@ -16,7 +16,7 @@ var MainMenu = {
   },
   
   render: function() {
-    App.paintScreen('#000');
+    App.gfx.paintScreen('#000');
     this.drawText("Zeldesque", '#fff', '80px', -80);
 //    this.drawText("[ Play ]",        this.selectedOptionIndex === 0 ? '#ff9' : '#9ff', '30px', 30);
 //    this.drawText("[ Editor ]",      this.selectedOptionIndex === 1 ? '#ff9' : '#9ff', '30px', 80);
@@ -25,9 +25,9 @@ var MainMenu = {
   drawText: function(text, colour, size, y) {
     var midX = CANVAS.width / 2;
     var midY = CANVAS.height / 2;
-    GFX.font      = 'bold ' + size + ' sans-serif';
-    GFX.fillStyle = colour;
-    GFX.textAlign = 'center';
-    GFX.fillText(text, midX, midY + y);
+    CANVAS_CTX.font      = 'bold ' + size + ' sans-serif';
+    CANVAS_CTX.fillStyle = colour;
+    CANVAS_CTX.textAlign = 'center';
+    CANVAS_CTX.fillText(text, midX, midY + y);
   }
 };

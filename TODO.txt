@@ -1,21 +1,24 @@
-
-NEW
-  - input state for a menu
-    - after setting the state, calling code should register buttons for both rendering and hittesting (position, size, text, colour, etc).
-      - don't bother with keyboard support.
-  - maybe App should own canvas and gfx instead of having globals?
-  - App's graphics methods should exist in another object, or a sub-object. Maybe App.gfx?
-  - Enemy should publish a member variable isHurt when hurt, not prevent all actions (HammerThrower still wants to move and throw)
-  - get rid of all "super" methods in Sprite-derived classes
-    - or not! look at all the stuff that Sprite.init does!
-
 TODO
   - getting hit from the back should push you forward, not backward
+  - stabbing a wall should push you backwards (and make a continuous(!?) sfx)
   - fix keys (tie them to dungeons with a uniqueId on the entrance area?)
     - exit objects on overworld should specify 'dungeon' since ultimately I'll need to know in order to play the dungeon theme song -- i can use the entrance area's id as the dungeon id
   - elevators!
+  - fix bug where you can be reduced to 0 health while getting knocked back to the overworld
+
+CONSIDER
+  - get rid of all "super" methods in Sprite-derived classes
+    - or not! look at all the stuff that Sprite.init does!
   - audio on android?
   - make it work in ie?
-  
-ONGOING:
+
+EDITOR?
+  - don't support mobile! (more surface area to play with)
+  - use html elements for textfields etc
+  - hardcoded tile set, tile palette is off to the side
+  - create enemies from dropdown (R.spawnableSprites)
+  - button to instantly playtest
+  ? how will multiple maps and exits work?
+
+ONGOING
   - add a couple more enemies (especially bigger enemies -- more satisfying to kill!)

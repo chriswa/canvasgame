@@ -24,7 +24,12 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
     this.touching.bottom = false;
   },
   
-  updateFixedStep: function() {
+  updateFixedStep: function(dt) {
+    // update hurt timers, etc
+    if (this.isHurt) { this.updateWhenHurt(dt); }
+    
+    // do nothing while hurt
+    if (this.isHurt) { return; }
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }

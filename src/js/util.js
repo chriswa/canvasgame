@@ -145,7 +145,7 @@ function renderTiles(canvas, ctx, cols, rows, renderOffsetX, renderOffsetY, ts, 
     tx = Math.round(leftCol * ts - renderOffsetX);
     for (var x = leftCol; x < rightCol; x++) {
       tileIndex = getTile(x, y);
-      GFX.drawImage(tileImg, ts * (tileIndex % tileImgCols), ts * Math.floor(tileIndex / tileImgCols), ts, ts, tx, ty, ts, ts);
+      CANVAS_CTX.drawImage(tileImg, ts * (tileIndex % tileImgCols), ts * Math.floor(tileIndex / tileImgCols), ts, ts, tx, ty, ts, ts);
       tx += ts;
     }
     ty += ts;

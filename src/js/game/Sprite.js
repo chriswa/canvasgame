@@ -16,6 +16,11 @@ var Sprite = {
   vx: 0.0,
   vy: 0.0,
   
+  // support for fixed-step updates
+  FIXED_STEP: 1000 / 60,
+  simTime: 0,
+  age: 0,
+  
   drawOffsetX: 0,
   drawOffsetY: 0,
   
@@ -25,22 +30,15 @@ var Sprite = {
     this.setAnimationCharacter(characterName);
     this.startAnimation(_.keys(R.spriteCharacters[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state, ready to be rendered
     this.advanceAnimation(0);
-    
-    // support for updateFixedStep
-    if (this.updateFixedStep) {
-      if (!this.FIXED_STEP) {
-        this.FIXED_STEP = 1000 / 60;
-      }
-      this.simTime = 0;
-      this.age     = 0;
-      this.update = function(dt) {
-        this.simTime += dt;
-        while (this.simTime >= this.FIXED_STEP) {
-          this.updateFixedStep();
-          this.simTime -= this.FIXED_STEP;
-          this.age++;
-        }
-      }
+  },
+  
+  // support for fixed-step updates
+  update: function(dt) {
+    this.simTime += dt;
+    while (this.simTime >= this.FIXED_STEP) {
+      this.updateFixedStep(this.FIXED_STEP);
+      this.simTime -= this.FIXED_STEP;
+      this.age++;
     }
   },
   
@@ -62,10 +60,10 @@ var Sprite = {
     var t = this.texture[this.imageModifier];
     
     if (this.imageModifier & R.IMG_FLIPX) {
-      GFX.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - ox, y + frame.y - oy, slice[2], slice[3]);
+      CANVAS_CTX.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - ox, y + frame.y - oy, slice[2], slice[3]);
     }
     else {
-      GFX.drawImage(t, slice[0], slice[1], slice[2], slice[3], x - frame.x - ox, y + frame.y - oy, slice[2], slice[3]);
+      CANVAS_CTX.drawImage(t, slice[0], slice[1], slice[2], slice[3], x - frame.x - ox, y + frame.y - oy, slice[2], slice[3]);
     }
   },
   

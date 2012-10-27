@@ -56,11 +56,11 @@ var App = {
     // initialize video globals
     CANVAS = document.getElementById('canvas');
     CANVAS.onselectstart = function () { return false; } // prevent text selection on doubleclick
-    GFX = CANVAS.getContext('2d');
-    //GFX.imageSmoothingEnabled = false;
+    CANVAS_CTX = CANVAS.getContext('2d');
+    //CANVAS_CTX.imageSmoothingEnabled = false;
     
     // show loading screen
-    this.drawTextScreen('Loading...', '#ccc', '#fff');
+    App.gfx.drawTextScreen('Loading...', '#ccc', '#fff');
     
     // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
     $(window).blur(function() { App.pause(); });
@@ -93,7 +93,7 @@ var App = {
   pause: function() {
     if (this.isRunning) {
       this.isRunning = false;
-      this.drawPausedScreen();
+      App.gfx.drawPausedScreen();
     }
   },
   stepAndPause: function(dt) {
@@ -101,7 +101,7 @@ var App = {
     this.update(dt);
     this.simTime += dt;
     this.render();
-    this.drawPausedScreen();
+    App.gfx.drawPausedScreen();
   },
   
   // 
@@ -169,59 +169,63 @@ var App = {
   
   
   
-  
-
-  //
-  paintScreen: function(colour) {
-    GFX.fillStyle = colour;
-    GFX.fillRect(0, 0, CANVAS.width, CANVAS.height);
+  gfx: {
+    
+    //
+    paintScreen: function(colour) {
+      CANVAS_CTX.fillStyle = colour;
+      CANVAS_CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
+    },
+    
+    // 
+    drawPausedScreen: function() {
+      App.gfx.paintScreen('rgba(0, 0, 0, 0.5)')
+      CANVAS_CTX.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      CANVAS_CTX.beginPath();
+      CANVAS_CTX.moveTo(CANVAS.width * 0.40, CANVAS.height * 0.35);
+      CANVAS_CTX.lineTo(CANVAS.width * 0.60, CANVAS.height * 0.50);
+      CANVAS_CTX.lineTo(CANVAS.width * 0.40, CANVAS.height * 0.65);
+      CANVAS_CTX.fill();
+    },
+    
+    drawTextScreen: function(text, colour, backgroundColour) {
+      colour           = colour           || '#900';
+      backgroundColour = backgroundColour || '#000';
+      App.gfx.paintScreen(backgroundColour);
+      CANVAS_CTX.font      = 'bold 50px sans-serif';
+      CANVAS_CTX.fillStyle = colour;
+      CANVAS_CTX.textAlign = 'center';
+      CANVAS_CTX.fillText(text, CANVAS.width / 2, CANVAS.height / 2 + 16);
+    },
+    
+    blitSliceByFilename: function(sliceFilename, x, y, w, h) {
+      var slice = R.spriteSlicesByOriginalFilename[sliceFilename];
+      var textureName = slice[4];
+      if (!w) { w = slice[2]; }
+      if (!h) { h = slice[3]; }
+      CANVAS_CTX.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
+    },
+    
   },
   
-  // 
-  drawPausedScreen: function() {
-    this.paintScreen('rgba(0, 0, 0, 0.5)')
-    GFX.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    GFX.beginPath();
-    GFX.moveTo(CANVAS.width * 0.40, CANVAS.height * 0.35);
-    GFX.lineTo(CANVAS.width * 0.60, CANVAS.height * 0.50);
-    GFX.lineTo(CANVAS.width * 0.40, CANVAS.height * 0.65);
-    GFX.fill();
-  },
-  
-  drawTextScreen: function(text, colour, backgroundColour) {
-    colour           = colour           || '#900';
-    backgroundColour = backgroundColour || '#000';
-    this.paintScreen(backgroundColour);
-    GFX.font      = 'bold 50px sans-serif';
-    GFX.fillStyle = colour;
-    GFX.textAlign = 'center';
-    GFX.fillText(text, CANVAS.width / 2, CANVAS.height / 2 + 16);
-  },
-  
-  blitSliceByFilename: function(sliceFilename, x, y, w, h) {
-    var slice = R.spriteSlicesByOriginalFilename[sliceFilename];
-    var textureName = slice[4];
-    if (!w) { w = slice[2]; }
-    if (!h) { h = slice[3]; }
-    GFX.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
-  },
-  
-  playSfx: function(filename) {
-    if (!this.audioEnabled) { return; }
-    var samples = R.sfx[filename];
-    for (var i = 0; i < samples.length; i += 1) {
-      var sample = samples[i];
-      if (sample.paused || sample.ended) {
-        sample.currentTime = 0;
-        sample.play();
-        return sample;
+  sfx: {
+    play: function(filename) {
+      if (!App.audioEnabled) { return; }
+      var samples = R.sfx[filename];
+      for (var i = 0; i < samples.length; i += 1) {
+        var sample = samples[i];
+        if (sample.paused || sample.ended) {
+          sample.currentTime = 0;
+          sample.play();
+          return sample;
+        }
       }
+      samples[0].pause();
+      samples[0].currentTime = 0.1; // force the next line to seek!
+      samples[0].currentTime = 0;
+      samples[0].play();
+      return samples[0];
     }
-    samples[0].pause();
-    samples[0].currentTime = 0.1; // force the next line to seek!
-    samples[0].currentTime = 0;
-    samples[0].play();
-    return samples[0];
   }
   
 };

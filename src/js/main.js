@@ -1,7 +1,7 @@
 //console.log("Build took: " + BUILD_TIME_ELAPSED.toFixed(1) + "ms");
 
 // globals
-var CANVAS, GFX;
+var CANVAS, CANVAS_CTX;
 
 // init App
 window.onload = function() {

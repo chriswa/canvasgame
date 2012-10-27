@@ -66,13 +66,13 @@ Input.gui = {
         this.onclick = onclick;
       },
       render: function(controlState) {
-        GFX.fillStyle = { normal: '#333', hover: '#666', press: '#999' }[controlState];
-        GFX.fillRect(0.5+this.hitbox.x1, 0.5+this.hitbox.y1, this.hitbox.x2 - this.hitbox.x1, this.hitbox.y2 - this.hitbox.y1);
+        CANVAS_CTX.fillStyle = { normal: '#333', hover: '#666', press: '#999' }[controlState];
+        CANVAS_CTX.fillRect(0.5+this.hitbox.x1, 0.5+this.hitbox.y1, this.hitbox.x2 - this.hitbox.x1, this.hitbox.y2 - this.hitbox.y1);
         var textSizePx = 20;
-        GFX.font      = 'bold '+textSizePx+'px sans-serif';
-        GFX.fillStyle = '#fff';
-        GFX.textAlign = 'center';
-        GFX.fillText(this.label, (this.hitbox.x1 + this.hitbox.x2) / 2, (this.hitbox.y1 + this.hitbox.y2) / 2 + (textSizePx / 3));
+        CANVAS_CTX.font      = 'bold '+textSizePx+'px sans-serif';
+        CANVAS_CTX.fillStyle = '#fff';
+        CANVAS_CTX.textAlign = 'center';
+        CANVAS_CTX.fillText(this.label, (this.hitbox.x1 + this.hitbox.x2) / 2, (this.hitbox.y1 + this.hitbox.y2) / 2 + (textSizePx / 3));
       }
     }
   }

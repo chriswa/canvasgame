@@ -26,17 +26,14 @@ var Enemy = Object.extend(PhysicsSprite, {
     if (this.invincibleTimer <= 0) {
       this.health--;
       this.isHurt              = true;
-      this.hurtTimer           = 0;
-      this.invincibleTimer     = 16;
-      
-      if (this.updateFixedStep !== this.updateWhenHurtFixedStep) {
-        this.origImageModifier   = this.imageModifier;
-        this.origUpdateFixedStep = this.updateFixedStep;
-        this.updateFixedStep     = this.updateWhenHurtFixedStep;
-      }
+      this.hurtTimer           = 500;
+      this.invincibleTimer     = 250;
       
       // death!
       if (this.health <= 0) {
+        
+        // prevent all future actions
+        this.update = this.updateWhenHurt;
         
         // no spurious onStabbed calls
         this.isStabbable = false;
@@ -55,12 +52,12 @@ var Enemy = Object.extend(PhysicsSprite, {
         
         // sfx
         if (this.area.currentAttackSfx) { this.area.currentAttackSfx.pause(); }
-        this.area.currentAttackSfx = App.playSfx('AOL_Kill');
+        this.area.currentAttackSfx = App.sfx.play('AOL_Kill');
       }
       else {
         if (this.area.currentAttackSfx && this.area.currentAttackSfx.getAttribute('name') === 'AOL_Sword') {
           this.area.currentAttackSfx.pause();
-          this.area.currentAttackSfx = App.playSfx('AOL_Sword_Hit');
+          this.area.currentAttackSfx = App.sfx.play('AOL_Sword_Hit');
         }
       }
     }
@@ -68,34 +65,37 @@ var Enemy = Object.extend(PhysicsSprite, {
   
   onPlayerCollision: function(playerSprite) {},
   
-  updateWhenHurtFixedStep: function() {
-    this.invincibleTimer--;
-    this.hurtTimer++;
-    if (this.hurtTimer > 16 && this.health <= 0) {
+  updateWhenHurt: function(dt) {
+    this.invincibleTimer -= dt;
+    this.hurtTimer       -= dt;
+    if (this.hurtTimer <= 250 && this.health <= 0) {
       this.kill();
       return;
     }
-    if (this.hurtTimer > 32) {
-      this.isHurt            = false;
-      this.updateFixedStep   = this.origUpdateFixedStep;
-      this.imageModifier     = this.origImageModifier;
-      delete this.origUpdateFixedStep;
-      delete this.origImageModifier;
-      this.updateFixedStep();
+    if (this.hurtTimer <= 0) {
+      this.isHurt = false;
+      this.imageModifier &= ~(R.IMG_PINK | R.IMG_CYAN); // remove colouration while preserving other modifiers
       return;
     }
     //
-    if (this.hurtTimer % 4 < 1) {
-      this.imageModifier = this.origImageModifier | R.IMG_PINK;
-    }
-    else if (this.hurtTimer % 4 < 2) {
-      this.imageModifier = this.origImageModifier | R.IMG_CYAN;
-    }
-    else if (this.hurtTimer % 4 < 3) {
-      this.imageModifier = this.origImageModifier | R.IMG_PINK | R.IMG_CYAN;
-    }
   },
   
-  onComplete: function() {},
+  render: function(ox, oy) {
+    if (this.isHurt) {
+      this.imageModifier &= ~(R.IMG_PINK | R.IMG_CYAN); // remove colouration while preserving other modifiers
+      if (this.hurtTimer % 67 >= 50) {
+        this.imageModifier |= R.IMG_PINK | R.IMG_CYAN;
+      }
+      else if (this.hurtTimer % 67 >= 33) {
+        this.imageModifier |= R.IMG_CYAN;
+      }
+      else if (this.hurtTimer % 67 >= 17) {
+        this.imageModifier |= R.IMG_PINK;
+      }
+    }
+    PhysicsSprite.render.call(this, ox, oy);
+  },
+  
+  onComplete: function() {}
   
 });

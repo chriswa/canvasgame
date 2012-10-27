@@ -4,16 +4,16 @@ var ResourceManager = {
     this.audioFormat = document.createElement('audio').canPlayType('audio/mpeg') ? 'mp3' : 'ogg';
     
     var progressCallback = function(percentComplete) {
-      GFX.fillStyle = '#999';
-      GFX.save();
-      GFX.beginPath();
-      GFX.moveTo(0, 0);
-      GFX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, 0);
-      GFX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, CANVAS.height);
-      GFX.lineTo(0, CANVAS.height);
-      GFX.clip();
-      GFX.fillText("Loading...", CANVAS.width / 2, CANVAS.height / 2 + 16);
-      GFX.restore();
+      CANVAS_CTX.fillStyle = '#999';
+      CANVAS_CTX.save();
+      CANVAS_CTX.beginPath();
+      CANVAS_CTX.moveTo(0, 0);
+      CANVAS_CTX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, 0);
+      CANVAS_CTX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, CANVAS.height);
+      CANVAS_CTX.lineTo(0, CANVAS.height);
+      CANVAS_CTX.clip();
+      CANVAS_CTX.fillText("Loading...", CANVAS.width / 2, CANVAS.height / 2 + 16);
+      CANVAS_CTX.restore();
     };
     
     var loaded, totalToLoad;

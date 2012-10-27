@@ -28,6 +28,9 @@ var Game = Object.extend(FiniteStateMachine, {
       if (App.request['type']) { encounterObject['type'] = App.request['type']; }
       this.overworld.startEncounter(encounterObject, terrainType);
     }
+    if (App.request['overworld']) {
+      this.startNewGame();
+    }
     
     // in case App fires a render before an update, make sure our activeState has been set (this seems to only happen on my netbook)
     this.updateState();
@@ -117,7 +120,7 @@ var Game = Object.extend(FiniteStateMachine, {
     nextlife: {
       onenterstate: function(newArea) {
         this.newArea = newArea;
-        App.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
+        App.gfx.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
         setTimeout(function() {
           Game.setState(Game.states.area, newArea);
         }, 1500);
@@ -127,8 +130,8 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     gameover: {
       onenterstate: function() {
-        App.playSfx('AOL_Ganon_Laugh');
-        App.drawTextScreen("GAME OVER");
+        App.sfx.play('AOL_Ganon_Laugh');
+        App.gfx.drawTextScreen("GAME OVER");
         setTimeout(function() {
           Game.setState(Game.states.mainmenu);
         }, 3000);
@@ -166,9 +169,9 @@ var Game = Object.extend(FiniteStateMachine, {
           // render destination
           if (this.newArea) { this.newArea.render(); } else { Game.overworld.render(); }
         }
-        GFX.fillStyle = '#000';
-        GFX.fillRect(0, 0, CANVAS.width, (CANVAS.height/2) * h);
-        GFX.fillRect(0, CANVAS.height - (CANVAS.height/2) * h, CANVAS.width, (CANVAS.height/2) * h);
+        CANVAS_CTX.fillStyle = '#000';
+        CANVAS_CTX.fillRect(0, 0, CANVAS.width, (CANVAS.height/2) * h);
+        CANVAS_CTX.fillRect(0, CANVAS.height - (CANVAS.height/2) * h, CANVAS.width, (CANVAS.height/2) * h);
       }
     }
     
@@ -249,10 +252,10 @@ var Game = Object.extend(FiniteStateMachine, {
         // do nothing: the fairy itself will make a sound
       }
       else if (exitObject.encounter) {
-        App.playSfx('AOL_Battle');
+        App.sfx.play('AOL_Battle');
       }
       else {
-        App.playSfx('AOL_Map');
+        App.sfx.play('AOL_Map');
       }
       this.queueState(Game.states.overworldWipe, doTransition, newArea);
     }

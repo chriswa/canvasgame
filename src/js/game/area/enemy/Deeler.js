@@ -17,7 +17,12 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
     this.canopyY = spawnInfo.y;
   },
   
-  updateFixedStep: function() {
+  updateFixedStep: function(dt) {
+    // update hurt timers, etc
+    if (this.isHurt) { this.updateWhenHurt(dt); }
+    
+    // do nothing while hurt
+    if (this.isHurt) { return; }
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
@@ -63,13 +68,13 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
       var y = Math.round( this.y - 16 );
       var canopyY = Math.round( this.canopyY - 16 );
       
-      GFX.strokeStyle = '#fff';
-      GFX.lineWidth   = 2;
-      GFX.beginPath();
-      GFX.moveTo( x - ox, canopyY - oy );
-      GFX.lineTo( x - ox, y - oy );
-      GFX.stroke();
-      GFX.lineWidth = 1;
+      CANVAS_CTX.strokeStyle = '#fff';
+      CANVAS_CTX.lineWidth   = 2;
+      CANVAS_CTX.beginPath();
+      CANVAS_CTX.moveTo( x - ox, canopyY - oy );
+      CANVAS_CTX.lineTo( x - ox, y - oy );
+      CANVAS_CTX.stroke();
+      CANVAS_CTX.lineWidth = 1;
     }
   },
   

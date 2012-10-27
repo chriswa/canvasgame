@@ -130,7 +130,7 @@ var Overworld = {
   render: function() {
     
     // blit background tiles
-    renderTiles(CANVAS, GFX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getTile, this.tileImg, this.tileImgCols)
+    renderTiles(CANVAS, CANVAS_CTX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getTile, this.tileImg, this.tileImgCols)
     
     /*
     var ts = this.tileSize;
@@ -148,7 +148,7 @@ var Overworld = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getTile(x, y);
-        GFX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        CANVAS_CTX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
       ty += ts;
@@ -187,7 +187,7 @@ var Overworld = {
       if (tileIndex === this.terrainTypes.DESERT) { areaId = 'desert'; }
     }
     if (!areaId) { return false; }
-    //App.playSfx('AOL_Battle');
+    //App.sfx.play('AOL_Battle');
     this.queueExit({ area: areaId, side: 'centre', encounter: encounter.type });
     return true;
   },

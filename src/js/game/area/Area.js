@@ -170,18 +170,18 @@ var Area = {
   render: function() {
     
     // clear screen
-    GFX.fillStyle = this.areaData.bgColour;
-    GFX.fillRect(0, 0, CANVAS.width, CANVAS.height);
+    CANVAS_CTX.fillStyle = this.areaData.bgColour;
+    CANVAS_CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
     
     // blit background tiles
-    renderTiles(CANVAS, GFX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getBackgroundTile, this.tileImg, this.tileImgCols)
+    renderTiles(CANVAS, CANVAS_CTX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getBackgroundTile, this.tileImg, this.tileImgCols)
     
     /*
     var ts = this.tileSize;
     
     // clear screen
-    GFX.fillStyle = this.areaData.bgColour;
-    GFX.fillRect(0, 0, CANVAS.width, CANVAS.height);
+    CANVAS_CTX.fillStyle = this.areaData.bgColour;
+    CANVAS_CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
     
     // find background tiles overlapping canvas
     var leftCol   = Math.max(Math.floor(this.renderOffsetX / ts), 0);
@@ -196,7 +196,7 @@ var Area = {
       tx = Math.round(leftCol * ts - this.renderOffsetX);
       for (var x = leftCol; x < rightCol; x++) {
         tileIndex = this.getBackgroundTile(x, y);
-        GFX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
+        CANVAS_CTX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
         tx += ts;
       }
       ty += ts;

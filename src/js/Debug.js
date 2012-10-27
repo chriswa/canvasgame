@@ -92,10 +92,10 @@ var Debug = {
   render: function() {
     if (Game.area) {
       _.each(this.shapesToDraw, function(shape) {
-        GFX.strokeStyle = shape.colour;
+        CANVAS_CTX.strokeStyle = shape.colour;
         if (shape.type === 'rect') {
           var rect = shape.rect;
-          GFX.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
+          CANVAS_CTX.strokeRect(0.5 + rect.x1 - Game.area.renderOffsetX, 0.5 + rect.y1 - Game.area.renderOffsetY, rect.x2 - rect.x1, rect.y2 - rect.y1);
         }
       });
     }
@@ -115,14 +115,14 @@ var Debug = {
   renderStatusbar: function() {
     var statusbarTop = App.isMobile ? 0 : CANVAS.height - 10;
     
-    GFX.fillStyle = '#333';
-    GFX.fillRect(0, statusbarTop, CANVAS.width, 10);
-    GFX.font      = 'bold 10px monospace';
-    GFX.textAlign = 'left';
+    CANVAS_CTX.fillStyle = '#333';
+    CANVAS_CTX.fillRect(0, statusbarTop, CANVAS.width, 10);
+    CANVAS_CTX.font      = 'bold 10px monospace';
+    CANVAS_CTX.textAlign = 'left';
     
     _.each(this.statusTextToDraw, function(value) {
-      GFX.fillStyle = value.colour;
-      GFX.fillText(value.text, value.column * 6, statusbarTop + 9);
+      CANVAS_CTX.fillStyle = value.colour;
+      CANVAS_CTX.fillText(value.text, value.column * 6, statusbarTop + 9);
     });
     this.statusTextToDraw = [];
   },

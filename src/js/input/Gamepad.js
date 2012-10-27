@@ -2,6 +2,7 @@ Input.gamepad = {
   
   held: {},
   pressed: {},
+  _buttonsJustPressed: {},
   
   onenterstate: function() {
     this.held    = {};
@@ -84,39 +85,39 @@ Input.gamepad = {
   render: function() {
     if (!App.isMobile) { return; }
     
-    GFX.globalAlpha = 0.5;
-    GFX.strokeStyle = '#fff';
+    CANVAS_CTX.globalAlpha = 0.5;
+    CANVAS_CTX.strokeStyle = '#fff';
     
     // draw dpad
     var origin = { x: 0, y: 209 };
     var size   = 150;
     // up
-    GFX.fillStyle = Input.gamepad.held.up ? '#fff' : '#000';
-    GFX.beginPath(); GFX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*1/3); GFX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y); GFX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y); GFX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*1/3); GFX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.fill(); GFX.stroke();
+    CANVAS_CTX.fillStyle = Input.gamepad.held.up ? '#fff' : '#000';
+    CANVAS_CTX.beginPath(); CANVAS_CTX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*1/3); CANVAS_CTX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y); CANVAS_CTX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y); CANVAS_CTX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*1/3); CANVAS_CTX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.fill(); CANVAS_CTX.stroke();
     // down
-    GFX.fillStyle = Input.gamepad.held.down ? '#fff' : '#000';
-    GFX.beginPath(); GFX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*2/3); GFX.lineTo(0.5+origin.x+size*+origin.x+size*1/3, 0.5+origin.y+size); GFX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size); GFX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*2/3); GFX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.fill(); GFX.stroke();
+    CANVAS_CTX.fillStyle = Input.gamepad.held.down ? '#fff' : '#000';
+    CANVAS_CTX.beginPath(); CANVAS_CTX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*2/3); CANVAS_CTX.lineTo(0.5+origin.x+size*+origin.x+size*1/3, 0.5+origin.y+size); CANVAS_CTX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size); CANVAS_CTX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*2/3); CANVAS_CTX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.fill(); CANVAS_CTX.stroke();
     // left
-    GFX.fillStyle = Input.gamepad.held.left ? '#fff' : '#000';
-    GFX.beginPath(); GFX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*1/3); GFX.lineTo(0.5+origin.x, 0.5+origin.y+size*1/3); GFX.lineTo(0.5+origin.x, 0.5+origin.y+size*2/3); GFX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*2/3); GFX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.fill(); GFX.stroke();
+    CANVAS_CTX.fillStyle = Input.gamepad.held.left ? '#fff' : '#000';
+    CANVAS_CTX.beginPath(); CANVAS_CTX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*1/3); CANVAS_CTX.lineTo(0.5+origin.x, 0.5+origin.y+size*1/3); CANVAS_CTX.lineTo(0.5+origin.x, 0.5+origin.y+size*2/3); CANVAS_CTX.lineTo(0.5+origin.x+size*1/3, 0.5+origin.y+size*2/3); CANVAS_CTX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.fill(); CANVAS_CTX.stroke();
     // right
-    GFX.fillStyle = Input.gamepad.held.right ? '#fff' : '#000';
-    GFX.beginPath(); GFX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*1/3); GFX.lineTo(0.5+origin.x+size, 0.5+origin.y+size*1/3); GFX.lineTo(0.5+origin.x+size, 0.5+origin.y+size*2/3); GFX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*2/3); GFX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); GFX.fill(); GFX.stroke();
+    CANVAS_CTX.fillStyle = Input.gamepad.held.right ? '#fff' : '#000';
+    CANVAS_CTX.beginPath(); CANVAS_CTX.moveTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*1/3); CANVAS_CTX.lineTo(0.5+origin.x+size, 0.5+origin.y+size*1/3); CANVAS_CTX.lineTo(0.5+origin.x+size, 0.5+origin.y+size*2/3); CANVAS_CTX.lineTo(0.5+origin.x+size*2/3, 0.5+origin.y+size*2/3); CANVAS_CTX.lineTo(0.5+origin.x+size*1/2, 0.5+origin.y+size*1/2); CANVAS_CTX.fill(); CANVAS_CTX.stroke();
     
     // draw attack/jump buttons
     // attack
-    GFX.fillStyle = Input.gamepad.held.attack ? '#fff' : '#000';
-    GFX.beginPath(); GFX.arc(550, 240, 40, 0, Math.PI*2, true); GFX.fill(); GFX.stroke();
+    CANVAS_CTX.fillStyle = Input.gamepad.held.attack ? '#fff' : '#000';
+    CANVAS_CTX.beginPath(); CANVAS_CTX.arc(550, 240, 40, 0, Math.PI*2, true); CANVAS_CTX.fill(); CANVAS_CTX.stroke();
     // jump
-    GFX.fillStyle = Input.gamepad.held.jump ? '#fff' : '#000';
-    GFX.beginPath(); GFX.arc(480, 310, 40, 0, Math.PI*2, true); GFX.fill(); GFX.stroke();
+    CANVAS_CTX.fillStyle = Input.gamepad.held.jump ? '#fff' : '#000';
+    CANVAS_CTX.beginPath(); CANVAS_CTX.arc(480, 310, 40, 0, Math.PI*2, true); CANVAS_CTX.fill(); CANVAS_CTX.stroke();
     
-    GFX.fillStyle = '#fff';
-    GFX.font      = 'bold 10px sans-serif';
-    GFX.textAlign = 'center';
-    GFX.fillText("attack", 550, 240 + 3);
-    GFX.fillText("jump", 480, 310 + 3);
+    CANVAS_CTX.fillStyle = '#fff';
+    CANVAS_CTX.font      = 'bold 10px sans-serif';
+    CANVAS_CTX.textAlign = 'center';
+    CANVAS_CTX.fillText("attack", 550, 240 + 3);
+    CANVAS_CTX.fillText("jump", 480, 310 + 3);
     
-    GFX.globalAlpha = 1;
+    CANVAS_CTX.globalAlpha = 1;
   }
 };

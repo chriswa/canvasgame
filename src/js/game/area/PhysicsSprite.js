@@ -1,10 +1,9 @@
 var PhysicsSprite = Object.extend(Sprite, {
   
   area: undefined,
-  
   gravity: 0.6,
-  
   hitbox: { x1: 0, y1: 0, x2: 32, y2: 32 }, // default size of 1x1 tiles
+  touching: {}, // feedback from translateWithTileCollisions
   
   init: function(area, characterName) {
     this.area = area;
@@ -15,9 +14,6 @@ var PhysicsSprite = Object.extend(Sprite, {
   getAbsHitbox: function() {
     return { x1: this.hitbox.x1 + this.x, y1: this.hitbox.y1 + this.y, x2: this.hitbox.x2 + this.x, y2: this.hitbox.y2 + this.y };
   },
-  
-  // feedback from translateWithTileCollisions
-  touching: {},
   
   //
   translateWithTileCollisions: function( dx, dy ) {
@@ -100,5 +96,6 @@ var PhysicsSprite = Object.extend(Sprite, {
       }
     }
     return { hitSomething: hitSomething, newPos: u };
-  },
+  }
+  
 });

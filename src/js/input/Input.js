@@ -56,7 +56,7 @@ var Input = Object.extend(FiniteStateMachine, {
   
   // global event handlers
   onkeydown: function(e) {
-    var evt = e ? e:event;
+    var evt = e ? e : event;
     var keyCode = evt.keyCode;
     
     //console.log(keyCode);
@@ -77,7 +77,7 @@ var Input = Object.extend(FiniteStateMachine, {
     
     // prevent browser defaults for certain keys
     if (Input.preventDefaultKeys[keyCode]) {
-      e.preventDefault();
+      evt.preventDefault();
       return false;
     }
     else {
@@ -87,7 +87,7 @@ var Input = Object.extend(FiniteStateMachine, {
   },
     
   onkeyup: function(e) {
-    var evt = e ? e:event;
+    var evt = e ? e : event;
     var keyCode = evt.keyCode;
     delete Input.keyDown[keyCode];
     
@@ -97,9 +97,11 @@ var Input = Object.extend(FiniteStateMachine, {
   
   // encapsulate mouse evens so we can treat it the same as a one-finger touch
   onmousedown: function(e) {
-    var evt = e ? e:event;
+    var evt = e ? e : event;
     this.isMouseDown = true;
-    this.onscreeninput([{x: e.pageX - $('#canvas')[0].offsetLeft, y: e.pageY - $('#canvas')[0].offsetTop}]);
+    var x = evt.pageX - $('#canvas')[0].offsetLeft; // XXX: really?! every frame?
+    var y = evt.pageY - $('#canvas')[0].offsetTop;
+    this.onscreeninput([{x: x, y: y}]);
   },
   onmousemove: function(e) {
     var coords = {x: e.pageX - $('#canvas')[0].offsetLeft, y: e.pageY - $('#canvas')[0].offsetTop};
@@ -150,7 +152,7 @@ var Input = Object.extend(FiniteStateMachine, {
           this.refreshButtonTimeout = setTimeout(function() {
             App.pause();
             App.gfx.drawTextScreen("Refresh!", "#000", "#f0f");
-            setTimeout(function() { window.location.reload(); }, 0);
+            window.location.reload();
           }, 750);
         }
       }

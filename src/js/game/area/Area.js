@@ -220,7 +220,21 @@ var Area = {
   },
   handlePlayerAttack: function(absHitbox) {
     Debug.drawRect(absHitbox, '#f00');
-    var hitSomething = false;
-    overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, function(e) { e.onStabbed(); hitSomething = true; }, function(e) { return e.getAbsHitbox(); });
+    var enemyToAbsHitbox = function(e) { return e.getAbsHitbox(); };
+    var onCollision = function(e) { e.onStabbed(); };
+    overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, onCollision, enemyToAbsHitbox);
+    
+    // find background tiles overlapping player's sword
+    var tileRect = pixelRectToTileRect(absHitbox, this.cols, this.rows, this.tileSize);
+    
+    var solidTileOverlap = false;
+    for (var y = tileRect.y1; y < tileRect.y2; y++) {
+      for (var x = tileRect.x1; x < tileRect.x2; x++) {
+        if (this.getPhysicsTile(x, y) === 1) {
+          solidTileOverlap = true;
+        }
+      }
+    }
+    return solidTileOverlap;
   },
 };

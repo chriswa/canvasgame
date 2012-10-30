@@ -62,13 +62,6 @@ var App = {
     // show loading screen
     App.gfx.drawTextScreen('Loading...', '#ccc', '#fff');
     
-    // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
-    $(window).blur(function() { App.pause(); });
-    $(CANVAS).click(function() { App.start(); });
-    if (this.isMobile) {
-      $(window).focus(function() { App.start(); });
-    }
-    
     Input.init();
     
     // load resources, then call callback
@@ -77,6 +70,14 @@ var App = {
       console.log("ResourceManager: " + (now() - startTime).toFixed(1) + "ms");
       Game.init();
       Debug.init();
+      
+      // auto-pause when window loses focus, and unpause when focus returns (for development - in production, i'll want to wait for a click while showing that the user should click!)
+      $(window).blur(function() { App.pause(); });
+      $(CANVAS).click(function() { App.start(); });
+      if (this.isMobile) {
+        $(window).focus(function() { App.start(); });
+      }
+      
       App.start();
     });
   },

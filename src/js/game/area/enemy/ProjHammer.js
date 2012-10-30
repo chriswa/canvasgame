@@ -10,7 +10,7 @@ R.spawnableSprites['ProjHammer'] = Object.extend(Enemy, {
     this.vx = spawn.vx;
     this.vy = spawn.vy;
     this.ax = 0;
-    this.ay = this.gravity;
+    this.ay = spawn.gravity;
   },
   
   onPlayerCollision: function(playerSprite) {

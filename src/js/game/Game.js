@@ -37,14 +37,16 @@ var Game = Object.extend(FiniteStateMachine, {
   },
   startNewGame: function() {
     this.player = {
-      lives:        3,
-      health:       6,
-      healthMax:    6,
-      overworldX:   52,   // zelda's palace == (28, 25)
-      overworldY:   25,
-      dungeonFlags: {},
-      worldFlags:   {},
-      lastArea:     undefined // for respawning after player death
+      lives:            3,
+      health:           6,
+      healthMax:        6,
+      overworldX:       52,   // zelda's palace == (28, 25)
+      overworldY:       25,
+      worldFlags:       {},       // keep track of what's been killed/taken in the world
+      dungeonFlags:     {},       // keep track of what's been killed/taken in the current dungeon (which will be reset when you leave)
+      dungeonState:     {},       // keep track of keys (not reset when you leave)
+      currentDungeonId: undefined,
+      lastArea:         undefined // for respawning after player death
     };
     this.overworld.reset();
     this.setState(this.states.overworld);
@@ -81,8 +83,15 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     area: {
       onenterstate: function(newArea) {
-        Game.area = newArea;
         Input.setState(Input.gamepad);
+        Game.area = newArea;
+        var gp = Game.player;
+        if (!gp.currentDungeonId) {
+          gp.currentDungeonId = newArea.areaId;
+          if (!gp.dungeonState[gp.currentDungeonId]) {
+            gp.dungeonState[gp.currentDungeonId] = {};
+          }
+        }
       },
       onleavestate: function() {
         Input.setState(Input.none);
@@ -99,10 +108,11 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     overworld: {
       onenterstate: function() {
+        Input.setState(Input.gamepad);
         Game.overworld.player.finishMove();
         Game.overworld.updateCamera();
         Game.player.dungeonFlags = {};      // reset "oncePerDungeon" flags
-        Input.setState(Input.gamepad);
+        Game.player.currentDungeonId = undefined;
       },
       onleavestate: function() {
         Input.setState(Input.none);

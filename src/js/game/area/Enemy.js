@@ -77,7 +77,6 @@ var Enemy = Object.extend(PhysicsSprite, {
       this.imageModifier &= ~(R.IMG_PINK | R.IMG_CYAN); // remove colouration while preserving other modifiers
       return;
     }
-    //
   },
   
   render: function(ox, oy) {

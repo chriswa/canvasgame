@@ -4,15 +4,17 @@ R.spawnableSprites['HammerThrower'] = Object.extend(Enemy, {
   health: 8,
   
   throwTimer:     0,
-  jumpTimer:      0,
+  jumpTimer:      15,
   changeDirTimer: 0,
+  throwCount:     0,
   
   direction: 1,
   
-  WALK_SPEED:    0.4,
-  JUMP_IMPULSE:  -10,
-  HAMMER_VX:     5,
-  HAMMER_VY:     -14,
+  WALK_SPEED:     1.0,
+  JUMP_IMPULSE:   -10,
+  HAMMER_VX:      2,
+  HAMMER_VY:      -5.5,
+  HAMMER_GRAVITY: 0.15,
   
   init: function(area) {
     Enemy.init.call(this, area, 'hammer-thrower');
@@ -35,23 +37,36 @@ R.spawnableSprites['HammerThrower'] = Object.extend(Enemy, {
     this.jumpTimer      += 1;
     this.changeDirTimer += 1;
     
-    if (this.changeDirTimer > 90) {
+    if (this.changeDirTimer >= 60) {
       this.changeDirTimer = 0;
       this.direction = -this.direction;
     }
-    if (this.jumpTimer > 180) {
+    if (this.jumpTimer >= 180) {
       this.jumpTimer = 0;
       this.vy = this.JUMP_IMPULSE;
     }
     if (this.throwTimer === 20) {
       this.playAnimation('throw');
     }
-    if (this.throwTimer > 30) {
+    if (this.throwTimer >= 30) {
       this.playAnimation('default');
       this.throwTimer = 0;
-      this.area.spawn(R.spawnableSprites['ProjHammer'], { x: this.x - facing * 12, y: this.y - 16, vx: facing * this.HAMMER_VX, vy: this.HAMMER_VY });
+      this.area.spawn(R.spawnableSprites['ProjHammer'], { x: this.x + facing * 12, y: this.y - 16, vx: facing * this.HAMMER_VX, vy: this.HAMMER_VY, gravity: this.HAMMER_GRAVITY });
+      
+      // brief rest after 7 throws
+      this.throwCount += 1;
+      if (this.throwCount === 7) {
+        this.throwCount = 0;
+        this.throwTimer = -10;
+        this.jumpTimer  -= 10;
+      }
     }
     this.vx = this.direction * this.WALK_SPEED;
+    
+    // when hurt, stumble backwards
+    if (this.hurtTimer > 200) {
+      this.vx = -facing * 4 * (this.hurtTimer - 200) / 300;
+    }
     
     // standard enemy stuff
     this.vy += this.gravity;

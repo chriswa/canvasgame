@@ -1,13 +1,15 @@
 TODO
-  - getting hit from the back should push you forward, not backward
-  - stabbing a wall should push you backwards (and make a continuous(!?) sfx)
+  - add locked doors
   - fix keys (tie them to dungeons with a uniqueId on the entrance area?)
     - exit objects on overworld should specify 'dungeon' since ultimately I'll need to know in order to play the dungeon theme song -- i can use the entrance area's id as the dungeon id
-  - elevators!
-  - fix bug where you can be reduced to 0 health while getting knocked back to the overworld
+  ? downward and upward thrusts
+  ? candle, hammer, gloves, raft, boots, flute, cross
+  ? spells
+  ? elevators
+  - more enemies: boomeranger, spear-chucker (early forest encounter), orange knights, white desert worms
 
 CONSIDER
-  - get rid of all "super" methods in Sprite-derived classes
+  - get rid of all "super" methods in Sprite-derived classes?
     - or not! look at all the stuff that Sprite.init does!
   - audio on android?
   - make it work in ie?

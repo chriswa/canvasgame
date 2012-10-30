@@ -1,25 +1,15 @@
 var ResourceManager = {
+  
+  audioFormat: undefined,
+  
   init: function(onComplete) {
     
     this.audioFormat = document.createElement('audio').canPlayType('audio/mpeg') ? 'mp3' : 'ogg';
     
-    var progressCallback = function(percentComplete) {
-      CANVAS_CTX.fillStyle = '#999';
-      CANVAS_CTX.save();
-      CANVAS_CTX.beginPath();
-      CANVAS_CTX.moveTo(0, 0);
-      CANVAS_CTX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, 0);
-      CANVAS_CTX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, CANVAS.height);
-      CANVAS_CTX.lineTo(0, CANVAS.height);
-      CANVAS_CTX.clip();
-      CANVAS_CTX.fillText("Loading...", CANVAS.width / 2, CANVAS.height / 2 + 16);
-      CANVAS_CTX.restore();
-    };
-    
     var loaded, totalToLoad;
     var onResourceLoad = function() {
       loaded += 1;
-      progressCallback(loaded / totalToLoad);
+      ResourceManager.showPercentComplete(loaded / totalToLoad);
       if (loaded === totalToLoad) {
         onComplete();
       }
@@ -29,6 +19,19 @@ var ResourceManager = {
     totalToLoad  = loadList.length;
     
     _.each(loadList, function(loadElement) { loadElement(onResourceLoad); });
+  },
+  
+  showPercentComplete: function(percentComplete) {
+    CANVAS_CTX.fillStyle = '#999';
+    CANVAS_CTX.save();
+    CANVAS_CTX.beginPath();
+    CANVAS_CTX.moveTo(0, 0);
+    CANVAS_CTX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, 0);
+    CANVAS_CTX.lineTo(CANVAS.width / 2 - 115 + 230 * percentComplete, CANVAS.height);
+    CANVAS_CTX.lineTo(0, CANVAS.height);
+    CANVAS_CTX.clip();
+    CANVAS_CTX.fillText("Loading...", CANVAS.width / 2, CANVAS.height / 2 + 16);
+    CANVAS_CTX.restore();
   },
   
   generateLoadList: function(onResourceLoad) {

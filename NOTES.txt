@@ -5,13 +5,13 @@ src/js
 ------
 
 main.js
-  Initializes App and loads the ?query=string
+  Initializes App
 
 util.js
   Various polyfills and global functions
 
 App.js
-  Main loop which calls update and render methods on Game, Input, Debug, and Mobile
+  Main loop which calls update and render methods on Game, Input, and Debug
 
 ResourceManager.js
   Handles asynchronous loading of resources (i.e. graphics and audio) and draws the dynamic "Loading..." screen

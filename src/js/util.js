@@ -131,25 +131,35 @@ function showme() {
 }
 
 //
+function pixelRectToTileRect(pixelRect, cols, rows, tileSize) {
+  var tileRect = {};
+  tileRect.x1 = Math.max(Math.floor( pixelRect.x1 / tileSize ), 0);
+  tileRect.x2 = Math.min(Math.ceil(  pixelRect.x2 / tileSize ), cols);
+  tileRect.y1 = Math.max(Math.floor( pixelRect.y1 / tileSize ), 0);
+  tileRect.y2 = Math.min(Math.ceil(  pixelRect.y2 / tileSize ), rows);
+  return tileRect;
+}
+
+//
 function renderTiles(canvas, ctx, cols, rows, renderOffsetX, renderOffsetY, ts, getTile, tileImg, tileImgCols) {
   // find background tiles overlapping canvas
-  var leftCol   = Math.max(Math.floor(renderOffsetX / ts), 0);
-  var rightCol  = Math.min(Math.ceil((renderOffsetX + canvas.width) / ts), cols);
-  var topRow    = Math.max(Math.floor(renderOffsetY / ts), 0);
-  var bottomRow = Math.min(Math.ceil((renderOffsetY + canvas.height) / ts), rows);
+  var pixelRect = { x1: renderOffsetX, x2: renderOffsetX + canvas.width, y1: renderOffsetY, y2: renderOffsetY + canvas.height };
+  var tileRect  = pixelRectToTileRect(pixelRect, cols, rows, ts);
   
   // blit background tiles
   var tx, ty, tileIndex;
-  ty = Math.round(topRow * ts - renderOffsetY);
-  for (var y = topRow; y < bottomRow; y++) {
-    tx = Math.round(leftCol * ts - renderOffsetX);
-    for (var x = leftCol; x < rightCol; x++) {
+  ty = Math.round(tileRect.y1 * ts - renderOffsetY);
+  for (var y = tileRect.y1; y < tileRect.y2; y++) {
+    tx = Math.round(tileRect.x1 * ts - renderOffsetX);
+    for (var x = tileRect.x1; x < tileRect.x2; x++) {
       tileIndex = getTile(x, y);
       CANVAS_CTX.drawImage(tileImg, ts * (tileIndex % tileImgCols), ts * Math.floor(tileIndex / tileImgCols), ts, ts, tx, ty, ts, ts);
+      //CANVAS_CTX.strokeStyle = '#000'; CANVAS_CTX.strokeRect(tx + 0.5, ty + 0.5, ts - 1, ts - 1);
       tx += ts;
     }
     ty += ts;
   }
+
 }
 
 // checks AABB overlaps

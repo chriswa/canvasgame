@@ -91,7 +91,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.invincibleTimer = this.HURT_INVINCIBLE_TIME;
       if (this.frozenTimer <= 0) {
         this.playAnimation('hurt');
-        this.vx = this.facing * -this.HURT_IMPULSE_X;
+        var hurtDirection = (entity.x < this.x) ? 1 : -1;
+        this.vx = hurtDirection * this.HURT_IMPULSE_X;
         this.vy = -this.HURT_IMPULSE_Y;
       }
       if (Game.player.health <= 0) {
@@ -164,11 +165,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       
       // attack in progress?
       if (this.isAttacking) {
-        if (this.isCrouching) { this.updateCrouchingAttack(); }
-        else                  { this.updateUprightAttack();   }
-        
-        // unless we're in the air, attacking stops all movement instantly
-        if (this.touching.bottom) { this.vx = 0; }
+        this.attack();
       }
       
       // horizontal controls (different behaviour depending on whether we're on the ground)
@@ -203,17 +200,13 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     
     // check for area transitions
-    if (this.touching.outOfBounds) {
+    if (this.touching.outOfBounds && Game.player.health > 0) {
       this.area.findAndQueuePlayerExit();
     }
     
     // visual effects (hurting and invincibility)
     this.applyVisualEffects();
     
-    //if (this.debugStartJumpY) {
-    //  this.debugHighestY = Math.min(this.debugHighestY, this.y);
-    //  $('#playerY' ).text(((this.debugStartJumpY - this.debugHighestY)/32).toFixed(2));
-    //}
   },
   
   tryToJump: function() {
@@ -328,26 +321,26 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // attacking
   // ---------
   
-  updateUprightAttack: function() {
+  attack: function() {
+    // unless we're in the air, attacking stops all movement instantly
+    if (this.touching.bottom) { this.vx = 0; }
+    
+    // after frame 1, the attack is over
     if (this.frameIndex === 2) {
       this.isAttacking = false;
       return;
     }
-    if (this.frameIndex === 1) {
-      var absHitbox = { x1: this.x + this.facing*24 - 24, y1: this.y - 16, x2: this.x + this.facing*24 + 24, y2: this.y - 6 };
-      this.area.handlePlayerAttack(absHitbox);
+    
+    // on the swinging frame, check for collisions (frame 0 if crouching, frame 1 otherwise)
+    if (this.frameIndex === (this.isCrouching ? 0 : 1)) {
+      var dy = this.isCrouching ? 20 : 0;
+      var absHitbox = { x1: this.x + this.facing*24 - 24, y1: this.y - 16 + dy, x2: this.x + this.facing*24 + 24, y2: this.y - 6 + dy };
+      var solidTileOverlap = this.area.handlePlayerAttack(absHitbox);
+      if (solidTileOverlap) {
+        this.vx = -this.facing * 0.5;
+      }
     }
-  },
-  
-  updateCrouchingAttack: function() {
-    if (this.frameIndex === 2) {
-      this.isAttacking = false;
-      return;
-    }
-    if (this.frameIndex === 0) {
-      var absHitbox = { x1: this.x + this.facing*24 - 24, y1: this.y + 4, x2: this.x + this.facing*24 + 24, y2: this.y + 14 };
-      this.area.handlePlayerAttack(absHitbox);
-    }
+    
   },
   
   // visual

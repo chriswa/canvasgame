@@ -42,7 +42,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // ====
   
   init: function(area) {
-    PhysicsSprite.init.call(this, area, 'link');
+    //PhysicsSprite.init.call(this, area, 'link');
+    this.uber('init', area, 'link');
     this.startAnimation('stand');
     this.JUMP_X_BOOST /= this.MAX_X_SPEED; // XXX: decouple this constant for simpler tweaking
   },

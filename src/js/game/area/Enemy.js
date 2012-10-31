@@ -6,8 +6,9 @@ var Enemy = Object.extend(PhysicsSprite, {
   invincibleTimer: 0, // this prevents multiple updates from the same attack from hurting us more than once
   hurtTimer: 0,
   
-  init: function(area) {
-    PhysicsSprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
+  init: function(area, characterName) {
+    //PhysicsSprite.init.apply(this, Array.prototype.slice.call(arguments, 0));
+    this.uber('init', area, characterName);
     this.addToGroup(this.area.enemyGroup);
   },
   
@@ -92,7 +93,8 @@ var Enemy = Object.extend(PhysicsSprite, {
         this.imageModifier |= R.IMG_PINK;
       }
     }
-    PhysicsSprite.render.call(this, ox, oy);
+    //PhysicsSprite.render.call(this, ox, oy);
+    this.uber('render', ox, oy);
   },
   
   onComplete: function() {}

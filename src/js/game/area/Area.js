@@ -30,6 +30,7 @@ var Area = {
   rows: 0,
   cols: 0,
   age: 0,
+  music: undefined,
   
   init: function(exitObject, sideHintFromLastExit) {
     this.getPhysicsTile    = this.getPhysicsTile.bind(this);
@@ -60,8 +61,8 @@ var Area = {
     _.each(this.areaData.spawns, function(spawnInfo) {
       
       // have we already "completed" (i.e. defeated/collected) this spawn?
-      if (spawnInfo.oncePerDungeon && Game.player.dungeonFlags[spawnInfo.oncePerDungeon]) { return; }
-      if (spawnInfo.onceEver       && Game.player.worldFlags[spawnInfo.onceEver])         { return; }
+      if (spawnInfo.oncePerDungeon && Game.player.tempDungeonState[spawnInfo.oncePerDungeon]) { return; }
+      if (spawnInfo.onceEver       && Game.player.worldState[spawnInfo.onceEver])         { return; }
       
       // is this an encounter-type dependant spawn and the wrong type of encounter?
       if (exitObject.encounter === 'fairy') { return; }
@@ -75,8 +76,8 @@ var Area = {
       e.y += spawnInfo.y;
       
       // do we need to do anything when the spawn is completed?
-      if (spawnInfo.oncePerDungeon) { e.onComplete = function() { Game.player.dungeonFlags[spawnInfo.oncePerDungeon] = true; } }
-      if (spawnInfo.onceEver)       { e.onComplete = function() { Game.player.worldFlags[spawnInfo.onceEver]         = true; } }
+      if (spawnInfo.oncePerDungeon) { e.onComplete = function() { Game.player.tempDungeonState[spawnInfo.oncePerDungeon] = true; } }
+      if (spawnInfo.onceEver)       { e.onComplete = function() { Game.player.worldState[spawnInfo.onceEver]         = true; } }
       
     }, this);
     
@@ -122,6 +123,21 @@ var Area = {
       this.playerSprite.startAnimation('walk');
     }
     
+    // play music
+    this.music = 'battle';
+    if (this.areaData.properties.music) {
+      this.music = this.areaData.properties.music;
+    }
+    else if (exitObject.encounter) {
+      if (exitObject.encounter === 'fairy') {
+        this.music = 'NONE';
+      }
+    }
+    else if (this.areaData.properties.dungeonId) {
+      this.music = 'palace';
+    }
+    if (Game.player.currentDungeonId) { this.music = 'NO_CHANGE'; }
+    
     //
     this.update(0);
   },
@@ -134,6 +150,16 @@ var Area = {
     return this.areaData.background[ ty * this.cols + tx ];
   },
   update: function(dt) {
+    
+    if (this.age === 0 && dt > 0) {
+      if (this.music === 'NONE') {
+        App.sfx.stopMusic();
+      }
+      else if (this.music !== 'NO_CHANGE') {
+        App.sfx.playMusic(this.music);
+      }
+    }
+    
     this.age += dt;
     
     // update all entities

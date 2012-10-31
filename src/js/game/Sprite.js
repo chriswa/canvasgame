@@ -1,8 +1,9 @@
 var Sprite = {
-  isAnimating: true,
+  
   uniqueId: null,
   readyToCull: false,
   groups: null,
+  
   characterName: null,
   animation: null,
   animationName: '',

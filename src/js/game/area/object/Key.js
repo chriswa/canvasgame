@@ -8,7 +8,10 @@ R.spawnableSprites['Key'] = Object.extend(Enemy, {
   },
   
   onStabbed: function() {
-    Game.player.dungeonFlags.keys++;
+    var ds = Game.player.dungeonState[Game.player.currentDungeonId];
+    if (ds) {
+      ds.keys = (ds.keys || 0) + 1;
+    }
     this.onComplete();
     this.kill();
   },

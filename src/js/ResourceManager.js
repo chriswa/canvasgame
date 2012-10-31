@@ -38,9 +38,11 @@ var ResourceManager = {
     var loadList = [];
     
     // sound effects
-    _.each(R.sfx, function(value, key, obj) {
-      loadList.push( _.bind( this.loadAudio, this, 'res/sfx/' + key, value, obj, key, onResourceLoad) );
-    }, this);
+    if (!App.isMobile) {
+      _.each(R.sfx, function(value, key, obj) {
+        loadList.push( _.bind( this.loadAudio, this, 'res/sfx/' + key, value, obj, key, onResourceLoad) );
+      }, this);
+    }
     
     // tileset images
     _.each(R.tilesetImages, function(value, key, obj) {
@@ -100,7 +102,6 @@ var ResourceManager = {
     audio.autobuffer = true;
     audio.preload    = 'auto';
     audio.src        = filepath + '.' + ResourceManager.audioFormat;
-    //onLoad();
     audio.load();
     audio.setAttribute('name', key);
     obj[key] = [ audio ];

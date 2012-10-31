@@ -11,7 +11,8 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   ASCEND_SPEED:  2,
   
   init: function(area, spawnInfo) {
-    Enemy.init.call(this, area, 'deeler');
+    //Enemy.init.call(this, area, 'deeler');
+    this.uber('init', area, 'deeler');
     this.startAnimation('canopy');
     this.advanceAnimation(0);
     this.canopyY = spawnInfo.y;
@@ -60,7 +61,8 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   
   // draw web line back up to canopy
   render: function(ox, oy) {
-    Enemy.render.call(this, ox, oy);
+    this.uber('render', ox, oy);
+    //Enemy.render.call(this, ox, oy);
     
     if (this.y > this.canopyY) {
     

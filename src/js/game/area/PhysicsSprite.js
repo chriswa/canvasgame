@@ -7,7 +7,8 @@ var PhysicsSprite = Object.extend(Sprite, {
   
   init: function(area, characterName) {
     this.area = area;
-    Sprite.init.call(this, characterName);
+    //Sprite.init.call(this, characterName);
+    this.uber('init', characterName);
   },
   
   //

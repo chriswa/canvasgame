@@ -81,12 +81,22 @@ function build_maps() {
       handleObject($obj, $objects);
     }
     
+    //
+    $mapProperties = array();
+    $properties = $map->kidByTag('properties');
+    if ($properties) {
+      foreach ($properties->kids as $property) {
+        $mapProperties[$property->attr['name']] = $property->attr['value'];
+      }
+    }
+    
     $area = array(
       'image'      => $backgroundTilesetImage,
       'bgColour'   => coalesce(@$map->attr['backgroundcolor'], '#000000'),
       'tileSize'   => (int)$map->attr['tilewidth'],
       'cols'       => (int)$map->attr['width'],
       'background' => $backgroundTileData,
+      'properties' => $mapProperties,
     );
     #$area = array_merge($area, $areaProperties);
     if ($physicsTileData)   { $area['physics'] = $physicsTileData; }

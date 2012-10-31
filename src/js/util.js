@@ -73,18 +73,52 @@ Object.build = function(o) {
   return Object.buildArgs(o, Array.prototype.slice.call(arguments, 1))
 };
 
+//// Object.extend is Object.create, which then has properties merged into it
+//Object.extend = function(BaseClass, properties) {
+//  /*
+//  var o = Object.create(BaseClass);
+//  for (prop in properties) {
+//    o[prop] = properties[prop];
+//  }
+//  return o;
+//  */
+//  var o = {};
+//  for (prop in BaseClass)  { o[prop] = BaseClass[prop]; }
+//  for (prop in properties) { o[prop] = properties[prop]; }
+//  return o;
+//};
+
 // Object.extend is Object.create, which then has properties merged into it
 Object.extend = function(BaseClass, properties) {
-  /*
+  
+  //var o = {};
+  //for (prop in BaseClass)  { o[prop] = BaseClass[prop]; }
+  //for (prop in properties) { o[prop] = properties[prop]; }
+
   var o = Object.create(BaseClass);
   for (prop in properties) {
     o[prop] = properties[prop];
   }
-  return o;
-  */
-  var o = {};
-  for (prop in BaseClass)  { o[prop] = BaseClass[prop]; }
-  for (prop in properties) { o[prop] = properties[prop]; }
+  
+  // provide "uber" method
+  o.BaseClass = BaseClass;
+  var depth = {};
+  o.uberArgs = function(methodName, args) {
+    if (!(methodName in depth)) { depth[methodName] = 0; }
+    var targetClass = BaseClass;
+    for (var i = 0; i < depth[methodName]; i++) {
+      targetClass = targetClass.BaseClass;
+    }
+    depth[methodName] += 1;
+    var retVal = targetClass[methodName].apply(this, args);
+    depth[methodName] -= 1;
+    return retVal;
+  };
+  o.uber = function(methodName) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return o.uberArgs.call(this, methodName, args);
+  };
+  
   return o;
 };
 

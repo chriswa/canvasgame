@@ -37,16 +37,16 @@ var Game = Object.extend(FiniteStateMachine, {
   },
   startNewGame: function() {
     this.player = {
-      lives:            3,
-      health:           6,
-      healthMax:        6,
-      overworldX:       52,   // zelda's palace == (28, 25)
-      overworldY:       25,
-      worldFlags:       {},       // keep track of what's been killed/taken in the world
-      dungeonFlags:     {},       // keep track of what's been killed/taken in the current dungeon (which will be reset when you leave)
-      dungeonState:     {},       // keep track of keys (not reset when you leave)
-      currentDungeonId: undefined,
-      lastArea:         undefined // for respawning after player death
+      lives:              3,
+      health:             6,
+      healthMax:          6,
+      overworldX:         52,   // zelda's palace == (28, 25)
+      overworldY:         25,
+      worldState:         {},       // keep track of what's been killed/taken in the world
+      tempDungeonState:   {},       // keep track of what's been killed/taken in the current dungeon (which will be reset when you leave)
+      dungeonState:       {},       // keep track of keys (not reset when you leave)
+      currentDungeonId:   undefined,
+      lastArea:           undefined // for respawning after player death
     };
     this.overworld.reset();
     this.setState(this.states.overworld);
@@ -68,6 +68,7 @@ var Game = Object.extend(FiniteStateMachine, {
     mainmenu: {
       onenterstate: function() {
         this.mainmenu = Object.build(MainMenu);
+        App.sfx.playMusic("title");
       },
       onleavestate: function() {
         this.mainmenu.destroy();
@@ -86,8 +87,8 @@ var Game = Object.extend(FiniteStateMachine, {
         Input.setState(Input.gamepad);
         Game.area = newArea;
         var gp = Game.player;
-        if (!gp.currentDungeonId) {
-          gp.currentDungeonId = newArea.areaId;
+        if (Game.area.areaData.properties.dungeonId) {
+          gp.currentDungeonId = Game.area.areaData.properties.dungeonId;
           if (!gp.dungeonState[gp.currentDungeonId]) {
             gp.dungeonState[gp.currentDungeonId] = {};
           }
@@ -108,10 +109,11 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     overworld: {
       onenterstate: function() {
+        App.sfx.playMusic("overworld");
         Input.setState(Input.gamepad);
         Game.overworld.player.finishMove();
         Game.overworld.updateCamera();
-        Game.player.dungeonFlags = {};      // reset "oncePerDungeon" flags
+        Game.player.tempDungeonState = {};      // reset "oncePerDungeon" flags
         Game.player.currentDungeonId = undefined;
       },
       onleavestate: function() {
@@ -129,6 +131,7 @@ var Game = Object.extend(FiniteStateMachine, {
     //
     nextlife: {
       onenterstate: function(newArea) {
+        App.sfx.stopMusic();
         this.newArea = newArea;
         App.gfx.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
         setTimeout(function() {
@@ -140,6 +143,7 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     gameover: {
       onenterstate: function() {
+        App.sfx.stopMusic();
         App.sfx.play('AOL_Ganon_Laugh');
         App.gfx.drawTextScreen("GAME OVER");
         setTimeout(function() {
@@ -151,6 +155,7 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     overworldWipe: {
       onenterstate: function(nextTransition, newArea) {
+        App.sfx.stopMusic();
         this.stateTimer     = 0;
         this.nextTransition = nextTransition;
         this.newArea        = newArea;

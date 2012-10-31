@@ -143,6 +143,13 @@ class xmlParser_XMLNode {
     return $result ? $result->kids : array();
   }
   
+  function kidByTag($targetTagName) {
+    foreach ($this->kids as $kid) {
+      if ($kid->name === $targetTagName) { return $kid; }
+    }
+    return null;
+  }
+  
   function closest($targetTagName) {
     $result = $this->parent;
     while (true) {

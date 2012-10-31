@@ -205,12 +205,13 @@ var App = {
       if (!w) { w = slice[2]; }
       if (!h) { h = slice[3]; }
       CANVAS_CTX.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
-    },
+    }
     
   },
   
   sfx: {
     play: function(filename) {
+      if (App.isMobile) { return; }
       if (!App.audioEnabled) { return; }
       var samples = R.sfx[filename];
       for (var i = 0; i < samples.length; i += 1) {
@@ -226,6 +227,70 @@ var App = {
       samples[0].currentTime = 0;
       samples[0].play();
       return samples[0];
+    },
+    
+    toggleAudio: function() {
+      App.audioEnabled = !App.audioEnabled;
+      if (App.audioEnabled) {
+        if (this.currentMusicFilename) { this.playMusic(this.currentMusicFilename); }
+      }
+      else {
+        this.stopMusic();
+      }
+    },
+    
+    cached: {},
+    currentlyPlaying: undefined,
+    currentMusicFilename: undefined,
+    stopMusic: function() {
+      this.currentMusicFilename = undefined;
+      if (this.currentlyPlaying) {
+        this.currentlyPlaying.pause();
+        this.currentlyPlaying = undefined;
+      }
+    },
+    playMusic: function(filename) {
+      this.currentMusicFilename = filename; // store this even if !App.audioEnabled
+      if (App.isMobile) { return; }
+      if (!App.audioEnabled) { return; }
+      var that = this;
+      
+      this.stopMusic();
+      
+      this.currentMusicFilename = filename;
+      
+      var cached = this.cached[filename];
+      if (cached) {
+        if (cached.loaded) {
+          if (this.currentlyPlaying === cached.audio) { return; } // don't restart music
+          cached.audio.currentTime = 0;
+          cached.audio.play();
+          that.currentlyPlaying = cached.audio;
+        }
+        return;
+      }
+      
+      var onLoad = function(audio) {
+        that.cached[filename].loaded = true;
+        audio.currentTime = 0;
+        audio.play();
+        that.currentlyPlaying = audio;
+      };
+      
+      var audio = document.createElement('audio');
+      var listener = audio.addEventListener('canplaythrough', function (e) {
+        this.removeEventListener('canplaythrough', listener, false)
+        onLoad(audio);
+      }, false);
+      audio.addEventListener('error', function (ev) {
+        console.log("audio load error: " + ev)
+      }, false);
+      audio.autobuffer = true;
+      audio.preload    = 'auto';
+      audio.src        = 'res/music/' + filename + '.' + ResourceManager.audioFormat;
+      audio.load();
+      
+      this.cached[filename] = { loaded: false, audio: audio };
     }
   }
   

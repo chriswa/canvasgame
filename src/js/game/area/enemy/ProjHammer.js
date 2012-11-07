@@ -2,6 +2,7 @@ R.spawnableSprites['ProjHammer'] = Object.extend(Enemy, {
   hitbox: { x1: -8, y1: -8, x2: 8, y2: 8 },
   
   isStabbable: false,
+  damageToPlayer: 2,
   
   init: function(area, spawn) {
     Enemy.init.call(this, area, 'proj-hammer');

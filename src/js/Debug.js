@@ -26,7 +26,7 @@ var Debug = {
     // hook Game.setState to update UI
     var originalSetState = Game.setState;
     Game.setState = function(newState, newArea) {
-      if (newState === 'area') {
+      if (newState === Game.states.area) {
         $('#areaDropdown').val(newArea.areaId);
         $('#leaveToOverworld').removeAttr('disabled');
         $('#godmode').removeAttr('disabled');

@@ -43,6 +43,12 @@ var Overworld = {
     FAKE_MOUNTAIN: 17,
     isEncounterSafe: function(t) {
       return t === this.WATER || t === this.ROAD || t === this.TOWN1 || t === this.TOWN2 || t === this.TOWN3 || t === this.CAVE || t === this.FAKE_WATER || t === this.FAKE_MOUNTAIN;
+    },
+    isImpassable: function(t) {
+      return (t === this.WATER || t === this.MOUNTAIN || t === this.BOULDER);
+    },
+    isSwampy: function(t) {
+      return t === this.SWAMP;
     }
   },
   
@@ -64,7 +70,7 @@ var Overworld = {
     this.enemyGroup = Object.build(SpriteGroup);
     
     // spawn a player
-    this.player = Object.build(OverworldPlayer);
+    this.player = Object.build(OWPlayer);
     this.player.addToGroup(this.allGroup);
     
     this.spawnTimer = this.SPAWN_DELAY_INITIAL;
@@ -132,29 +138,6 @@ var Overworld = {
     // blit background tiles
     renderTiles(CANVAS, CANVAS_CTX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getTile, this.tileImg, this.tileImgCols)
     
-    /*
-    var ts = this.tileSize;
-    
-    // find background tiles overlapping canvas
-    var leftCol   = Math.max(Math.floor(this.renderOffsetX / ts), 0);
-    var rightCol  = Math.min(Math.ceil((this.renderOffsetX + CANVAS.width) / ts), this.cols);
-    var topRow    = Math.max(Math.floor(this.renderOffsetY / ts), 0);
-    var bottomRow = Math.min(Math.ceil((this.renderOffsetY + CANVAS.height) / ts), this.rows);
-    
-    // blit background tiles
-    var tx, ty, tileIndex;
-    ty = Math.round(topRow * ts - this.renderOffsetY);
-    for (var y = topRow; y < bottomRow; y++) {
-      tx = Math.round(leftCol * ts - this.renderOffsetX);
-      for (var x = leftCol; x < rightCol; x++) {
-        tileIndex = this.getTile(x, y);
-        CANVAS_CTX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
-        tx += ts;
-      }
-      ty += ts;
-    }
-    */
-    
     // render all entities
     this.allGroup.render(Game.overworld.renderOffsetX, Game.overworld.renderOffsetY);
   },
@@ -166,7 +149,7 @@ var Overworld = {
       var type = ['blob', 'blob', 'blob', 'blob', 'blob', 'blob', 'monster', 'monster', 'monster', 'monster', 'fairy'];
       //var type = ['blob', 'monster', 'fairy'];
       type = type[Math.floor(Math.random() * type.length)];
-      var e = Object.build(OverworldEncounter, type, this.getPlayerX() + distance * dirs[i][0], this.getPlayerY() + distance * dirs[i][1]);
+      var e = Object.build(OWEncounter, type, this.getPlayerX() + distance * dirs[i][0], this.getPlayerY() + distance * dirs[i][1]);
       e.addToGroup(this.allGroup);
       e.addToGroup(this.enemyGroup);
     }

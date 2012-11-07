@@ -31,23 +31,32 @@ var Game = Object.extend(FiniteStateMachine, {
     if (App.request['overworld']) {
       this.startNewGame();
     }
+    if (App.request['editor']) {
+      this.startEditor();
+    }
     
     // in case App fires a render before an update, make sure our activeState has been set (this seems to only happen on my netbook)
     this.updateState();
   },
   startNewGame: function() {
     this.player = {
-      lives:              3,
-      health:             6,
       healthMax:          6,
-      overworldX:         52,   // zelda's palace == (28, 25)
+      swordDamage:        1,
+      worldState:         {},        // keep track of what's been killed/taken in the world
+      dungeonState:       {}         // keep track of keys (not reset when you leave)
+    };
+    this.continueGame();
+  },
+  continueGame: function() {
+    _.extend(this.player, {
+      lives:              3,
+      health:             this.player.healthMax,
+      overworldX:         52,
       overworldY:         25,
-      worldState:         {},       // keep track of what's been killed/taken in the world
-      tempDungeonState:   {},       // keep track of what's been killed/taken in the current dungeon (which will be reset when you leave)
-      dungeonState:       {},       // keep track of keys (not reset when you leave)
+      tempDungeonState:   undefined, // keep track of what's been killed/taken in the current dungeon (which will be reset when you leave)
       currentDungeonId:   undefined,
       lastArea:           undefined // for respawning after player death
-    };
+    });
     this.overworld.reset();
     this.setState(this.states.overworld);
   },
@@ -93,6 +102,7 @@ var Game = Object.extend(FiniteStateMachine, {
             gp.dungeonState[gp.currentDungeonId] = {};
           }
         }
+        Game.area.startMusic();
       },
       onleavestate: function() {
         Input.setState(Input.none);
@@ -124,7 +134,7 @@ var Game = Object.extend(FiniteStateMachine, {
       },
       render: function() {
         Game.overworld.render();
-        Game.areaHud.render();
+        //Game.areaHud.render();
       }
     },
     
@@ -133,6 +143,7 @@ var Game = Object.extend(FiniteStateMachine, {
       onenterstate: function(newArea) {
         App.sfx.stopMusic();
         this.newArea = newArea;
+        //this.newArea.reset();
         App.gfx.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
         setTimeout(function() {
           Game.setState(Game.states.area, newArea);
@@ -176,7 +187,7 @@ var Game = Object.extend(FiniteStateMachine, {
       render: function() {
         var h = 0;
         if (this.stateTimer < 275) {
-          h = this.stateTimer / 225;
+          h = Math.max(1, this.stateTimer / 225);
         }
         else {
           h = (500 - this.stateTimer) / 225;
@@ -185,8 +196,9 @@ var Game = Object.extend(FiniteStateMachine, {
           if (this.newArea) { this.newArea.render(); } else { Game.overworld.render(); }
         }
         CANVAS_CTX.fillStyle = '#000';
-        CANVAS_CTX.fillRect(0, 0, CANVAS.width, (CANVAS.height/2) * h);
-        CANVAS_CTX.fillRect(0, CANVAS.height - (CANVAS.height/2) * h, CANVAS.width, (CANVAS.height/2) * h);
+        var rectHeight = (CANVAS.height/2) * h;
+        CANVAS_CTX.fillRect(0, 0, CANVAS.width, rectHeight);
+        CANVAS_CTX.fillRect(0, CANVAS.height - rectHeight, CANVAS.width, rectHeight);
       }
     }
     
@@ -197,7 +209,7 @@ var Game = Object.extend(FiniteStateMachine, {
     Game.player.lives -= 1;
     if (Game.player.lives > 0) {
       Game.player.health = Game.player.healthMax;
-      this.queueState(Game.states.nextlife, Object.build(Area, Game.player.lastArea.exitObject, Game.player.lastArea.sideHint));
+      this.queueState(Game.states.nextlife, Object.build(Area, Game.player.lastArea.exitObject));
     }
     else {
       this.queueState(Game.states.gameover);
@@ -206,13 +218,16 @@ var Game = Object.extend(FiniteStateMachine, {
   
   queueExit: function(exitObject) {
     
+    // clone exitObject so we can safely modify it
+    exitObject = _.clone(exitObject);
+    
     var doTransition;
     var newArea;      // or null if the target is the overworld
     
     // moving to the overworld?
     if (exitObject.area === 'overworld') {
       
-      // move player to destination if requested
+      // move player to overworld coords if requested
       if (exitObject.x && exitObject.y) {
         Game.overworld.movePlayerTo(exitObject.x, exitObject.y);
       }
@@ -231,22 +246,25 @@ var Game = Object.extend(FiniteStateMachine, {
     else {
       
       // for area exitObjects which don't specify any side information, guess based on which side of an area the player is leaving (i.e. walking off left side enters on right side and vice versa)
-      var sideHint = undefined;
-      var oldArea  = this.area;
-      if (oldArea) {
-        sideHint = (oldArea.playerSprite.x > oldArea.maxX / 2) ? 'right' : 'left';
+      if (this.area) {
+        var ps = this.area.playerSprite;
+        exitObject.sideHint = (ps.x > this.area.maxX / 2) ? 'left' : 'right';
+        if (ps.y + ps.hitbox.y1 < 0) {
+          exitObject.sideHint = 'bottom'; // player went off top of area
+        }
+        else if (ps.y + ps.hitbox.y2 > this.area.maxY) {
+          exitObject.sideHint = 'top'; // player went off bottom of area
+        }
       }
       
-      // overworld exitObjects which supply .side* properties depend on which direction the player entered the square from
+      // overworld exitObjects which supply .going* properties depend on which direction the player was travelling when they entered the tile
       var lastDir = this.overworld.player.lastDir;
-      if (exitObject.sidenorth && lastDir === 'north') { sideHint = exitObject.sidenorth; }
-      if (exitObject.sidesouth && lastDir === 'south') { sideHint = exitObject.sidesouth; }
-      if (exitObject.sideeast  && lastDir === 'east' ) { sideHint = exitObject.sideeast;  }
-      if (exitObject.sidewest  && lastDir === 'west' ) { sideHint = exitObject.sidewest;  }
+      var prop = 'going' + lastDir;
+      if (exitObject[prop]) { exitObject.sideHint = exitObject[prop]; }
       
       //
-      Game.player.lastArea = { exitObject: exitObject, sideHint: sideHint };
-      var newArea = Object.build(Area, exitObject, sideHint);
+      Game.player.lastArea = { exitObject: exitObject };
+      var newArea = Object.build(Area, exitObject);
       
       // prepare transition code
       doTransition = function() {
@@ -275,6 +293,13 @@ var Game = Object.extend(FiniteStateMachine, {
       this.queueState(Game.states.overworldWipe, doTransition, newArea);
     }
     
+  },
+  
+  startEditor: function() {
+    if (App.isMobile) { alert('Editor is not supported on mobile'); return; }
+    $('#debug-panel').hide();
+    $('.editor').show();
+    alert('TODO');
   }
   
 });

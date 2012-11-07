@@ -1,13 +1,18 @@
 TODO
-  - add locked doors
+  - sfx
+    - noise while sword strikes solid blocks
+    - continuous elevator noise
+  - more enemies:
+    - boomeranger
+    - orange knight
+    - ground-scurrying thing in first dark cave
+    - spear-chucker (early forest encounter)?
+    - white desert worms?
+  - more levels
   ? downward and upward thrusts
   ? candle, hammer, gloves, raft, boots, flute, cross
   ? spells
-  ? elevators
-  - more enemies: boomeranger, spear-chucker (early forest encounter), orange knights, white desert worms
 
 CONSIDER
   - make it work in ie?
-
-ONGOING
-  - add a couple more enemies (especially bigger enemies -- more satisfying to kill!)
+  - map-property-specified alternate tileset name for "dark" (no candle)

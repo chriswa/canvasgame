@@ -13,9 +13,9 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     this.startAnimation('idle');
   },
   
-  onStabbed: function() {
+  onStabbed: function(absHitbox) {
     this.isReadyToFire = false;
-    Enemy.onStabbed.apply(this);
+    Enemy.onStabbed.call(this, absHitbox);
   },
   
   updateFixedStep: function(dt) {
@@ -29,8 +29,7 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     // turn to face player
-    var facing = (this.area.playerSprite.x > this.x) ? 1 : -1;
-    this.imageModifier = facing === 1 ? R.IMG_ORIGINAL : R.IMG_FLIPX;
+    this.facing = (this.area.playerSprite.x > this.x) ? 1 : -1;
     
     this.behaviourTimer++;
     if (this.behaviourTimer === 120) {
@@ -39,7 +38,7 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     }
     if (this.behaviourTimer === 130) {
       if (this.isReadyToFire) {
-        this.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x, y: this.y, vx: facing * this.FIREBALL_SPEED });
+        this.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x, y: this.y, vx: this.facing * this.FIREBALL_SPEED });
       }
     }
     if (this.behaviourTimer === 160) {
@@ -48,9 +47,9 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     
     // standard enemy stuff
     this.vy += this.gravity;
-    this.translateWithTileCollisions( this.vx, this.vy );
+    this.touching = this.translateWithTileCollisions( this.vx, this.vy );
     this.advanceAnimation( this.FIXED_STEP );
-    if (this.touching.outOfBounds) { this.kill(); }
+    if (this.isOutOfBounds()) { this.kill(); }
     
     if (this.touching.bottom || this.touching.top) { this.vy = 0; }
     

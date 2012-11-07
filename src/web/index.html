@@ -16,7 +16,7 @@
 
 <!-- DEBUG PANEL -->
 <div class="development-toggle" style="float: left;"><a href="#" onclick="$('.production-toggle').toggle(); $('.development-toggle').toggle(); return false;" style="position: absolute; color: #eee; font: 10px bold monospace; padding: 5px;">X</a></div>
-<div id="debug-panel" class="development-toggle mobile-off" style="background-color: #fff; padding: 10px; border: 1px solid #ddd; margin: 10px; position: absolute; text-align: left; display: none; width: 260px;">
+<div id="debug-panel" class="panel development-toggle mobile-off" style="position: absolute; display: none;">
   
   <div style="float: right;"><a href="#" onclick="$('.production-toggle').toggle(); $('.development-toggle').toggle(); return false;" style="color: #ccc; font: 10px bold monospace; padding: 5px; margin-right: -6px;">X</a></div>
   
@@ -52,6 +52,14 @@
   
 </div>
 
+<!-- EDITOR -->
+<div id="editor-panel-left" class="panel editor" style="position: absolute; display: none;">
+  EDITOR PANEL LEFT
+</div>
+<div id="editor-panel-right" class="panel editor" style="position: absolute; right: 0; display: none;">
+  EDITOR PANEL RIGHT
+</div>
+
 <!-- CANVAS -->
 <canvas id="canvas" width="640" height="480" class="default-on" style="display: none;">
   <div id="nocanvas">
@@ -64,7 +72,7 @@
 <!-- INSTRUCTIONS -->
 <div class="default-on mobile-off" style="display: none; width: 660px; margin: auto;">
   
-  <div style="width: 660px; position: absolute; text-align: right; margin-top: -8px;" onclick="App.sfx.toggleAudio(); $(this).children().toggle();">
+  <div id="toggleAudio" style="width: 660px; position: absolute; text-align: right; margin-top: -8px;" onclick="App.sfx.toggleAudio();">
     <img src="src/web/speaker_on.png">
     <img src="src/web/speaker_off.png" style="display: none;">
   </div>
@@ -75,8 +83,12 @@
     <tr><th><span>Attack</span></th><td><span>ctrl <i>or</i> X</span></td></tr>
   </table>
   
-  <div class="production-toggle" style="background-color: #ddd; padding: 10px; border: 1px solid #999; display: inline-block; margin-top: 10px;">
+  <div class="production-toggle" style="background-color: #ddd; padding: 10px; border: 1px solid #999; margin-top: 10px;">
     <strong>THIS IS THE DEVELOPMENT VERSION!</strong><br/>If things are broken, <a href="http://dl.dropbox.com/u/29873255/aolbackup/index.html">try the latest stable version</a>
+  </div>
+  
+  <div style="font-size: 12px; margin: 10px;">
+    Works best with the latest version of <a target="_blank" href="http://google.com/chrome">Chrome</a> or <a target="_blank" href="http://mozilla.org/firefox">Firefox</a>
   </div>
   
 </div>

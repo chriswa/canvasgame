@@ -2,8 +2,10 @@ var Sprite = {
   
   uniqueId: null,
   readyToCull: false,
+  alive: true,
   groups: null,
   
+  facing: 1,                      // 1 = right, -1 = left and X_FLIP the sprite
   characterName: null,
   animation: null,
   animationName: '',
@@ -11,7 +13,6 @@ var Sprite = {
   slice: null,
   frameIndex: null,
   frameDelayRemaining: 0,
-  imageModifier: R.IMG_ORIGINAL,
   x: 0.0,
   y: 0.0,
   vx: 0.0,
@@ -25,12 +26,12 @@ var Sprite = {
   drawOffsetX: 0,
   drawOffsetY: 0,
   
-  init: function(characterName) {
+  init: function(characterName, animationName) {
     this.uniqueId = getUniqueId();
     this.groups = [];
     this.setAnimationCharacter(characterName);
-    this.startAnimation(_.keys(R.spriteCharacters[this.characterName].sequences)[0]); // start arbitrary animation so the object is in a healthy state, ready to be rendered
-    this.advanceAnimation(0);
+    if (!animationName) { animationName = _.keys(R.spriteCharacters[this.characterName].sequences)[0]; } // pick an arbitrary animation so we are ready to be rendered
+    this.startAnimation(animationName);
   },
   
   // support for fixed-step updates
@@ -50,17 +51,21 @@ var Sprite = {
     });
   },
   
-  render: function(ox, oy) {
+  render: function(ox, oy, colour) {
+    if (!colour) { colour = 0; }
+    if (colour < 0 || colour > 3) { throw new Error('Invalid colour'); }
+    
     var slice = this.slice;
     var frame = this.animation.frames[this.frameIndex];
-    if (!slice || !frame || this.imageModifier === -1) { return; } 
+    if (!slice || !frame) { throw new Error('Invalid slice or frame'); } 
     
     var x = Math.round( this.x + this.drawOffsetX );
     var y = Math.round( this.y + this.drawOffsetY );
     
-    var t = this.texture[this.imageModifier];
+    var im = (colour << 1) | (this.facing === -1 ? R.IMG_FLIPX : 0);
+    var t = this.texture[im];
     
-    if (this.imageModifier & R.IMG_FLIPX) {
+    if (this.facing === -1) {
       CANVAS_CTX.drawImage(t, this.texture[1].width - slice[0] - slice[2], slice[1], slice[2], slice[3], x - frame.x_flipped - ox, y + frame.y - oy, slice[2], slice[3]);
     }
     else {
@@ -75,7 +80,7 @@ var Sprite = {
   },
   
   setAnimationCharacter: function(characterName) {
-    if (!R.spriteCharacters[characterName]) { throw new Error("setAnimationCharacter: characterName unknown: " + characterName); }
+    if (!R.spriteCharacters[characterName]) { console.trace(); throw new Error("setAnimationCharacter: characterName unknown: " + characterName); }
     this.characterName = characterName;
     this.texture       = R.spriteTextures[R.spriteCharacters[this.characterName].image];
   },
@@ -85,6 +90,7 @@ var Sprite = {
     if (!this.animation) { throw new Error("Sprite: character " + this.characterName + " has no animation named " + this.animationName); }
     this.frameIndex = 0;
     this.frameDelayRemaining = this.animation.frames[this.frameIndex].duration;
+    this.advanceAnimation(0);
   },
   playAnimation: function(animationName) {
     if (this.animationName !== animationName) {
@@ -95,7 +101,7 @@ var Sprite = {
   // this should be called from update code
   advanceAnimation: function(dt) {
     this.frameDelayRemaining -= dt;
-    while (this.frameDelayRemaining < 0) {
+    while (this.frameDelayRemaining <= 0) {
       
       // provide an optional event for sprites
       if (this.onAnimationFrameAdvance) {
@@ -120,6 +126,7 @@ var Sprite = {
   // this may be safely called from anywhere
   kill: function() {
     this.readyToCull = true;
+    this.alive = false;
   },
   
 };

@@ -5,8 +5,11 @@ var MainMenu = {
     var midY = CANVAS.height / 2;
     
     Input.setState(Input.gui);
-    Input.gui.addButton("New Game", { x1: midX - 60, x2: midX + 60, y1: midY + 10, y2: midY +  50 }, function() { Game.startNewGame(); });
-    Input.gui.addButton("Editor",   { x1: midX - 60, x2: midX + 60, y1: midY + 60, y2: midY + 100 }, function() { alert("Under construction!"); });
+    Input.gui.addButton("New Game", { x1: midX - 60, x2: midX + 60, y1: midY +  10, y2: midY +  50 }, function() { Game.startNewGame(); });
+    if (Game.player) {
+      Input.gui.addButton("Continue", { x1: midX - 60, x2: midX + 60, y1: midY +  60, y2: midY + 100 }, function() { Game.continueGame(); });
+    }
+    //Input.gui.addButton("Editor",   { x1: midX - 60, x2: midX + 60, y1: midY + 110, y2: midY + 150 }, function() { alert("Under construction!"); });
   },
   
   destroy: function() {

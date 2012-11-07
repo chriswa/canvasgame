@@ -2,46 +2,54 @@ var PhysicsSprite = Object.extend(Sprite, {
   
   area: undefined,
   gravity: 0.6,
-  hitbox: { x1: 0, y1: 0, x2: 32, y2: 32 }, // default size of 1x1 tiles
+  hitbox: { x1: -16, y1: -16, x2: 16, y2: 16 }, // default size of 1x1 tiles
   touching: {}, // feedback from translateWithTileCollisions
   
   init: function(area, characterName) {
     this.area = area;
-    //Sprite.init.call(this, characterName);
-    this.uber('init', characterName);
+    Sprite.init.call(this, characterName);
+    //this.uber('init', characterName);
   },
   
   //
   getAbsHitbox: function() {
-    return { x1: this.hitbox.x1 + this.x, y1: this.hitbox.y1 + this.y, x2: this.hitbox.x2 + this.x, y2: this.hitbox.y2 + this.y };
+    return relToAbsHitbox( this.hitbox, this );
+  },
+  
+  //
+  isOutOfBounds: function() {
+    return this.touching.tiles[Area.physicsTileTypes.OUTOFBOUNDS];
   },
   
   //
   translateWithTileCollisions: function( dx, dy ) {
-    this.touching     = {};
-    this.tilesTouched = {};
+    var touching = {};
     
     var x1 = this.hitbox.x1;
     var y1 = this.hitbox.y1;
     var x2 = this.hitbox.x2;
     var y2 = this.hitbox.y2;
     
-    var gpt = this.area.getPhysicsTile.bind(this.area);
+    var gpt = this.area.getPhysicsTile;
     
     // translate along x-axis
     var r = this.translateWithTileCollisionsAlongAxis(dx, this.x, x1, x2, this.y, y1, y2, function(x, y) { return gpt(x, y); });
     this.x = r.newPos;
-    if (r.hitSomething && dx < 0) { this.touching.left   = true; }
-    if (r.hitSomething && dx > 0) { this.touching.right  = true; }
+    if (r.hitSomething && dx < 0) { touching.left   = true; }
+    if (r.hitSomething && dx > 0) { touching.right  = true; }
+    touching.tiles = r.tilesTouched;
     
     // translate along y-axis
     var r = this.translateWithTileCollisionsAlongAxis(dy, this.y, y1, y2, this.x, x1, x2, function(y, x) { return gpt(x, y); });
     this.y = r.newPos;
-    if (r.hitSomething && dy < 0) { this.touching.top    = true; }
-    if (r.hitSomething && dy > 0) { this.touching.bottom = true; }
+    if (r.hitSomething && dy < 0) { touching.top    = true; }
+    if (r.hitSomething && dy > 0) { touching.bottom = true; }
+    _.extend(touching.tiles, r.tilesTouched);
     
     // debug draw hitbox
     Debug.drawRect({x1: x1 + this.x, y1: y1 + this.y, x2: x2 + this.x, y2: y2 + this.y}, '#0f0');
+    
+    return touching;
   },
   
   //
@@ -73,13 +81,12 @@ var PhysicsSprite = Object.extend(Sprite, {
         
         var physicsTile = tileGetter(tileU, tileV);
         
-        // -1 means outOfBounds
-        if (physicsTile === -1) {
-          this.touching.outOfBounds = true;
+        if (physicsTile === Area.physicsTileTypes.OUTOFBOUNDS) {
+          tilesTouched[Area.physicsTileTypes.OUTOFBOUNDS] = true;
         }
         
         // solid tiles cause us to stop
-        else if (physicsTile === 1) {
+        else if (physicsTile === Area.physicsTileTypes.SOLID) {
           if (deltaPos < 0) {
             u = (tileU + 1) * tileSize - u1;
           }
@@ -92,11 +99,11 @@ var PhysicsSprite = Object.extend(Sprite, {
         
         // special physics tiles
         if (physicsTile > 1) {
-          this.tilesTouched[physicsTile] = true;
+          tilesTouched[physicsTile] = true;
         }
       }
     }
-    return { hitSomething: hitSomething, newPos: u };
+    return { hitSomething: hitSomething, newPos: u, tilesTouched: tilesTouched };
   }
   
 });

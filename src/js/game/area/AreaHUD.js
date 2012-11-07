@@ -24,5 +24,5 @@ var AreaHUD = {
     //for (var i = 0; i < p.lives; i++) {
     //  App.gfx.blitSliceByFilename('extralife.png', CANVAS.width - 16 - (5 + 20 * i), 5);
     //}
-  },
+  }
 };

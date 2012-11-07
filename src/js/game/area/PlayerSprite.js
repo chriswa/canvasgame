@@ -17,6 +17,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   isAirborne:   true,
   isAttacking:  false,
   isCrouching:  false,
+  isOnElevator: false,
   
   //
   collectEntityHandle: undefined,
@@ -42,8 +43,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // ====
   
   init: function(area) {
-    //PhysicsSprite.init.call(this, area, 'link');
-    this.uber('init', area, 'link');
+    PhysicsSprite.init.call(this, area, 'link');
+    //this.uber('init', area, 'link');
     this.startAnimation('stand');
     this.JUMP_X_BOOST /= this.MAX_X_SPEED; // XXX: decouple this constant for simpler tweaking
   },
@@ -76,9 +77,9 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       var facingEntity = (this.facing === directionTowardEntity);
       
       // if you're facing against the direction of its motion, you can deflect it (just in case it tunnels into you from your shield-side!)
-      var facingAgainstMotion = (sign(entity.vx) !== this.facing);
+      //var facingAgainstMotion = (sign(entity.vx) !== this.facing);
       
-      if (shieldAtRightHeight && (facingEntity || facingAgainstMotion)) {
+      if (shieldAtRightHeight && (facingEntity /*|| facingAgainstMotion*/)) {
         App.sfx.play('AOL_Deflect');
         entity.onBlock();
       }
@@ -86,10 +87,10 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
     // if it's dangerous and we're not invincible, we get hurt
     if (entity.isDangerous && this.invincibleTimer <= 0) {
-      Game.player.health -= 1;
-      this.isAttacking     = false;
-      this.hurtTimer       = this.HURT_TIME;
-      this.invincibleTimer = this.HURT_INVINCIBLE_TIME;
+      Game.player.health   -= entity.damageToPlayer;
+      this.isAttacking     =  false;
+      this.hurtTimer       =  this.HURT_TIME;
+      this.invincibleTimer =  this.HURT_INVINCIBLE_TIME;
       if (this.frozenTimer <= 0) {
         this.playAnimation('hurt');
         var hurtDirection = (entity.x < this.x) ? 1 : -1;
@@ -97,6 +98,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
         this.vy = -this.HURT_IMPULSE_Y;
       }
       if (Game.player.health <= 0) {
+        App.sfx.stopMusic();
         App.sfx.play('AOL_Die');
       }
       else {
@@ -104,6 +106,10 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       }
       
       // tell the entity it hurt us (e.g. fireballs will want to kill themselves)
+      entity.onPlayerCollision(this);
+    }
+    
+    else if (!entity.isDangerous) {
       entity.onPlayerCollision(this);
     }
   },
@@ -123,6 +129,12 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     if (this.frozenTimer > 0) {
       this.frozenTimer -= dt;
       if (this.frozenTimer <= 0 && this.collectEntityHandle) { this.collectEntityHandle.kill(); this.collectEntityHandle = undefined; }
+    }
+    
+    // if we're on an elevator, treat it like the ground
+    if (this.isOnElevator) {
+      this.vy = 0;
+      this.touching.bottom = true;
     }
     
     // if you're hurt or collecting something, you can't do anything at all (even change your facing)
@@ -154,7 +166,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       if (Input.gamepad.pressed.attack && !this.isAttacking) {
         this.area.currentAttackSfx = App.sfx.play('AOL_Sword');
         this.isAttacking = true;
-        this.isCrouching = Input.gamepad.held.down && !this.isAirborne;
+        this.isCrouching = Input.gamepad.held.down && !this.isAirborne && !this.isOnElevator;
         if (this.isCrouching) { this.startAnimation('crouch-attack'); }
         else                  { this.startAnimation('attack');        }
       }
@@ -184,7 +196,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.integrateAndTranslate(dt);
       
       // check for lava
-      if (Game.player.health > 0 && this.tilesTouched[ Area.physicsTileTypes.LAVA ]) {
+      if (Game.player.health > 0 && this.touching.tiles[ Area.physicsTileTypes.LAVA ]) {
+        App.sfx.stopMusic();
         App.sfx.play('AOL_Die');
         Game.player.health = 0;
         this.playAnimation('hurt');
@@ -201,18 +214,15 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     }
     
     // check for area transitions
-    if (this.touching.outOfBounds && Game.player.health > 0) {
+    if ((this.isOutOfBounds() || this.y + this.hitbox.y1 < 0) && Game.player.health > 0) {
       this.area.findAndQueuePlayerExit();
     }
-    
-    // visual effects (hurting and invincibility)
-    this.applyVisualEffects();
     
   },
   
   tryToJump: function() {
     // allow jump if on ground or recently on ground
-    if (this.fallStopwatch < this.JUMP_GRACE_TIME && !this.isAttacking) {
+    if (this.fallStopwatch < this.JUMP_GRACE_TIME && !this.isAttacking && !this.isOnElevator) {
       
       // stop crouching?
       this.isCrouching = false;
@@ -232,7 +242,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     this.fallStopwatch = 0;
     
     // press down to crouch
-    this.isCrouching = Input.gamepad.held.down;
+    this.isCrouching = Input.gamepad.held.down && !this.isOnElevator;
     if (this.isCrouching) {
       
       // if below a certain threshold of speed, full stop
@@ -314,7 +324,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     deltaX = clamp(-this.MAX_X_SPEED * dt, deltaX, this.MAX_X_SPEED * dt);
     
     // move sprite
-    this.translateWithTileCollisions( deltaX, deltaY );
+    this.touching = this.translateWithTileCollisions( deltaX, deltaY );
     if (this.touching.bottom || this.touching.top)   { this.vy = 0; }
     if (this.touching.left   || this.touching.right) { this.vx = 0; }
   },
@@ -344,32 +354,24 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
   },
   
-  // visual
+  // render
   // ------
   
-  applyVisualEffects: function() {
+  render: function(ox, oy) {
+    var f = 1000 / 30;
     
-    // flip sprite if facing left
-    this.imageModifier = (this.facing === 1) ? R.IMG_ORIGINAL : R.IMG_FLIPX;
+    // flash transparent if invincible (and not hurting)
+    if (this.invincibleTimer > 0 && this.invincibleTimer / f % 4 < 2 && this.hurtTimer <= 0) {
+      return; // return without rendering
+    }
     
     // flash colours if hurting
-    var f = 1000 / 30;
+    var colour = 0;
     if (this.hurtTimer > 0) {
-      if (this.hurtTimer % 4*f < 1*f) {
-        this.imageModifier |= R.IMG_PINK;
-      }
-      else if (this.hurtTimer % 4*f < 2*f) {
-        this.imageModifier |= R.IMG_CYAN;
-      }
-      else if (this.hurtTimer % 4*f < 3*f) {
-        this.imageModifier |= R.IMG_PINK | R.IMG_CYAN;
-      }
+      colour = Math.floor(this.hurtTimer / f % 4);
     }
     
-    // flash transparent if invincible
-    else if (this.invincibleTimer > 0 && this.invincibleTimer % 4*f < 2*f) {
-      this.imageModifier = -1;
-    }
+    PhysicsSprite.render.call(this, ox, oy, colour);
   },
   
   // misc
@@ -391,6 +393,10 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     this.frozenTimer = 1000;
     this.vx = 0;
     this.vy = 0;
+    
+    App.sfx.pauseMusic();
+    setTimeout(function() { App.sfx.restartMusic(); }, 2500);
+    App.sfx.play('AOL_LevelUp_GetItem');
   },
   
 });

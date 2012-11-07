@@ -1,6 +1,7 @@
 var Area = {
   
   physicsTileTypes: {
+    OUTOFBOUNDS: -1,
     EMPTY: 0,
     SOLID: 1,
     LAVA:  2
@@ -32,7 +33,7 @@ var Area = {
   age: 0,
   music: undefined,
   
-  init: function(exitObject, sideHintFromLastExit) {
+  init: function(exitObject) {
     this.getPhysicsTile    = this.getPhysicsTile.bind(this);
     this.getBackgroundTile = this.getBackgroundTile.bind(this);
     
@@ -54,76 +55,16 @@ var Area = {
     this.allGroup   = Object.build(SpriteGroup);
     this.enemyGroup = Object.build(SpriteGroup);
     
-    // spawn a playerSprite
-    this.playerSprite = this.spawn(PlayerSprite);
-    
     // spawn enemies
-    _.each(this.areaData.spawns, function(spawnInfo) {
-      
-      // have we already "completed" (i.e. defeated/collected) this spawn?
-      if (spawnInfo.oncePerDungeon && Game.player.tempDungeonState[spawnInfo.oncePerDungeon]) { return; }
-      if (spawnInfo.onceEver       && Game.player.worldState[spawnInfo.onceEver])         { return; }
-      
-      // is this an encounter-type dependant spawn and the wrong type of encounter?
-      if (exitObject.encounter === 'fairy') { return; }
-      if (exitObject.encounter === 'blob' && spawnInfo.hard) { return; }
-      if (exitObject.encounter === 'monster' && !spawnInfo.hard) { return; }
-      
-      // spawn!
-      var classObject = R.spawnableSprites[spawnInfo['class']];
-      var e = this.spawn(classObject, spawnInfo);
-      e.x += spawnInfo.x;
-      e.y += spawnInfo.y;
-      
-      // do we need to do anything when the spawn is completed?
-      if (spawnInfo.oncePerDungeon) { e.onComplete = function() { Game.player.tempDungeonState[spawnInfo.oncePerDungeon] = true; } }
-      if (spawnInfo.onceEver)       { e.onComplete = function() { Game.player.worldState[spawnInfo.onceEver]         = true; } }
-      
-    }, this);
+    this.initSpawnEntities(exitObject.encounter);
     
-    // special rules for exitObject.encounter === 'fairy'
-    if (exitObject.encounter === 'fairy') {
-      var e = this.spawn(R.spawnableSprites['Fairy']);
-      e.x += this.tileSize * this.cols / 2 - 16;
-      e.y += 9 * this.tileSize;
-    }
+    // spawn a playerSprite
+    this.initPlayer(exitObject);
     
-    // set the playerSprite's position and velocity
-    // if the player is leaving an area, we can use which side of it they're on to guess where the player should appear on the next area
-    if (exitObject.x !== undefined && exitObject.y !== undefined) {
-      this.playerSprite.x = exitObject.x;
-      this.playerSprite.y = exitObject.y;
-      // TODO: also set velocity
-    }
-    else {
-      var side = exitObject.side;
-      if (!side && sideHintFromLastExit) {
-        if (sideHintFromLastExit === 'left') { side = 'right'; }
-        if (sideHintFromLastExit === 'right') { side = 'left'; }
-      }
-      if (!side) { side = 'left'; }
-      
-      // find the first solid tile from the bottom
-      var tx = 0;
-      if (side === 'right') { tx = this.cols - 1; }
-      if (side === 'centre') { tx = Math.floor(this.cols / 2); }
-      for (var ty = this.rows - 1; ty > 2; ty--) {
-        if (this.getPhysicsTile(tx, ty) < 1) { break; }
-      }
-      
-      // place player
-      this.playerSprite.x = (side === 'left') ? -this.playerSprite.hitbox.x1 : ((tx + 1) * this.tileSize) - this.playerSprite.hitbox.x2;
-      if (side === 'centre') { this.playerSprite.x = this.tileSize * this.cols / 2 - 16; }
-      this.playerSprite.y = (ty + 1) * this.tileSize - this.playerSprite.hitbox.y2;
-      this.playerSprite.vx = 0;
-      if (side === 'left')  { this.playerSprite.vx =  this.playerSprite.MAX_X_SPEED; }
-      if (side === 'right') { this.playerSprite.vx = -this.playerSprite.MAX_X_SPEED; }
-      
-      this.playerSprite.facing = (side === 'left') ? 1 : -1;
-      this.playerSprite.startAnimation('walk');
-    }
+    // fix elevators
+    this.initElevators();
     
-    // play music
+    // decide on music
     this.music = 'battle';
     if (this.areaData.properties.music) {
       this.music = this.areaData.properties.music;
@@ -136,44 +77,149 @@ var Area = {
     else if (this.areaData.properties.dungeonId) {
       this.music = 'palace';
     }
+    if (this.areaData.properties.dungeonId && !Game.player.currentDungeonId) {
+      Game.player.tempDungeonState.music = this.music;
+    }
     if (Game.player.currentDungeonId) { this.music = 'NO_CHANGE'; }
     
     //
     this.update(0);
   },
+  initPlayer: function(exitObject) {
+    this.playerSprite = this.spawn(PlayerSprite);
+    
+    // set the playerSprite's position and velocity
+    // if the player is leaving an area, we can use which side of it they're on to guess where the player should appear on the next area
+    if (exitObject.x !== undefined && exitObject.y !== undefined) {
+      this.playerSprite.x = exitObject.x;
+      this.playerSprite.y = exitObject.y;
+      // TODO: also set velocity?
+    }
+    else {
+      var side = exitObject.sideHint;
+      if (exitObject.side) { side = exitObject.side; }
+      if (!side) { side = 'left'; }
+      
+      // elevator?
+      if (side === 'top' || side === 'bottom') {
+        
+        // find any elevator
+        var elevators = _.where(this.enemyGroup.collection, { className: 'Elevator' });
+        if (elevators.length < 1) { throw new Error('side = ' + side + ' but no elevators were found!'); }
+        var elevator = elevators[0];
+        
+        // move player to edge of screen, in line with elevator
+        var extraDisplacementFromEdge = 16;
+        this.playerSprite.x = elevator.x;
+        if (side === 'top') {
+          this.playerSprite.y = 0 - this.playerSprite.hitbox.y1 + extraDisplacementFromEdge;
+        }
+        else {
+          this.playerSprite.y = this.maxY - this.playerSprite.hitbox.y2 - extraDisplacementFromEdge;
+        }
+        
+        // move elevator under player
+        elevator.moveUnderPlayer();
+        
+      }
+      
+      // side is left, right, or centre
+      else {
+        
+        // find the first solid tile from the bottom
+        var tx = 0;
+        if (side === 'right') { tx = this.cols - 1; }
+        if (side === 'centre') { tx = Math.floor(this.cols / 2); }
+        for (var ty = this.rows - 1; ty > 2; ty--) {
+          if (this.getPhysicsTile(tx, ty) === this.physicsTileTypes.EMPTY) { break; }
+        }
+        
+        // place player
+        this.playerSprite.x = (side === 'left') ? -this.playerSprite.hitbox.x1 : ((tx + 1) * this.tileSize) - this.playerSprite.hitbox.x2;
+        if (side === 'centre') { this.playerSprite.x = this.tileSize * this.cols / 2; }
+        this.playerSprite.y = (ty + 1) * this.tileSize - this.playerSprite.hitbox.y2;
+        this.playerSprite.vx = 0;
+        if (side === 'left')  { this.playerSprite.vx =  this.playerSprite.MAX_X_SPEED; }
+        if (side === 'right') { this.playerSprite.vx = -this.playerSprite.MAX_X_SPEED; }
+        
+        this.playerSprite.facing = (side === 'right') ? -1 : 1;
+        this.playerSprite.startAnimation('walk');
+      }
+    }
+  },
+  initSpawnEntities: function(encounterType) {
+    // special rules for encounterType === 'fairy'
+    if (encounterType === 'fairy') {
+      var e = this.spawn(R.spawnableSprites['Fairy']);
+      e.x += this.tileSize * this.cols / 2;
+      e.y += 9 * this.tileSize;
+    }
+    
+    // 
+    _.each(this.areaData.spawns, function(spawnInfo) {
+      
+      // have we already "completed" (i.e. defeated/collected) this spawn?
+      if (spawnInfo.oncePerDungeon && Game.player.tempDungeonState[spawnInfo.oncePerDungeon]) { return; }
+      if (spawnInfo.onceEver       && Game.player.worldState[spawnInfo.onceEver])             { return; }
+      
+      // is this an encounter-type dependant spawn and the wrong type of encounter?
+      if (encounterType === 'fairy') { return; }
+      if (encounterType === 'blob' && spawnInfo.hard) { return; }
+      if (encounterType === 'monster' && !spawnInfo.hard) { return; }
+      
+      // spawn!
+      var classObject = R.spawnableSprites[spawnInfo['class']];
+      if (!classObject) { throw new Error("Unknown spawnableSprite " + spawnInfo['class']); }
+      var e = this.spawn(classObject, spawnInfo);
+      e.x += spawnInfo.x;
+      e.y += spawnInfo.y;
+      
+      // do we need to do anything when the spawn is completed?
+      if (spawnInfo.oncePerDungeon) { e.onComplete = function() { Game.player.tempDungeonState[spawnInfo.oncePerDungeon] = true; }; }
+      if (spawnInfo.onceEver)       { e.onComplete = function() { Game.player.worldState[spawnInfo.onceEver]             = true; }; }
+      
+    }, this);
+  },
+  initElevators: function() {
+    // TODO: if the player enters via a top tunnel, an elevator between the tunnels must spawn at the top and vice versa
+  },
+  
   getPhysicsTile: function(tx, ty) {
-    if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return -1; } // out of bounds
+    if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return this.physicsTileTypes.OUTOFBOUNDS; }
     return this.areaData.physics[ ty * this.cols + tx ];
   },
   getBackgroundTile: function(tx, ty) {
-    if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return 0; }
+    //if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return 0; }
     return this.areaData.background[ ty * this.cols + tx ];
   },
-  update: function(dt) {
-    
-    if (this.age === 0 && dt > 0) {
-      if (this.music === 'NONE') {
-        App.sfx.stopMusic();
-      }
-      else if (this.music !== 'NO_CHANGE') {
-        App.sfx.playMusic(this.music);
-      }
+  startMusic: function() {
+    if (this.music === 'NONE') {
+      App.sfx.stopMusic();
     }
-    
+    else if (this.music === 'NO_CHANGE') {
+      App.sfx.playMusic(Game.player.tempDungeonState.music);
+    }
+    else {
+      App.sfx.playMusic(this.music);
+    }
+  },
+  update: function(dt) {
     this.age += dt;
     
     // update all entities
     this.allGroup.update(dt);
+    
+    // cull entities while have been "killed"
+    this.allGroup.cull();
     
     // offset the area to center on the player
     this.updateCamera();
     
     // do collisions
     var p = this.playerSprite;
-    overlapOneToManyAABBs(p.getAbsHitbox(), this.enemyGroup.collection, function(e) { p.onCollisionWithEnemy(e); }, function(e) { return e.isHurt ? false : e.getAbsHitbox(); });
-    
-    // cull entities while have been "killed"
-    this.allGroup.cull();
+    var onCollision = function(e) { p.onCollisionWithEnemy(e); };
+    var getEnemyAbsHitbox = function(e) { return e.isHurt ? false : e.getAbsHitbox(); };
+    overlapOneToManyAABBs(p.getAbsHitbox(), this.enemyGroup.collection, onCollision, getEnemyAbsHitbox);
     
     Debug.statusbarPrint("SPR: " + this.allGroup.count(), 71);
   },
@@ -182,14 +228,14 @@ var Area = {
     var py = Math.round(this.playerSprite.y);
     
     // center camera on playerSprite
-    this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px + 16 - CANVAS.width  / 2)), this.cols * this.tileSize - CANVAS.width));
-    this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py + 32 - CANVAS.height / 2)), this.rows * this.tileSize - CANVAS.height));
+    this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px - CANVAS.width  / 2)), this.maxX - CANVAS.width));
+    this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py - CANVAS.height / 2)), this.maxY - CANVAS.height));
     
     // provide standardized aabb for game logic to provide identical gameplay on devices with different display sizes
     var stdW = 640;
     var stdH = 480;
-    this.stdX1 = Math.min(Math.max(0, Math.floor(px + 16 - stdW / 2)), this.cols * this.tileSize - stdW);
-    this.stdY1 = Math.min(Math.max(0, Math.floor(py + 32 - stdH / 2)), this.rows * this.tileSize - stdH);
+    this.stdX1 = Math.min(Math.max(0, Math.floor(px - stdW / 2)), this.maxX - stdW);
+    this.stdY1 = Math.min(Math.max(0, Math.floor(py - stdH / 2)), this.maxY - stdH);
     this.stdX2 = this.stdX1 + stdW;
     this.stdY2 = this.stdY1 + stdH;
   },
@@ -201,33 +247,6 @@ var Area = {
     
     // blit background tiles
     renderTiles(CANVAS, CANVAS_CTX, this.cols, this.rows, this.renderOffsetX, this.renderOffsetY, this.tileSize, this.getBackgroundTile, this.tileImg, this.tileImgCols)
-    
-    /*
-    var ts = this.tileSize;
-    
-    // clear screen
-    CANVAS_CTX.fillStyle = this.areaData.bgColour;
-    CANVAS_CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
-    
-    // find background tiles overlapping canvas
-    var leftCol   = Math.max(Math.floor(this.renderOffsetX / ts), 0);
-    var rightCol  = Math.min(Math.ceil((this.renderOffsetX + CANVAS.width) / ts), this.cols);
-    var topRow    = Math.max(Math.floor(this.renderOffsetY / ts), 0);
-    var bottomRow = Math.min(Math.ceil((this.renderOffsetY + CANVAS.height) / ts), this.rows);
-    
-    // blit background tiles
-    var tx, ty, tileIndex;
-    ty = Math.round(topRow * ts - this.renderOffsetY);
-    for (var y = topRow; y < bottomRow; y++) {
-      tx = Math.round(leftCol * ts - this.renderOffsetX);
-      for (var x = leftCol; x < rightCol; x++) {
-        tileIndex = this.getBackgroundTile(x, y);
-        CANVAS_CTX.drawImage(this.tileImg, ts * (tileIndex % this.tileImgCols), ts * Math.floor(tileIndex / this.tileImgCols), ts, ts, tx, ty, ts, ts);
-        tx += ts;
-      }
-      ty += ts;
-    }
-    */
     
     // render all entities
     this.allGroup.render(this.renderOffsetX, this.renderOffsetY);
@@ -247,7 +266,7 @@ var Area = {
   handlePlayerAttack: function(absHitbox) {
     Debug.drawRect(absHitbox, '#f00');
     var enemyToAbsHitbox = function(e) { return e.getAbsHitbox(); };
-    var onCollision = function(e) { e.onStabbed(); };
+    var onCollision = function(e) { e.onStabbed(absHitbox); };
     overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, onCollision, enemyToAbsHitbox);
     
     // find background tiles overlapping player's sword
@@ -256,11 +275,11 @@ var Area = {
     var solidTileOverlap = false;
     for (var y = tileRect.y1; y < tileRect.y2; y++) {
       for (var x = tileRect.x1; x < tileRect.x2; x++) {
-        if (this.getPhysicsTile(x, y) === 1) {
+        if (this.getPhysicsTile(x, y) === this.physicsTileTypes.SOLID) {
           solidTileOverlap = true;
         }
       }
     }
     return solidTileOverlap;
-  },
+  }
 };

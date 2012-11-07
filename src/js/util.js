@@ -199,15 +199,29 @@ function renderTiles(canvas, ctx, cols, rows, renderOffsetX, renderOffsetY, ts, 
 // checks AABB overlaps
 // accepts an absolute hitbox {x1,y1,x2,y2} and a collection of objects which are optionally mapped to yield a collection of absolute hitboxes, calls the callback on overlaps
 function overlapOneToManyAABBs(oneAbsHitbox, many, callback, map) {
-  if (!map)   { map  = _.identity; }
+  if (!map) { map  = _.identity; }
   _.each(many, function(other) {
     var otherAbsHitbox = map(other);
-    if (otherAbsHitbox && oneAbsHitbox.x2 > otherAbsHitbox.x1 && oneAbsHitbox.x1 < otherAbsHitbox.x2 && oneAbsHitbox.y2 > otherAbsHitbox.y1 && oneAbsHitbox.y1 < otherAbsHitbox.y2) {
+    if (otherAbsHitbox && checkAbsHitboxOverlap(oneAbsHitbox, otherAbsHitbox)) {
       callback(other);
     }
   });
 }
-  
+
+//
+function checkAbsHitboxOverlap(absHitbox1, absHitbox2) {
+  return (
+    absHitbox1.x1 < absHitbox2.x2 &&
+    absHitbox1.x2 > absHitbox2.x1 &&
+    absHitbox1.y1 < absHitbox2.y2 &&
+    absHitbox1.y2 > absHitbox2.y1
+  );
+}
+
+//
+function relToAbsHitbox(relHitbox, pos) {
+  return { x1: relHitbox.x1 + pos.x, y1: relHitbox.y1 + pos.y, x2: relHitbox.x2 + pos.x, y2: relHitbox.y2 + pos.y };
+}
 
 
 //

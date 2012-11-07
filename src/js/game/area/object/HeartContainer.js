@@ -10,7 +10,6 @@ R.spawnableSprites['HeartContainer'] = Object.extend(Enemy, {
   },
   
   onPlayerCollision: function(playerSprite) {
-    App.sfx.play('AOL_LevelUp_GetItem');
     Game.player.healthMax += 2;
     Game.player.health    =  Game.player.healthMax;
     playerSprite.poseWithItem(this);

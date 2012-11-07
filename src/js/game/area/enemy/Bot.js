@@ -69,9 +69,9 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
     
     // standard enemy stuff
     this.vy += this.gravity;
-    this.translateWithTileCollisions( this.vx, this.vy );
+    this.touching = this.translateWithTileCollisions( this.vx, this.vy );
     this.advanceAnimation( this.FIXED_STEP );
-    if (this.touching.outOfBounds) { this.kill(); }
+    if (this.isOutOfBounds()) { this.kill(); }
     
     if (this.touching.bottom || this.touching.top) { this.vy = 0; }
     
@@ -79,7 +79,7 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   
   onAnimationFrameAdvance: function(animationName, frameIndex) {
     if (this.touching.bottom && animationName === 'inch' && frameIndex === 1) {
-      this.translateWithTileCollisions( this.direction * 10, this.gravity );
+      this.touching = this.translateWithTileCollisions( this.direction * 10, this.gravity );
       this.vx = this.direction * 5;
       //this.touching.bottom = true;
     }

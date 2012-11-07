@@ -1,0 +1,11 @@
+I'm a talented programmer looking for a level designer, game designer, and/or pixel artist with whom I'll develop and polish a 2d indie game as a hobby (not for profit.) If we work well together, I'd be interested in making more games together.
+
+I'm a lifelong programmer who's earned his living for the past decade writing web software. I've always been interested in making games, but not in the games industry. I love challenging, learnable games and dislike the hand-holding and lack of gameplay in many modern games. Some of my favourites include X-COM, Zelda LTTP, and Final Fantasy Tactics.
+
+I've never felt comfortable looking for anyone else to work with before because I didn't have any kind of portfolio. Consider this partially-completed HTML5 remake of the NES game Zelda II: The Adventure of Link my portfolio:
+
+http://zelda2.freehosting.com/
+
+I wrote this in my free time over the last couple months. It runs great on newer browsers and my Galaxy Nexus (with the help of a 5 line Java app), but terribly on my iPhone 4, for which I'm considering looking into PhoneGap as a fix. The great thing about HTML5 games is that support is getting better and better for them every time new browser versions come out!
+
+I would be interested in either starting on a brand new 2d HTML5 game with a different concept -- or making a Zelda 2 "Master Quest", where the gameplay is similar to the original game, but the world, levels, graphics, and/or possibly some enemies and mechanics are new.

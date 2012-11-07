@@ -19,6 +19,9 @@ var App = {
     // load request object from ?query=string
     this.request = loadQueryString();
     
+    // disable audio?
+    if (this.request.nosound) { App.sfx.toggleAudio(); }
+    
     // check if we're on mobile first, since we may need to resize canvas element
     var forceMobile = this.request['mobile'];
     this.isMobile = ('ontouchstart' in window) || forceMobile;
@@ -66,7 +69,7 @@ var App = {
     
     // load resources, then call callback
     var startTime = now();
-    ResourceManager.init( function() {
+    ResourceManager.init( _.once(function() {
       console.log("ResourceManager: " + (now() - startTime).toFixed(1) + "ms");
       Game.init();
       Debug.init();
@@ -79,12 +82,13 @@ var App = {
       }
       
       App.start();
-    });
+    }));
   },
   
   // API for starting, pausing, and stepping
   start: function() {
     if (!this.isRunning) {
+      App.sfx.unpauseMusic();
       this.isRunning = true;
       this.simTime = now();
       this.render();
@@ -95,6 +99,7 @@ var App = {
     if (this.isRunning) {
       this.isRunning = false;
       App.gfx.drawPausedScreen();
+      App.sfx.pauseMusic();
     }
   },
   stepAndPause: function(dt) {
@@ -211,8 +216,8 @@ var App = {
   
   sfx: {
     play: function(filename) {
-      if (App.isMobile) { return; }
-      if (!App.audioEnabled) { return; }
+      if (App.isMobile) { return undefined; }
+      if (!App.audioEnabled) { return undefined; }
       var samples = R.sfx[filename];
       for (var i = 0; i < samples.length; i += 1) {
         var sample = samples[i];
@@ -230,67 +235,90 @@ var App = {
     },
     
     toggleAudio: function() {
+      $('#toggleAudio').children().toggle();
       App.audioEnabled = !App.audioEnabled;
       if (App.audioEnabled) {
         if (this.currentMusicFilename) { this.playMusic(this.currentMusicFilename); }
       }
       else {
-        this.stopMusic();
+        this._stopMusic();
       }
     },
     
     cached: {},
     currentlyPlaying: undefined,
     currentMusicFilename: undefined,
-    stopMusic: function() {
-      this.currentMusicFilename = undefined;
+    _stopMusic: function() {
       if (this.currentlyPlaying) {
         this.currentlyPlaying.pause();
         this.currentlyPlaying = undefined;
       }
     },
+    stopMusic: function() {
+      this.currentMusicFilename = undefined;
+      this._stopMusic();
+    },
     playMusic: function(filename) {
+      if (filename === this.currentMusicFilename) { return; } // don't restart if already playing
       this.currentMusicFilename = filename; // store this even if !App.audioEnabled
       if (App.isMobile) { return; }
       if (!App.audioEnabled) { return; }
       var that = this;
       
-      this.stopMusic();
-      
-      this.currentMusicFilename = filename;
+      this._stopMusic();
       
       var cached = this.cached[filename];
       if (cached) {
-        if (cached.loaded) {
-          if (this.currentlyPlaying === cached.audio) { return; } // don't restart music
-          cached.audio.currentTime = 0;
-          cached.audio.play();
-          that.currentlyPlaying = cached.audio;
-        }
+        if (this.currentlyPlaying === cached.audio) { return; } // don't restart music
+        cached.audio.currentTime = 0;
+        cached.audio.play();
+        that.currentlyPlaying = cached.audio;
         return;
       }
       
-      var onLoad = function(audio) {
-        that.cached[filename].loaded = true;
+      var audio = document.createElement('audio');
+      audio.addEventListener('error', function (ev) {
+        console.log("audio error: " + ev)
+      }, false);
+      
+      // loop
+      audio.addEventListener('ended', function(){
+        console.log('ended');
         audio.currentTime = 0;
         audio.play();
-        that.currentlyPlaying = audio;
-      };
+      }, false);
       
-      var audio = document.createElement('audio');
-      var listener = audio.addEventListener('canplaythrough', function (e) {
-        this.removeEventListener('canplaythrough', listener, false)
-        onLoad(audio);
-      }, false);
-      audio.addEventListener('error', function (ev) {
-        console.log("audio load error: " + ev)
-      }, false);
       audio.autobuffer = true;
       audio.preload    = 'auto';
       audio.src        = 'res/music/' + filename + '.' + ResourceManager.audioFormat;
-      audio.load();
       
-      this.cached[filename] = { loaded: false, audio: audio };
+      // play now
+      audio.play();
+      this.currentlyPlaying = audio;
+      
+      this.cached[filename] = { audio: audio };
+    },
+    pauseMusic: function() {
+      if (App.isMobile) { return; }
+      if (!App.audioEnabled) { return; }
+      if (this.currentlyPlaying) {
+        this.currentlyPlaying.pause();
+      }
+    },
+    unpauseMusic: function() {
+      if (App.isMobile) { return; }
+      if (!App.audioEnabled) { return; }
+      if (this.currentlyPlaying) {
+        this.currentlyPlaying.play();
+      }
+    },
+    restartMusic: function() {
+      if (App.isMobile) { return; }
+      if (!App.audioEnabled) { return; }
+      if (this.currentlyPlaying) {
+        this.currentlyPlaying.currentTime = 0;
+        this.currentlyPlaying.play();
+      }
     }
   }
   

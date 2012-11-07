@@ -1,4 +1,4 @@
-var OverworldPlayer = Object.extend(Sprite, {
+var OWPlayer = Object.extend(Sprite, {
   
   vx: 0,
   vy: 0,
@@ -51,7 +51,6 @@ var OverworldPlayer = Object.extend(Sprite, {
       // we haven't started a move? stand still
       if (this.moveRemaining <= 0) {
         this.startAnimation('stand');
-        this.imageModifier = R.IMG_ORIGINAL;
       }
       
     }
@@ -77,10 +76,10 @@ var OverworldPlayer = Object.extend(Sprite, {
     var tileIndex = Game.overworld.getTile(newTX, newTY);
     
     // can't move into water or mountains or boulders
-    if (tileIndex === 0 || tileIndex === 4 || tileIndex === 13) { return false; }
+    if (Overworld.terrainTypes.isImpassable(tileIndex)) { return false; }
     
     // player moves slower going into swamps
-    var speed = (tileIndex === 6) ? this.SWAMP_SPEED : this.SPEED;
+    var speed = Overworld.terrainTypes.isSwampy(tileIndex) ? this.SWAMP_SPEED : this.SPEED;
     
     // initiate move
     Game.player.overworldX = newTX;
@@ -90,7 +89,7 @@ var OverworldPlayer = Object.extend(Sprite, {
     this.moveRemaining     = speed;
     
     // animate
-    this.imageModifier = R.IMG_ORIGINAL;
+    this.facing = 1;
     if (dty < 0) {
       this.startAnimation('walk-north');
     }
@@ -98,7 +97,7 @@ var OverworldPlayer = Object.extend(Sprite, {
       this.startAnimation('walk-south');
     }
     else if (dtx < 0) {
-      this.imageModifier = R.IMG_FLIPX;
+      this.facing = -1;
       this.startAnimation('walk-east');
     }
     else if (dtx > 0) {
@@ -113,6 +112,6 @@ var OverworldPlayer = Object.extend(Sprite, {
     this.y = Game.player.overworldY * 32;
     this.startAnimation('stand');
     this.advanceAnimation(0);
-  },
+  }
   
 });

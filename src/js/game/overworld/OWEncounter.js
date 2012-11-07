@@ -1,4 +1,4 @@
-var OverworldEncounter = Object.extend(Sprite, {
+var OWEncounter = Object.extend(Sprite, {
   
   tx: undefined,
   ty: undefined,
@@ -42,7 +42,7 @@ var OverworldEncounter = Object.extend(Sprite, {
         if      (ptx > this.tx) { this.startMove(  1,  0); }
         else if (ptx < this.tx) { this.startMove( -1,  0); }
       }
-      else if (Math.random() < 1.00) {
+      else {
         if      (pty > this.ty) { this.startMove(  0,  1 ); }
         else if (pty < this.ty) { this.startMove(  0, -1 ); }
       }
@@ -74,7 +74,6 @@ var OverworldEncounter = Object.extend(Sprite, {
   startMove: function(dtx, dty) {
     var newTX = this.tx + dtx;
     var newTY = this.ty + dty;
-    var tileIndex = Game.overworld.getTile(newTX, newTY);
     
     // initiate move
     this.tx            = newTX;

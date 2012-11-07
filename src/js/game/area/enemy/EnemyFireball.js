@@ -23,7 +23,9 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
   },
   
   onPlayerCollision: function(playerSprite) {
-    this.kill();
+    if (this.isDangerous) {
+      this.kill();
+    }
   },
   
   updateFixedStep: function() {

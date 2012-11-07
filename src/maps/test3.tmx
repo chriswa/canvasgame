@@ -28,7 +28,7 @@
   <object name="intro1" type="exit" x="2016" y="416" width="128" height="160">
    <properties>
     <property name="x" value="590"/>
-    <property name="y" value="0"/>
+    <property name="y" value="30"/>
    </properties>
   </object>
   <object name="HammerThrower" type="spawn" x="544" y="384" width="32" height="32">

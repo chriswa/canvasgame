@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="24" height="15" tilewidth="32" tileheight="32" backgroundcolor="#0064c2">
+ <tileset firstgid="1" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="../art/physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="tiles-new" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles-new.png" trans="5c94fc" width="512" height="320"/>
+ </tileset>
+ <layer name="background" width="24" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAtcMSBkeWdgNgZj1pc2ImAPCE3gfS7kGAXshvJCQNi/YmuD5cYPvHBhgfKnfS2lxK7iHHrQIQhNrvR3YELEDIzFIhDoHQokhhMHJkPwwxY1ITg0JNCY5xKYwwA0lhS1A==
+  </data>
+ </layer>
+ <layer name="physics" width="24" height="15" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRQA5gpDEGAApQABk=
+  </data>
+ </layer>
+ <objectgroup name="objects" width="24" height="15">
+  <object name="overworld" type="exit" x="0" y="0" width="32" height="480"/>
+  <object name="overworld" type="exit" x="736" y="0" width="32" height="480"/>
+  <object name="Boomeranger" type="spawn" x="384" y="416" width="32" height="32"/>
+ </objectgroup>
+</map>

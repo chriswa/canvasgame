@@ -36,5 +36,14 @@ margin-bottom: 0px;
 }
 #controls I {
   font-size: 10px;
-  color: #aaa;
+  color: #888;
+}
+
+.panel {
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin: 10px;
+  text-align: left;
+  width: 260px;
 }

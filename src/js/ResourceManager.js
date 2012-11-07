@@ -18,7 +18,7 @@ var ResourceManager = {
     loaded       = 0;
     totalToLoad  = loadList.length;
     
-    _.each(loadList, function(loadElement) { loadElement(onResourceLoad); });
+    _.each(loadList, function(loadElement) { loadElement(); });
   },
   
   showPercentComplete: function(percentComplete) {
@@ -91,10 +91,10 @@ var ResourceManager = {
   
   loadAudio: function(filepath, quantity, obj, key, onLoad) {
     var audio = document.createElement('audio');
-    var listener = audio.addEventListener('canplaythrough', function (e) {
-      this.removeEventListener('canplaythrough', listener, false)
+    var listener = audio.addEventListener('canplaythrough', _.once(function (e) {
+      //this.removeEventListener('canplaythrough', listener, false); // this doesn't seem to work in Firefox?!
       onLoad();
-    }, false);
+    }), false);
     audio.addEventListener('error', function (ev) {
       alert('audio error loading ' + filepath + '.' + ResourceManager.audioFormat);
       console.log(ev)

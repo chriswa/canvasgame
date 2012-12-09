@@ -1,4 +1,4 @@
-R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
+R.spawnableSprites['Deeler'] = Object.extend(Entity, {
   hitbox: { x1: -16, y1: -16, x2: 16, y2: 16 },
   
   behaviour: 'canopy',
@@ -9,7 +9,7 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   ASCEND_SPEED:  2,
   
   init: function(area, spawnInfo) {
-    Enemy.init.call(this, area, 'deeler');
+    Entity.init.call(this, area, 'deeler');
     //this.uber('init', area, 'deeler');
     this.startAnimation('canopy');
     this.advanceAnimation(0);
@@ -18,16 +18,16 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   
   updateFixedStep: function(dt) {
     // update hurt timers, etc
-    if (this.isHurt) { this.updateWhenHurt(dt); }
+    this.updateWhenHurt(dt);
     
     // do nothing while hurt
-    if (this.isHurt) { return; }
+    if (this.isHurt()) { return; }
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     if (this.behaviour === 'canopy') {
-      var distanceToPlayer = this.area.playerSprite.x - this.x;
+      var distanceToPlayer = this.area.playerEntity.x - this.x;
       if (Math.abs(distanceToPlayer) < 80 && Math.random() < 0.02) {
         this.behaviour = 'descend';
         this.startAnimation('attack');
@@ -60,7 +60,7 @@ R.spawnableSprites['Deeler'] = Object.extend(Enemy, {
   // draw web line back up to canopy
   render: function(ox, oy) {
     //this.uber('render', ox, oy);
-    Enemy.render.call(this, ox, oy);
+    Entity.render.call(this, ox, oy);
     
     if (this.y > this.canopyY) {
     

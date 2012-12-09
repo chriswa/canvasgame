@@ -1,9 +1,9 @@
-R.spawnableSprites['ProjBoomerang'] = Object.extend(Enemy, {
+R.spawnableSprites['ProjBoomerang'] = Object.extend(Entity, {
   hitbox: { x1: -8, y1: -8, x2: 8, y2: 8 },
   
   isBlockable: true,
   isStabbable: false,
-  damageToPlayer: 2,
+  damageToPlayer: 1,
   
   age: 0,
   spawnInfo: undefined,
@@ -12,14 +12,14 @@ R.spawnableSprites['ProjBoomerang'] = Object.extend(Enemy, {
   TIME: 60,
   
   init: function(area, spawnInfo) {
-    Enemy.init.call(this, area, 'proj-boomerang');
+    Entity.init.call(this, area, 'proj-boomerang');
     this.x         = spawnInfo.x;
     this.y         = spawnInfo.y;
     this.facing    = spawnInfo.facing;
     this.spawnInfo = spawnInfo;
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
     if (this.isDangerous) {
       this.kill();
     }

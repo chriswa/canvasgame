@@ -247,7 +247,7 @@ var Game = Object.extend(FiniteStateMachine, {
       
       // for area exitObjects which don't specify any side information, guess based on which side of an area the player is leaving (i.e. walking off left side enters on right side and vice versa)
       if (this.area) {
-        var ps = this.area.playerSprite;
+        var ps = this.area.playerEntity;
         exitObject.sideHint = (ps.x > this.area.maxX / 2) ? 'left' : 'right';
         if (ps.y + ps.hitbox.y1 < 0) {
           exitObject.sideHint = 'bottom'; // player went off top of area

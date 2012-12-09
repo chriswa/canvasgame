@@ -1,11 +1,11 @@
-R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
+R.spawnableSprites['ProjFireball'] = Object.extend(Entity, {
   hitbox: { x1: -8, y1: -8, x2: 8, y2: 8 },
   
   isBlockable: true,
   isStabbable: false,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'fireball');
+    Entity.init.call(this, area, 'fireball');
     this.x  = spawn.x;
     this.y  = spawn.y;
     this.vx = spawn.vx;
@@ -22,14 +22,13 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
     this.ay = 0.6;
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
     if (this.isDangerous) {
       this.kill();
     }
   },
   
-  updateFixedStep: function() {
-    this.behaviourTimer++;
+  updateFixedStep: function(dt) {
     
     // translate without tile collisions
     this.vx += this.ax;
@@ -37,7 +36,7 @@ R.spawnableSprites['EnemyFireball'] = Object.extend(Enemy, {
     this.x += this.vx;
     this.y += this.vy;
     
-    this.advanceAnimation( this.FIXED_STEP );
+    this.advanceAnimation(dt);
     
     // kill when out of bounds
     if (this.x < -8 || this.y < -8 || this.x > this.area.maxX + 8 || this.y > this.area.maxY + 8 ) {

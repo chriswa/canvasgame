@@ -1,7 +1,6 @@
-R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
+R.spawnableSprites['Fairy'] = Object.extend(Entity, {
   hitbox: { x1: -8, y1: -15, x2: 8, y2: 15 },
   
-  isCollectable: true,
   isStabbable:   false,
   isDangerous:   false,
   
@@ -12,13 +11,14 @@ R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
   HEAL_DELAY:    100,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'fairy');
+    Entity.init.call(this, area, 'fairy');
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
     if (!this.isHealing) {
+      this.onComplete();
       this.isHealing           = true;
-      playerSprite.frozenTimer = Infinity;
+      playerEntity.frozenTimer = Infinity;
       this.healTimer           = this.HEAL_DELAY;
     }
   },
@@ -34,7 +34,7 @@ R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
       if (this.healTimer <= 0) {
         this.healTimer += this.HEAL_DELAY;
         if (Game.player.health >= Game.player.healthMax) {
-          this.area.playerSprite.frozenTimer = 0;
+          this.area.playerEntity.frozenTimer = 0;
           this.kill();
         }
         else {
@@ -48,7 +48,7 @@ R.spawnableSprites['Fairy'] = Object.extend(Enemy, {
   
   render: function(ox, oy) {
     if (!this.isHealing) {
-      Enemy.render.call(this, ox, oy);
+      Entity.render.call(this, ox, oy);
     }
   }
   

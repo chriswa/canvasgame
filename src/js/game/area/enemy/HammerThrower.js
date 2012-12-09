@@ -1,4 +1,4 @@
-R.spawnableSprites['HammerThrower'] = Object.extend(Enemy, {
+R.spawnableSprites['HammerThrower'] = Object.extend(Entity, {
   hitbox: { x1: -12, y1: -32, x2: 12, y2: 32 },
   
   health: 8,
@@ -18,19 +18,19 @@ R.spawnableSprites['HammerThrower'] = Object.extend(Enemy, {
   HAMMER_GRAVITY: 0.15,
   
   init: function(area) {
-    Enemy.init.call(this, area, 'hammer-thrower');
+    Entity.init.call(this, area, 'hammer-thrower');
     this.startAnimation('default');
   },
   
   updateFixedStep: function(dt) {
     // update hurt timers, etc
-    if (this.isHurt) { this.updateWhenHurt(dt); }
+    this.updateWhenHurt(dt);
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     // turn to face player
-    this.facing = (this.area.playerSprite.x > this.x) ? 1 : -1;
+    this.facing = (this.area.playerEntity.x > this.x) ? 1 : -1;
     
     //
     this.throwTimer     += 1;

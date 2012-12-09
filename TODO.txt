@@ -1,9 +1,9 @@
 TODO
+  - onInjuredPlayer instead of onPlayerCollision being called only when not invincible for dangerous entities
   - sfx
-    - noise while sword strikes solid blocks
-    - continuous elevator noise
+    - noise while sword strikes solid blocks (noise during, then when collision ends, stop it and start separate noise)
+    - continuous elevator noise (maybe just start a short clip repeatedly on a timer?)
   - more enemies:
-    - boomeranger
     - orange knight
     - ground-scurrying thing in first dark cave
     - spear-chucker (early forest encounter)?
@@ -16,3 +16,7 @@ TODO
 CONSIDER
   - make it work in ie?
   - map-property-specified alternate tileset name for "dark" (no candle)
+
+
+
+"Good enemy design forces the player to play differently than they normally would, so the entire game does not consist of a single type of interaction. The Boomer does this quite well."

@@ -1,7 +1,8 @@
-R.spawnableSprites['Skeleton'] = Object.extend(Enemy, {
+R.spawnableSprites['Skeleton'] = Object.extend(Entity, {
   hitbox: { x1: -12, y1: -32, x2: 12, y2: 32 },
   
-  health: 3,
+  health: 4,
+  damageToPlayer: 2,
   
   attackTimer: 0,
   isAttacking: false,
@@ -13,7 +14,7 @@ R.spawnableSprites['Skeleton'] = Object.extend(Enemy, {
   ATTACK_DIST:    82,
   
   init: function(area) {
-    Enemy.init.call(this, area, 'skeleton');
+    Entity.init.call(this, area, 'skeleton');
     this.startAnimation('walk');
   },
   
@@ -24,8 +25,8 @@ R.spawnableSprites['Skeleton'] = Object.extend(Enemy, {
     return relToAbsHitbox(this.relativeShieldHitbox, { x: this.x /* + this.facing * 20*/, y: this.y });
   },
   
-  onStabbed: function(absSwordHitbox) {
-    var gotHurt = Enemy.onStabbed.call(this, absSwordHitbox);
+  onStabbedByPlayer: function(absSwordHitbox) {
+    var gotHurt = Entity.onStabbedByPlayer.call(this, absSwordHitbox);
     if (gotHurt) {
       this.endAttack();
     }
@@ -39,13 +40,13 @@ R.spawnableSprites['Skeleton'] = Object.extend(Enemy, {
   
   updateFixedStep: function(dt) {
     // update hurt timers, etc
-    if (this.isHurt) { this.updateWhenHurt(dt); }
+    this.updateWhenHurt(dt);
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     // turn to face player
-    this.facing = (this.area.playerSprite.x > this.x) ? 1 : -1;
+    this.facing = (this.area.playerEntity.x > this.x) ? 1 : -1;
     
     /*
     //
@@ -64,20 +65,20 @@ R.spawnableSprites['Skeleton'] = Object.extend(Enemy, {
         this.endAttack();
       }
       if (this.frameIndex === 2) {
-        this.attackRect(relToAbsHitbox(this.attackHitbox, { x: this.x + this.facing * 32, y: this.y }));
+        this.attackPlayerRect(relToAbsHitbox(this.attackHitbox, { x: this.x + this.facing * 32, y: this.y }));
       }
     }
     
-    var distFromPlayer = Math.abs(this.x - this.area.playerSprite.x);
+    var distFromPlayer = Math.abs(this.x - this.area.playerEntity.x);
     
     if (this.touching.bottom) {
+      if (!this.isAttacking) {
+        this.playAnimation('walk');
+      }
       if (distFromPlayer < this.ATTACK_DIST && !this.isAttacking && this.attackTimer >= this.ATTACK_DELAY) {
         this.attackTimer = 0;
         this.isAttacking = true;
         this.startAnimation('attack');
-      }
-      if (!this.isAttacking) {
-        this.playAnimation('walk');
       }
     }
     else {

@@ -1,15 +1,28 @@
-var PlayerSprite = Object.extend(PhysicsSprite, {
+var PlayerEntity = Object.extend(Entity, {
+  
+  /*
+    notes
+    =====
+    - player is an Entity, but
+      - doesn't add itself to area.enemyGroup
+      - doesn't use 'player-interaction' functions
+      - provides its own 'hurting' functionality
+      - uses Game.player for health
+  */
   
   // vars
   // ====
+  
+  // ignored Entity member vars
+  health: undefined, // health is stored in Game.player.health
   
   // important
   hitbox:  { x1: -12, y1: -30, x2: 12, y2: 30, STANDING_Y1: -30, CROUCHING_Y1: -20 }, // sprite is 0, 0, 32, 64
   facing:  1, // values: 1, -1
   
   // timers
-  hurtTimer:        0,
-  invincibleTimer:  0,
+  // hurtTimer inherited from Entity
+  // invincibleTimer inherited from Entity
   frozenTimer:      0,
   fallStopwatch:    9999,
   
@@ -43,10 +56,13 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   // ====
   
   init: function(area) {
-    PhysicsSprite.init.call(this, area, 'link');
-    //this.uber('init', area, 'link');
-    this.startAnimation('stand');
-    this.JUMP_X_BOOST /= this.MAX_X_SPEED; // XXX: decouple this constant for simpler tweaking
+    
+    // skip calling Entity.init, because that would add us to area.enemyGroup!
+    this.area = area;
+    Sprite.init.call(this, 'link', 'stand');
+    
+    // decouple this constant for easier tweaking
+    this.JUMP_X_BOOST /= this.MAX_X_SPEED;
   },
   
   // collision handler
@@ -54,15 +70,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
   
   onCollisionWithEnemy: function(entity) {
     
-    // if it's collectable, collect it!
-    if (entity.isCollectable) {
-      entity.isCollectable = false;
-      entity.onPlayerCollision(this);
-      entity.onComplete();
-      return;
-    }
-    
-    // if it's blockable with the shield, try to block it
+    // if it's blockable with the shield, try to block it first
     if (entity.isBlockable) {
       
       // shield must be at the right height to block something
@@ -85,8 +93,13 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       }
     }
     
-    // if it's dangerous and we're not invincible, we get hurt
-    if (entity.isDangerous && this.invincibleTimer <= 0) {
+    // if it's dangerous and we're invincible, ignore it (it doesn't even get a call to entity.onPlayerCollision)
+    if (entity.isDangerous && this.invincibleTimer > 0) {
+      return;
+    }
+    
+    // if it's dangerous, we get hurt
+    if (entity.isDangerous) {
       Game.player.health   -= entity.damageToPlayer;
       this.isAttacking     =  false;
       this.hurtTimer       =  this.HURT_TIME;
@@ -104,14 +117,10 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       else {
         App.sfx.play('AOL_Hurt');
       }
-      
-      // tell the entity it hurt us (e.g. fireballs will want to kill themselves)
-      entity.onPlayerCollision(this);
     }
     
-    else if (!entity.isDangerous) {
-      entity.onPlayerCollision(this);
-    }
+    // tell the entity it touched us (e.g. fireballs will want to kill themselves, heart containers will want to be collected)
+    entity.onPlayerCollision(this);
   },
   
   // update
@@ -124,11 +133,11 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     this.ay = this.GRAVITY;
     
     // update timers
-    if (this.invincibleTimer > 0) { this.invincibleTimer -= dt; }
-    if (this.hurtTimer > 0) { this.hurtTimer -= dt; }
+    if (this.invincibleTimer > 0) { this.invincibleTimer = Math.max(0, this.invincibleTimer - dt); }
+    if (this.hurtTimer > 0) { this.hurtTimer = Math.max(0, this.hurtTimer - dt); }
     if (this.frozenTimer > 0) {
       this.frozenTimer -= dt;
-      if (this.frozenTimer <= 0 && this.collectEntityHandle) { this.collectEntityHandle.kill(); this.collectEntityHandle = undefined; }
+      if (this.frozenTimer <= 0 && this.collectEntityHandle) { this.frozenTimer = 0; this.collectEntityHandle.kill(); this.collectEntityHandle = undefined; }
     }
     
     // if we're on an elevator, treat it like the ground
@@ -196,7 +205,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       this.integrateAndTranslate(dt);
       
       // check for lava
-      if (Game.player.health > 0 && this.touching.tiles[ Area.physicsTileTypes.LAVA ]) {
+      if (Game.player.health > 0 && this.touching.tiles[ Area.physicsTileTypes.INSTADEATH ]) {
         App.sfx.stopMusic();
         App.sfx.play('AOL_Die');
         Game.player.health = 0;
@@ -365,13 +374,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
       return; // return without rendering
     }
     
-    // flash colours if hurting
-    var colour = 0;
-    if (this.hurtTimer > 0) {
-      colour = Math.floor(this.hurtTimer / f % 4);
-    }
-    
-    PhysicsSprite.render.call(this, ox, oy, colour);
+    Entity.render.call(this, ox, oy);
   },
   
   // misc
@@ -384,7 +387,7 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     
     if (this.collectEntityHandle) { this.collectEntityHandle.kill(); }
     this.collectEntityHandle = entity;
-    entity.isCollectable = false;
+    entity.onPlayerCollision = function() {};
     entity.x = this.x;
     entity.y = this.y - 66 + entity.hitbox.y2;
     
@@ -395,8 +398,8 @@ var PlayerSprite = Object.extend(PhysicsSprite, {
     this.vy = 0;
     
     App.sfx.pauseMusic();
-    setTimeout(function() { App.sfx.restartMusic(); }, 2500);
     App.sfx.play('AOL_LevelUp_GetItem');
+    setTimeout(function() { App.sfx.restartMusic(); }, 2500);
   },
   
 });

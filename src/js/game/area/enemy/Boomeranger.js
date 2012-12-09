@@ -1,7 +1,8 @@
-R.spawnableSprites['Boomeranger'] = Object.extend(Enemy, {
+R.spawnableSprites['Boomeranger'] = Object.extend(Entity, {
   hitbox: { x1: -12, y1: -32, x2: 12, y2: 32 },
   
   health: 3,
+  damageToPlayer: 2,
   
   attackTimer: 0,
   isAttacking: false,
@@ -12,7 +13,7 @@ R.spawnableSprites['Boomeranger'] = Object.extend(Enemy, {
   ATTACK_DIST:    200,
   
   init: function(area) {
-    Enemy.init.call(this, area, 'boomeranger');
+    Entity.init.call(this, area, 'boomeranger');
     this.startAnimation('walk');
   },
   
@@ -20,15 +21,15 @@ R.spawnableSprites['Boomeranger'] = Object.extend(Enemy, {
   
   updateFixedStep: function(dt) {
     // update hurt timers, etc
-    if (this.isHurt) { this.updateWhenHurt(dt); }
+    this.updateWhenHurt(dt);
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     // turn to face player
-    this.facing = (this.area.playerSprite.x > this.x) ? 1 : -1;
+    this.facing = (this.area.playerEntity.x > this.x) ? 1 : -1;
     
-    var distFromPlayer = Math.abs(this.x - this.area.playerSprite.x);
+    var distFromPlayer = Math.abs(this.x - this.area.playerEntity.x);
     
     this.attackTimer += dt;
     

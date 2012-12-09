@@ -68,11 +68,10 @@
       'src/js/R.js',
       'src/js/game/Sprite.js',
       'src/js/game/Game.js',
-      'src/js/game/area/PhysicsSprite.js',
-      'src/js/game/area/Enemy.js',
+      'src/js/game/area/Entity.js',
     ),
     
-    // now load all other src/js/*/*.js files
+    // now load all remaining src/js/*/*.js files (dupes will be removed by array_unique())
     recurseDir('src/js', '/\.js$/'),
     
     // and finally, built/js/*.js files

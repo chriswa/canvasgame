@@ -1,18 +1,18 @@
-R.spawnableSprites['HeartContainer'] = Object.extend(Enemy, {
+R.spawnableSprites['HeartContainer'] = Object.extend(Entity, {
   hitbox: { x1: -16, y1: -16, x2: 16, y2: 16 },
   
-  isCollectable: true,
   isStabbable:   false,
   isDangerous:   false,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'heart-container');
+    Entity.init.call(this, area, 'heart-container');
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
+    this.onComplete();
     Game.player.healthMax += 2;
     Game.player.health    =  Game.player.healthMax;
-    playerSprite.poseWithItem(this);
+    playerEntity.poseWithItem(this);
   },
   
   update: function(dt) {

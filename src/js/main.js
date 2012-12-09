@@ -7,7 +7,7 @@ var CANVAS, CANVAS_CTX;
 window.onload = function() {
   
   // guess production mode from URL (and allow it to be forced from query string)
-  var isProduction = (window.location.href === "http://dl.dropbox.com/u/29873255/aolbackup/index.html");
+  var isProduction = (window.location.href === "http://chriswa.com/zelda2/");
 
   // initialize App
   App.init(isProduction);

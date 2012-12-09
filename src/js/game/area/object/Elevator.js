@@ -1,4 +1,4 @@
-R.spawnableSprites['Elevator'] = Object.extend(Enemy, {
+R.spawnableSprites['Elevator'] = Object.extend(Entity, {
   hitbox: { x1: -24, y1: -10, x2: 24, y2: 8 }, // extra pixels on top
   
   isStabbable:   false,
@@ -10,11 +10,11 @@ R.spawnableSprites['Elevator'] = Object.extend(Enemy, {
   className: 'Elevator', // XXX: this should be set by ALL entities via the register function which should add them to R.areaEntityClasses
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'elevator');
+    Entity.init.call(this, area, 'elevator');
   },
   
-  onPlayerCollision: function(playerSprite) {
-    var ps = playerSprite;
+  onPlayerCollision: function(playerEntity) {
+    var ps = playerEntity;
     ps.y = this.y + this.hitbox.y1 - ps.hitbox.y2 + 2; // set player atop our platform, embedded slightly for continual collisions
     ps.vy = 1;
     ps.isOnElevator = true;
@@ -22,14 +22,14 @@ R.spawnableSprites['Elevator'] = Object.extend(Enemy, {
   },
   
   moveUnderPlayer: function() {
-    var ps = this.area.playerSprite;
+    var ps = this.area.playerEntity;
     this.y = ps.y + ps.hitbox.y2 - this.hitbox.y1 - 2;
   },
   
   update: function(dt) {
     this.activeTimer -= 1;
     
-    var ps = this.area.playerSprite;
+    var ps = this.area.playerEntity;
     
     if (this.activeTimer > 0) {
       var dy = 0;
@@ -58,8 +58,8 @@ R.spawnableSprites['Elevator'] = Object.extend(Enemy, {
   },
   
   render: function(ox, oy) {
-    Enemy.render.call(this, ox, oy);
-    Enemy.render.call(this, ox, oy + 80);
+    Entity.render.call(this, ox, oy);
+    Entity.render.call(this, ox, oy + 80);
   }
   
 });

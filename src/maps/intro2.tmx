@@ -8,12 +8,12 @@
  </tileset>
  <layer name="background" width="100" height="15">
   <data encoding="base64" compression="zlib">
-   eJztlscOwjAQRBPagXagHWgS4NBE+/+vYw4cLCtOYjxrB5TD06w2SrLr8VrOkiQ5gqzRWugdPMCtiaPGpkr8oxUAWz9lGqI2Rj8Mj2P39Mvo6+o7FzHqTz98E9eREOdSG3RAF/QIOQlC1KMc/JA6l/pgAIZgBMaeOfP7O7AHB8eYVaPkfEicSxMwBTMwBwvPnO6Bvs4XcK2ged741uMzD0V+SNyXlmAF1mADtp4523xU9cNU3RdGPaxzSxJ9TzJyTD90X2Ku0b/A8qPM99CkRE7gTP6mDQk/XGtQxH5s+81UF2+f4OX4Tuz5KJoLZZD3nN2P632xbjFzPmLFjD4a5eobP+l7lQ==
+   eJztlskOwjAMRMN6YDuwHdgkaMsmtv//OuZSqTINTbGdUCmHJ0eWiO1MxyIzxhxBFuNfxDt4gFs8Bz3TqFGj7QE6h4+aPueR0Dj0TE2m+K5cX4Tov0UI/Z6SemjtpQ7ogh7oC+TqIF2b009aQw+tvTQAQzACYzBh5uj9e3AoRM3aLv1I+kNjL03BDMzBAiyZuTINEosu0rVt/XD8wNlXv+i9AmuwAVuwY+Zs/riAq/n0iWRtl36k9pYmxe9YIueiR9n+ivjTOtfD5hNpUoLUvfT/ogQncFa6m1KlRx65dej7U6TmsX1vHN8/wavmb6T9wfVJ1fuXITlP0vBzlR6uMeQs3+aIMUx8A0xIcok=
   </data>
  </layer>
  <layer name="physics" width="100" height="15" opacity="0.61">
   <data encoding="base64" compression="zlib">
-   eJztldsJwDAMA72a918qCzhg4kcsowP9tJDKvZCoiCjDMO3pYHK3F1A9bIUeZkEPfXj+FboH5O4WiLOg3Hcva0/oHQHBi9X5J9bMkWe3tVF8bCb77NropXOuCT6q76BoR1Qf3m9Y77Oo2F8MsyUH67Gw+g==
+   eJztljEKACAMA/s1//8pcXBTkIppU3OQxcGGHojNzJqiKPAgiJj5ElYPVZGHXMgDjpNdsXvI2OkGRg8MHQeeHkweVjB1nUT3W+3p5mx3N5uXikT5YPKO7Ih6a7N498yr4CPqn+OZqyi/pAMqd591
   </data>
  </layer>
  <objectgroup name="objects" width="100" height="15">
@@ -24,26 +24,18 @@
     <property name="sample" value="property"/>
    </properties>
   </object>
-  <object name="Bot" type="spawn" x="2592" y="320" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="1312" y="256" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="2144" y="384" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="2784" y="192" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="2912" y="128" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="2976" y="224" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="1472" y="384" width="32" height="32">
-  </object>
-  <object name="Bot" type="spawn" x="704" y="320" width="32" height="32">
-  </object>
+  <object name="Bot" type="spawn" x="1312" y="256" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="2784" y="192" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="2912" y="128" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="2976" y="224" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="1472" y="384" width="32" height="32"/>
+  <object name="Bot" type="spawn" x="704" y="320" width="32" height="32"/>
   <object name="HeartContainer" type="spawn" x="1472" y="192" width="32" height="32">
    <properties>
     <property name="once" value="ever"/>
    </properties>
   </object>
+  <object name="Skeleton" type="spawn" x="2592" y="64" width="32" height="64"/>
+  <object name="Skeleton" type="spawn" x="2336" y="64" width="32" height="64"/>
  </objectgroup>
 </map>

@@ -1,4 +1,4 @@
-R.spawnableSprites['Bubble'] = Object.extend(Enemy, {
+R.spawnableSprites['Bubble'] = Object.extend(Entity, {
   hitbox: { x1: -8, y1: -8, x2: 8, y2: 8 },
   
   isBlockable: false,
@@ -7,12 +7,12 @@ R.spawnableSprites['Bubble'] = Object.extend(Enemy, {
   age: 0,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'bubble');
+    Entity.init.call(this, area, 'bubble');
     this.x  = spawn.x;
     this.y  = spawn.y;
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
     this.kill();
   },
   
@@ -41,7 +41,7 @@ R.spawnableSprites['Bubble'] = Object.extend(Enemy, {
       colour = 1;
     }
     
-    Enemy.render.call(this, ox, oy, colour);
+    Entity.render.call(this, ox, oy, colour);
   }
   
 });

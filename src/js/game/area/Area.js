@@ -2,12 +2,12 @@ var Area = {
   
   physicsTileTypes: {
     OUTOFBOUNDS: -1,
-    EMPTY: 0,
-    SOLID: 1,
-    LAVA:  2
+    EMPTY:        0,
+    SOLID:        1,
+    INSTADEATH:   2
   },
   
-  playerSprite: null,
+  playerEntity: null,
   
   allGroup: null,   // all sprites (for updating and rendering)
   enemyGroup: null, // things which collide with the player
@@ -56,13 +56,10 @@ var Area = {
     this.enemyGroup = Object.build(SpriteGroup);
     
     // spawn enemies
-    this.initSpawnEntities(exitObject.encounter);
+    this._initSpawnEntities(exitObject.encounter);
     
-    // spawn a playerSprite
-    this.initPlayer(exitObject);
-    
-    // fix elevators
-    this.initElevators();
+    // spawn a playerEntity
+    this._initPlayer(exitObject);
     
     // decide on music
     this.music = 'battle';
@@ -85,14 +82,15 @@ var Area = {
     //
     this.update(0);
   },
-  initPlayer: function(exitObject) {
-    this.playerSprite = this.spawn(PlayerSprite);
+  
+  _initPlayer: function(exitObject) {
+    this.playerEntity = this.spawn(PlayerEntity);
     
-    // set the playerSprite's position and velocity
+    // set the playerEntity's position and velocity
     // if the player is leaving an area, we can use which side of it they're on to guess where the player should appear on the next area
     if (exitObject.x !== undefined && exitObject.y !== undefined) {
-      this.playerSprite.x = exitObject.x;
-      this.playerSprite.y = exitObject.y;
+      this.playerEntity.x = exitObject.x;
+      this.playerEntity.y = exitObject.y;
       // TODO: also set velocity?
     }
     else {
@@ -110,12 +108,12 @@ var Area = {
         
         // move player to edge of screen, in line with elevator
         var extraDisplacementFromEdge = 16;
-        this.playerSprite.x = elevator.x;
+        this.playerEntity.x = elevator.x;
         if (side === 'top') {
-          this.playerSprite.y = 0 - this.playerSprite.hitbox.y1 + extraDisplacementFromEdge;
+          this.playerEntity.y = 0 - this.playerEntity.hitbox.y1 + extraDisplacementFromEdge;
         }
         else {
-          this.playerSprite.y = this.maxY - this.playerSprite.hitbox.y2 - extraDisplacementFromEdge;
+          this.playerEntity.y = this.maxY - this.playerEntity.hitbox.y2 - extraDisplacementFromEdge;
         }
         
         // move elevator under player
@@ -135,19 +133,20 @@ var Area = {
         }
         
         // place player
-        this.playerSprite.x = (side === 'left') ? -this.playerSprite.hitbox.x1 : ((tx + 1) * this.tileSize) - this.playerSprite.hitbox.x2;
-        if (side === 'centre') { this.playerSprite.x = this.tileSize * this.cols / 2; }
-        this.playerSprite.y = (ty + 1) * this.tileSize - this.playerSprite.hitbox.y2;
-        this.playerSprite.vx = 0;
-        if (side === 'left')  { this.playerSprite.vx =  this.playerSprite.MAX_X_SPEED; }
-        if (side === 'right') { this.playerSprite.vx = -this.playerSprite.MAX_X_SPEED; }
+        this.playerEntity.x = (side === 'left') ? -this.playerEntity.hitbox.x1 : ((tx + 1) * this.tileSize) - this.playerEntity.hitbox.x2;
+        if (side === 'centre') { this.playerEntity.x = this.tileSize * this.cols / 2; }
+        this.playerEntity.y = (ty + 1) * this.tileSize - this.playerEntity.hitbox.y2;
+        this.playerEntity.vx = 0;
+        if (side === 'left')  { this.playerEntity.vx =  this.playerEntity.MAX_X_SPEED; }
+        if (side === 'right') { this.playerEntity.vx = -this.playerEntity.MAX_X_SPEED; }
         
-        this.playerSprite.facing = (side === 'right') ? -1 : 1;
-        this.playerSprite.startAnimation('walk');
+        this.playerEntity.facing = (side === 'right') ? -1 : 1;
+        this.playerEntity.startAnimation('walk');
       }
     }
   },
-  initSpawnEntities: function(encounterType) {
+  
+  _initSpawnEntities: function(encounterType) {
     // special rules for encounterType === 'fairy'
     if (encounterType === 'fairy') {
       var e = this.spawn(R.spawnableSprites['Fairy']);
@@ -180,18 +179,17 @@ var Area = {
       
     }, this);
   },
-  initElevators: function() {
-    // TODO: if the player enters via a top tunnel, an elevator between the tunnels must spawn at the top and vice versa
-  },
   
   getPhysicsTile: function(tx, ty) {
     if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return this.physicsTileTypes.OUTOFBOUNDS; }
     return this.areaData.physics[ ty * this.cols + tx ];
   },
+  
   getBackgroundTile: function(tx, ty) {
     //if (tx < 0 || tx >= this.cols || ty < 0 || ty >= this.rows) { return 0; }
     return this.areaData.background[ ty * this.cols + tx ];
   },
+  
   startMusic: function() {
     if (this.music === 'NONE') {
       App.sfx.stopMusic();
@@ -203,6 +201,7 @@ var Area = {
       App.sfx.playMusic(this.music);
     }
   },
+  
   update: function(dt) {
     this.age += dt;
     
@@ -216,18 +215,19 @@ var Area = {
     this.updateCamera();
     
     // do collisions
-    var p = this.playerSprite;
+    var p = this.playerEntity;
     var onCollision = function(e) { p.onCollisionWithEnemy(e); };
-    var getEnemyAbsHitbox = function(e) { return e.isHurt ? false : e.getAbsHitbox(); };
-    overlapOneToManyAABBs(p.getAbsHitbox(), this.enemyGroup.collection, onCollision, getEnemyAbsHitbox);
+    var getEntityAbsHitbox = function(e) { return e.isHurt() ? false : e.getAbsHitbox(); };
+    overlapOneToManyAABBs(p.getAbsHitbox(), this.enemyGroup.collection, onCollision, getEntityAbsHitbox);
     
     Debug.statusbarPrint("SPR: " + this.allGroup.count(), 71);
   },
+  
   updateCamera: function() {
-    var px = Math.round(this.playerSprite.x);
-    var py = Math.round(this.playerSprite.y);
+    var px = Math.round(this.playerEntity.x);
+    var py = Math.round(this.playerEntity.y);
     
-    // center camera on playerSprite
+    // center camera on playerEntity
     this.renderOffsetX = Math.round(Math.min(Math.max(0, Math.floor(px - CANVAS.width  / 2)), this.maxX - CANVAS.width));
     this.renderOffsetY = Math.round(Math.min(Math.max(0, Math.floor(py - CANVAS.height / 2)), this.maxY - CANVAS.height));
     
@@ -239,6 +239,7 @@ var Area = {
     this.stdX2 = this.stdX1 + stdW;
     this.stdY2 = this.stdY1 + stdH;
   },
+  
   render: function() {
     
     // clear screen
@@ -251,23 +252,26 @@ var Area = {
     // render all entities
     this.allGroup.render(this.renderOffsetX, this.renderOffsetY);
   },
+  
   spawn: function(classObject, spawnInfo) {
     var e = Object.build(classObject, this, spawnInfo);
     e.addToGroup(this.allGroup);
     return e;
   },
+  
   findAndQueuePlayerExit: function() {
-    var p = this.playerSprite;
+    var p = this.playerEntity;
     // find an overlapping area exit object
     var success = false;
     overlapOneToManyAABBs(p.getAbsHitbox(), this.areaData.exits, function(exitObject) { Game.queueExit(exitObject); success = true; }, function(exitObject) { return exitObject.hitbox; });
     if (!success) { console.log("Player is out of bounds, but no exitObject could be found!"); }
   },
+  
   handlePlayerAttack: function(absHitbox) {
     Debug.drawRect(absHitbox, '#f00');
-    var enemyToAbsHitbox = function(e) { return e.getAbsHitbox(); };
-    var onCollision = function(e) { e.onStabbed(absHitbox); };
-    overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, onCollision, enemyToAbsHitbox);
+    var entityToAbsHitbox = function(e) { return e.getAbsHitbox(); };
+    var onCollision = function(e) { e.onStabbedByPlayer(absHitbox); };
+    overlapOneToManyAABBs(absHitbox, this.enemyGroup.collection, onCollision, entityToAbsHitbox);
     
     // find background tiles overlapping player's sword
     var tileRect = pixelRectToTileRect(absHitbox, this.cols, this.rows, this.tileSize);

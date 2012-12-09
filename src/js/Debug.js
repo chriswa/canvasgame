@@ -52,9 +52,9 @@ var Debug = {
         var y = e.pageY - $(this).offset().top;
         var area = Game.area;
         if (Game.activeState === Game.states.area) {
-          area.playerSprite.x = x + area.renderOffsetX - 16;
-          area.playerSprite.y = y + area.renderOffsetY - 32;
-          area.playerSprite.vx = area.playerSprite.vy = 0;
+          area.playerEntity.x = x + area.renderOffsetX - 16;
+          area.playerEntity.y = y + area.renderOffsetY - 32;
+          area.playerEntity.vx = area.playerEntity.vy = 0;
         }
         else if (Game.activeState === Game.states.overworld) {
           Game.player.overworldX = Math.floor((x + Game.overworld.renderOffsetX) / 32);

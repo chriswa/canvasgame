@@ -1,4 +1,4 @@
-R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
+R.spawnableSprites['Octorok'] = Object.extend(Entity, {
   hitbox: { x1: -12, y1: -16, x2: 12, y2: 16 },
   
   behaviourTimer: 0,
@@ -9,27 +9,27 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
   FIREBALL_SPEED: 3,
   
   init: function(area) {
-    Enemy.init.call(this, area, 'octorok');
+    Entity.init.call(this, area, 'octorok');
     this.startAnimation('idle');
   },
   
-  onStabbed: function(absHitbox) {
+  onStabbedByPlayer: function(absHitbox) {
     this.isReadyToFire = false;
-    Enemy.onStabbed.call(this, absHitbox);
+    Entity.onStabbedByPlayer.call(this, absHitbox);
   },
   
   updateFixedStep: function(dt) {
     // update hurt timers, etc
-    if (this.isHurt) { this.updateWhenHurt(dt); }
+    this.updateWhenHurt(dt);
     
     // do nothing while hurt
-    if (this.isHurt) { return; }
+    if (this.isHurt()) { return; }
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }
     
     // turn to face player
-    this.facing = (this.area.playerSprite.x > this.x) ? 1 : -1;
+    this.facing = (this.area.playerEntity.x > this.x) ? 1 : -1;
     
     this.behaviourTimer++;
     if (this.behaviourTimer === 120) {
@@ -38,7 +38,7 @@ R.spawnableSprites['Octorok'] = Object.extend(Enemy, {
     }
     if (this.behaviourTimer === 130) {
       if (this.isReadyToFire) {
-        this.area.spawn(R.spawnableSprites['EnemyFireball'], { x: this.x, y: this.y, vx: this.facing * this.FIREBALL_SPEED });
+        this.area.spawn(R.spawnableSprites['ProjFireball'], { x: this.x, y: this.y, vx: this.facing * this.FIREBALL_SPEED });
       }
     }
     if (this.behaviourTimer === 160) {

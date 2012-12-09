@@ -1,34 +1,34 @@
-R.spawnableSprites['Lock'] = Object.extend(Enemy, {
+R.spawnableSprites['Lock'] = Object.extend(Entity, {
   hitbox: { x1: -8, y1: -48, x2: 8, y2: 48 },
   
-  isStabbable:   false,
-  isDangerous:   false,
+  isStabbable: false,
+  isDangerous: false,
   
   isUnlocking: false,
-  wallSprite: undefined,
-  wallOffset: 32,
+  wallSprite:  undefined,
+  wallOffset:  32,
   
   UNLOCK_TIME: 300,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'lock');
+    Entity.init.call(this, area, 'lock');
     this.wallSprite = Object.build(Sprite, 'lock', 'wall');
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
     
     var p = Game.player;
     if (p.currentDungeonId && p.dungeonState[p.currentDungeonId].keys > 0) {
       p.dungeonState[p.currentDungeonId].keys -= 1;
-      this.area.playerSprite.frozenTimer = Infinity;
+      this.area.playerEntity.frozenTimer = Infinity;
       this.isUnlocking = true;
     }
     
-    if (playerSprite.x < this.x) {
-      playerSprite.x = this.x + this.hitbox.x1 - playerSprite.hitbox.x2;
+    if (playerEntity.x < this.x) {
+      playerEntity.x = this.x + this.hitbox.x1 - playerEntity.hitbox.x2;
     }
     else {
-      playerSprite.x = this.x + this.hitbox.x2 - playerSprite.hitbox.x1;
+      playerEntity.x = this.x + this.hitbox.x2 - playerEntity.hitbox.x1;
     }
     this.area.updateCamera();
   },
@@ -40,8 +40,8 @@ R.spawnableSprites['Lock'] = Object.extend(Enemy, {
       if (this.wallOffset <= 0) {
         this.onComplete();
         this.kill();
-        this.area.playerSprite.vx          = 0;
-        this.area.playerSprite.frozenTimer = 0;
+        this.area.playerEntity.vx          = 0;
+        this.area.playerEntity.frozenTimer = 0;
       }
     }
   },
@@ -52,7 +52,7 @@ R.spawnableSprites['Lock'] = Object.extend(Enemy, {
     this.wallSprite.render(ox, oy - this.wallOffset);
     this.wallSprite.render(ox, oy + this.wallOffset);
     
-    Enemy.render.call(this, ox, oy);
+    Entity.render.call(this, ox, oy);
   }
   
 });

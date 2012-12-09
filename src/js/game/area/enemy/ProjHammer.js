@@ -1,11 +1,11 @@
-R.spawnableSprites['ProjHammer'] = Object.extend(Enemy, {
+R.spawnableSprites['ProjHammer'] = Object.extend(Entity, {
   hitbox: { x1: -8, y1: -8, x2: 8, y2: 8 },
   
   isStabbable: false,
   damageToPlayer: 2,
   
   init: function(area, spawn) {
-    Enemy.init.call(this, area, 'proj-hammer');
+    Entity.init.call(this, area, 'proj-hammer');
     this.x  = spawn.x;
     this.y  = spawn.y;
     this.vx = spawn.vx;
@@ -14,7 +14,7 @@ R.spawnableSprites['ProjHammer'] = Object.extend(Enemy, {
     this.ay = spawn.gravity;
   },
   
-  onPlayerCollision: function(playerSprite) {
+  onPlayerCollision: function(playerEntity) {
     this.kill();
   },
   

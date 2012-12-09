@@ -20,7 +20,7 @@ var SpriteGroup = {
     });
   },
   cull: function() {
-    _.invoke(_.filter(this.collection, function(spr) { return spr.readyToCull; }), 'destroy');
+    _.invoke(_.filter(this.collection, function(spr) { return !spr.alive; }), '_destroy');
   },
   count: function() {
     return _.keys(this.collection).length;

@@ -1,4 +1,4 @@
-R.spawnableSprites['Bot'] = Object.extend(Enemy, {
+R.spawnableSprites['Bot'] = Object.extend(Entity, {
   
   hitbox: { x1: -12, y1: -12, x2: 12, y2: 12 },
   
@@ -9,7 +9,7 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   direction: 0,
   
   init: function(area) {
-    Enemy.init.call(this, area, 'blob');
+    Entity.init.call(this, area, 'blob');
     this.y += 8;
     //this.startAnimation('idle');
     //this.vx = Math.random() < 0.5 ? 1 : -1;
@@ -18,7 +18,7 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   jump: function() {
     this.behaviour = 'inch';
     this.behaviourTimer = 0;
-    this.direction = (this.area.playerSprite.x < this.x) ? -1 : 1;
+    this.direction = (this.area.playerEntity.x < this.x) ? -1 : 1;
     this.vx = this.direction * 3;
     this.vy = -6.5;
     this.touching.bottom = false;
@@ -26,10 +26,10 @@ R.spawnableSprites['Bot'] = Object.extend(Enemy, {
   
   updateFixedStep: function(dt) {
     // update hurt timers, etc
-    if (this.isHurt) { this.updateWhenHurt(dt); }
+    this.updateWhenHurt(dt);
     
     // do nothing while hurt
-    if (this.isHurt) { return; }
+    if (this.isHurt()) { return; }
     
     // don't update when off screen
     if ( this.getStandardizedOffscreenDist() > 20 ) { return; }

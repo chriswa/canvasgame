@@ -103,7 +103,7 @@ var Overworld = {
     // update all entities
     this.allGroup.update(dt);
     
-    // center camera on playerSprite
+    // center camera on playerEntity
     this.updateCamera();
     
     // do collisions

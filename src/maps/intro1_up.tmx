@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="dungeonId" value="sample1"/>
+ </properties>
+ <tileset firstgid="1" name="tiles3" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles3.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="../art/physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxTZWBgUANiVSrROkCsC8R6eNi4aGzqCekZpQeGJiY+SdGrDsQaFNDo5ukDsQEFNMwcRSBWAmImCjHMHBjNSCFGNw9khwoV3KdMJBvmDkLqNYFYiwgaZh4hdQCu2Sn6
+  </data>
+ </layer>
+ <layer name="physics" width="20" height="15" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJxzZGBgcBzFo3gU48WUAnqYR4m55IYHtcOXkDoAq58/Og==
+  </data>
+ </layer>
+ <objectgroup name="objects" width="20" height="15">
+  <object name="Octorok" type="spawn" x="512" y="384" width="32" height="32">
+   <properties>
+    <property name="once" value="dungeon"/>
+   </properties>
+  </object>
+  <object name="HeartContainer" type="spawn" x="96" y="352" width="32" height="32">
+   <properties>
+    <property name="once" value="ever"/>
+   </properties>
+  </object>
+  <object name="Lock" type="spawn" x="224" y="320" width="32" height="96">
+   <properties>
+    <property name="once" value="ever"/>
+   </properties>
+  </object>
+  <object name="Elevator" type="spawn" x="320" y="384" width="64" height="64"/>
+  <object name="intro1" type="exit" x="256" y="448" width="192" height="32"/>
+  <object name="Key" type="spawn" x="160" y="384" width="32" height="32">
+   <properties>
+    <property name="once" value="ever"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

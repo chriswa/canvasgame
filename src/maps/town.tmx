@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32" backgroundcolor="#5c94fc">
  <properties>
-  <property name="music" value="town"/>
+  <property name="music" value="NONE"/>
  </properties>
- <tileset firstgid="1" name="tiles3" tilewidth="32" tileheight="32">
-  <image source="../../res/tileset/tiles3.png" width="256" height="256"/>
- </tileset>
- <tileset firstgid="65" name="physicsTiles" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="physicsTiles" tilewidth="32" tileheight="32">
   <image source="../art/physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="tiles-new" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles-new.png" trans="5c94fc" width="512" height="320"/>
  </tileset>
  <layer name="background" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJy10csKwkAMheHxuqjVhZcutBVU6o1Wff+n6+8iEILTWZguPs4QwiG0dQjhitopW7zQOL0lb7irlPnYSO1LvvFRaXssux+7T/YnmGKGec8sdd93J8MCOZZYRWb6TtvXqNvW2GCLHYrITPZ//Q/dt8cBJSocI7O+vtT3Txmq798e2zdyMtR9J5xxcXo/8HTMDgO2G94=
+   eJzdz2kKwjAQhuFczeUI9gheR72B3sC6r0St+4L7rofxLQQaimIqCsUPnh+ZTIaMEF6iiIn/SpCd3N74D//ySQooooQyKqiihjoaaKKFtsG8Hhz0McAQI4wxwRQzzLEwmLfBFjvsccARJ5xxwRU33BHRmCaNjO/tM6bJIvfFeXnYAfrfpYPuizvpO1tIKO6fU1pNqtoKa+HtJbXepeq1lGTIPQALbkD+
   </data>
  </layer>
- <layer name="physics" width="20" height="15" opacity="0.61">
+ <layer name="physics" width="20" height="15" opacity="0.74">
   <data encoding="base64" compression="zlib">
-   eJxzZGBgcBzCGB1QyxxyzSUV0NM8cgE9zKMU0Mo8aoGhYt5gxwBWkCYX
+   eJxjYBgFo2AUjAIIYBzkGAARgAAp
   </data>
  </layer>
  <objectgroup name="objects" width="20" height="15">
-  <object name="overworld" type="exit" x="0" y="0" width="32" height="480"/>
-  <object name="Fairy" type="spawn" x="352" y="288" width="32" height="32">
-   <properties>
-    <property name="once" value="dungeon"/>
-   </properties>
-  </object>
-  <object name="HeartContainer" type="spawn" x="224" y="384" width="32" height="32">
-   <properties>
-    <property name="once" value="ever"/>
-   </properties>
-  </object>
+  <object name="overworld" type="exit" x="640" y="0" width="64" height="480"/>
+  <object name="overworld" type="exit" x="-64" y="0" width="64" height="480"/>
+  <object name="Fairy" type="spawn" x="416" y="320" width="32" height="32"/>
  </objectgroup>
 </map>

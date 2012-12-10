@@ -8,30 +8,34 @@
  </tileset>
  <layer name="background" width="100" height="15">
   <data encoding="base64" compression="zlib">
-   eJztl8cOgzAMhuk8dB26Dl1SC3Sp6/2frv+hlpDlkEFYhcMnUyuOnfwxoXEQBGcQt7YS9gle4NE+l/pM9ghOoOsIzaP6nTcXcHWwRdVnu4666/EGHwdb9v6r1uFLD9K3aD34+apbX/D6Tcf3QB8MwFDQg/SV9JBis/jSzpdrX/iuxxabvh2BMZiAKZhZ5JFis/jyOJtVqMemP+ZgAZZgBdaGcaEiVueLGLq8HcEmkcbo1mfq890fJvfHBmzBDuzBwUIPKTaLL00PE6SxvutxgXTIep+naZHX3NIeq3pE5asK/DuXbOQ5D80bGo73nb8u8PdUUg/+3nVB9Z2pizPNrxvnax15w/fHtT/4XavS2/b/l03+f+gzvj9cj7Bhz/xuK7ue8Gdv4N5gS3qUXQfZL345ZWs=
+   eJztl0kPgjAQhXE9uB3cDm6Jgmvc/v+v8x2cpJlMaUsLgunhywyTvhb6GKrHJElO4BhjLeIDPME95j/NKe7BAbQLQvPoriN2nMEl+lEbXuAd0A/yt4l+ZAptJUp5xmo6PZ9L0qo57Z/tPXdAF/RAX/CD/JX8kLQ+tbI8ycu5B9JYSZPnsVqj/bO51wEYghEYg4nDc0pan1pVfujeeVNvFPXDpT+mYAbmYAGWlrpUozXV+H64rluX/tDpJY3L+bECa7ABW7Bz8EPS+tR+5YdLj+T1im5u8sH3PM/zoqy5/xHuh64ffedPLceHXr9pSH60AkDnEo8mne36pnGhnqMq+P9A1/6Qfnuo0LnEY6j+MI1rWp/xc1z9rsS8upx/p9JvvIJbjJVH8oPXPzKNYmw=
   </data>
  </layer>
  <layer name="physics" width="100" height="15" opacity="0.61">
   <data encoding="base64" compression="zlib">
-   eJztlzEOwCAMA/M1/v+pTl06UHCdkDQ+ySOBcEjAMLOhKMo0KM/xX+uh80f164V85ILt43S/VT3csNaXpW/5EEwifKD1q5xpJhE9d9lLBt4+up1vlKi7brduV2/ePtDaLG9VvLLegm9j5GMN9B/792h/ciWbjwtfFYwp
+   eJztmEsOQCEIA7ma97+Ua11ogOIn7SRdSnyMRn3NzJqiKMtEmcdn67EiH2+B9oGqxwqqb/KBQX17ixM+ovUZ99qJb2bpJYJqH2zrO0v1Geyty+6tykf0voXy9pvX7Bt9N0Y+fNz+L6OMa+b2PJS1jw7BdH3x
   </data>
  </layer>
  <objectgroup name="objects" width="100" height="15">
   <object name="test2" type="exit" x="-19" y="142" width="45" height="127"/>
-  <object name="test" type="exit" x="3149" y="51" width="64" height="190"/>
   <object name="Bot" type="spawn" x="608" y="96" width="32" height="32"/>
   <object name="HeartContainer" type="spawn" x="1248" y="192" width="32" height="32">
    <properties>
     <property name="once" value="ever"/>
    </properties>
   </object>
-  <object name="intro1" type="exit" x="2016" y="416" width="128" height="160">
+  <object name="overworld" type="exit" x="2976" y="416" width="128" height="160">
    <properties>
-    <property name="x" value="590"/>
-    <property name="y" value="30"/>
+    <property name="x" value="97"/>
+    <property name="y" value="7"/>
    </properties>
   </object>
   <object name="HammerThrower" type="spawn" x="544" y="384" width="32" height="32">
+   <properties>
+    <property name="once" value="dungeon"/>
+   </properties>
+  </object>
+  <object name="Boomeranger" type="spawn" x="2592" y="384" width="32" height="32">
    <properties>
     <property name="once" value="dungeon"/>
    </properties>

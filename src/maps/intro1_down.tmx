@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="42" height="15" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="dungeonId" value="sample1"/>
+ </properties>
+ <tileset firstgid="1" name="tiles3" tilewidth="32" tileheight="32">
+  <image source="../../res/tileset/tiles3.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="65" name="physicsTiles" tilewidth="32" tileheight="32">
+  <image source="../art/physicsTiles.png" width="256" height="256"/>
+ </tileset>
+ <layer name="background" width="42" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzt1EcLAyEQhmE37ZB2SDukQcqmLGn//9flPWRARKMsC04gh4fRgZEP2bU0xpxQKqvFh+zveFj1pmQtOaW/wx6tzNz7kpyy/+fMl7ONDrrofenVOaupnH0MMMQI40AvJaNvrqmcE0wxwxyLQC8lp28u9L+7OY8RS6ywxgbbQC92jnDnzrhYtW7O1O8uNac798TLqlpzxt4ByVkoFbrP3O9o7D6lHhSsffWK6gfqG8V9Mxw=
+  </data>
+ </layer>
+ <layer name="physics" width="42" height="15" opacity="0.61">
+  <data encoding="base64" compression="zlib">
+   eJxzZGBgcByEGAYG2h3kunOgwag7qQtG3UldMNzcSWw5Qap9xJo36k7qupNY8wYroNSf9AKkxvsoJg4DABi2Syk=
+  </data>
+ </layer>
+ <objectgroup name="objects" width="42" height="15">
+  <object name="Elevator" type="spawn" x="1216" y="384" width="64" height="64"/>
+  <object name="intro1" type="exit" x="1152" y="0" width="192" height="32"/>
+  <object name="Key" type="spawn" x="96" y="352" width="32" height="32">
+   <properties>
+    <property name="once" value="ever"/>
+   </properties>
+  </object>
+  <object name="Skeleton" type="spawn" x="448" y="96" width="32" height="32">
+   <properties>
+    <property name="once" value="ever"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

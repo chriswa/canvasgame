@@ -51,8 +51,8 @@ var Game = Object.extend(FiniteStateMachine, {
     _.extend(this.player, {
       lives:              3,
       health:             this.player.healthMax,
-      overworldX:         52,
-      overworldY:         25,
+      overworldX:         39,
+      overworldY:         24,
       tempDungeonState:   undefined, // keep track of what's been killed/taken in the current dungeon (which will be reset when you leave)
       currentDungeonId:   undefined,
       lastArea:           undefined // for respawning after player death

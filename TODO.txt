@@ -14,6 +14,7 @@ TODO
   ? spells
 
 CONSIDER
+  - demo mode (fake Input from an array and hardcoded FPS to ensure identical simulation)
   - make it work in ie?
   - map-property-specified alternate tileset name for "dark" (no candle)
 

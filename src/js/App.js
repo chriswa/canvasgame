@@ -20,7 +20,7 @@ var App = {
     this.request = loadQueryString();
     
     // disable audio?
-    if (this.request.nosound) { App.sfx.toggleAudio(); }
+    if (this.request.nosound) { Audio.toggleAudio(); }
     
     // check if we're on mobile first, since we may need to resize canvas element
     var forceMobile = this.request['mobile'];
@@ -63,7 +63,7 @@ var App = {
     //CANVAS_CTX.imageSmoothingEnabled = false;
     
     // show loading screen
-    App.gfx.drawTextScreen('Loading...', '#ccc', '#fff');
+    Video.drawTextScreen('Loading...', '#ccc', '#fff');
     
     Input.init();
     
@@ -88,7 +88,7 @@ var App = {
   // API for starting, pausing, and stepping
   start: function() {
     if (!this.isRunning) {
-      App.sfx.unpauseMusic();
+      Audio.unpauseMusic();
       this.isRunning = true;
       this.simTime = now();
       this.render();
@@ -98,8 +98,8 @@ var App = {
   pause: function() {
     if (this.isRunning) {
       this.isRunning = false;
-      App.gfx.drawPausedScreen();
-      App.sfx.pauseMusic();
+      Video.drawPausedScreen();
+      Audio.pauseMusic();
     }
   },
   stepAndPause: function(dt) {
@@ -107,7 +107,7 @@ var App = {
     this.update(dt);
     this.simTime += dt;
     this.render();
-    App.gfx.drawPausedScreen();
+    Video.drawPausedScreen();
   },
   
   // 
@@ -171,161 +171,6 @@ var App = {
     if (keyName === 'esc') { if (this.isRunning) { this.pause(); } else { this.start(); } }
     if (keyName === '6') { this.stepAndPause(1000 * 1 / 60); }
     if (keyName === '3') { this.stepAndPause(1000 * 1 / 30); }
-  },
-  
-  
-  
-  gfx: {
-    
-    //
-    paintScreen: function(colour) {
-      CANVAS_CTX.fillStyle = colour;
-      CANVAS_CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
-    },
-    
-    // 
-    drawPausedScreen: function() {
-      App.gfx.paintScreen('rgba(0, 0, 0, 0.5)')
-      CANVAS_CTX.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      CANVAS_CTX.beginPath();
-      CANVAS_CTX.moveTo(CANVAS.width * 0.40, CANVAS.height * 0.35);
-      CANVAS_CTX.lineTo(CANVAS.width * 0.60, CANVAS.height * 0.50);
-      CANVAS_CTX.lineTo(CANVAS.width * 0.40, CANVAS.height * 0.65);
-      CANVAS_CTX.fill();
-    },
-    
-    drawTextScreen: function(text, colour, backgroundColour) {
-      colour           = colour           || '#900';
-      backgroundColour = backgroundColour || '#000';
-      App.gfx.paintScreen(backgroundColour);
-      CANVAS_CTX.font      = 'bold 50px sans-serif';
-      CANVAS_CTX.fillStyle = colour;
-      CANVAS_CTX.textAlign = 'center';
-      CANVAS_CTX.fillText(text, CANVAS.width / 2, CANVAS.height / 2 + 16);
-    },
-    
-    blitSliceByFilename: function(sliceFilename, x, y, w, h) {
-      var slice = R.spriteSlicesByOriginalFilename[sliceFilename];
-      var textureName = slice[4];
-      if (!w) { w = slice[2]; }
-      if (!h) { h = slice[3]; }
-      CANVAS_CTX.drawImage(R.spriteTextures[textureName][0], slice[0], slice[1], slice[2], slice[3], x, y, w, h);
-    }
-    
-  },
-  
-  sfx: {
-    play: function(filename) {
-      if (App.isMobile) { return undefined; }
-      if (!App.audioEnabled) { return undefined; }
-      var samples = R.sfx[filename];
-      for (var i = 0; i < samples.length; i += 1) {
-        var sample = samples[i];
-        if (sample.paused || sample.ended) {
-          sample.currentTime = 0;
-          sample.play();
-          return sample;
-        }
-      }
-      samples[0].pause();
-      samples[0].currentTime = 0.1; // force the next line to seek!
-      samples[0].currentTime = 0;
-      samples[0].play();
-      return samples[0];
-    },
-    
-    toggleAudio: function() {
-      $('#toggleAudio').children().toggle();
-      App.audioEnabled = !App.audioEnabled;
-      if (App.audioEnabled) {
-        if (this.currentMusicFilename) { this.playMusic(this.currentMusicFilename); }
-      }
-      else {
-        this._stopMusic();
-      }
-    },
-    
-    cached: {},
-    currentlyPlaying: undefined,
-    currentMusicFilename: undefined,
-    _stopMusic: function() {
-      if (this.currentlyPlaying) {
-        this.currentlyPlaying.pause();
-        this.currentlyPlaying = undefined;
-      }
-    },
-    stopMusic: function() {
-      this.currentMusicFilename = undefined;
-      this._stopMusic();
-    },
-    playMusic: function(filename) {
-      if (filename === this.currentMusicFilename) { return; } // don't restart if already playing
-      this.currentMusicFilename = filename; // store this even if !App.audioEnabled
-      if (App.isMobile) { return; }
-      if (!App.audioEnabled) { return; }
-      var that = this;
-      
-      this._stopMusic();
-      
-      var cached = this.cached[filename];
-      if (cached) {
-        if (this.currentlyPlaying === cached.audio) { return; } // don't restart music
-        cached.audio.currentTime = 0;
-        cached.audio.play();
-        that.currentlyPlaying = cached.audio;
-        return;
-      }
-      
-      var audio = document.createElement('audio');
-      audio.addEventListener('error', function (ev) {
-        console.log("audio error: " + ev)
-      }, false);
-      
-      // loop
-      audio.addEventListener('ended', function(){
-        console.log('ended');
-        audio.currentTime = 0;
-        audio.play();
-      }, false);
-      
-      audio.autobuffer = true;
-      audio.preload    = 'auto';
-      audio.src        = 'res/music/' + filename + '.' + ResourceManager.audioFormat;
-      
-      // play now
-      audio.play();
-      this.currentlyPlaying = audio;
-      
-      this.cached[filename] = { audio: audio };
-    },
-    pauseMusic: function() {
-      if (App.isMobile) { return; }
-      if (!App.audioEnabled) { return; }
-      if (this.currentlyPlaying) {
-        this.currentlyPlaying.pause();
-      }
-    },
-    unpauseMusic: function() {
-      if (App.isMobile) { return; }
-      if (!App.audioEnabled) { return; }
-      if (this.currentlyPlaying) {
-        this.currentlyPlaying.play();
-      }
-    },
-    restartMusic: function() {
-      if (App.isMobile) { return; }
-      if (!App.audioEnabled) { return; }
-      if (this.currentlyPlaying) {
-        this.currentlyPlaying.currentTime = 0;
-        this.currentlyPlaying.play();
-      }
-    }
   }
   
 };
-
-//
-function getUniqueId() {
-  return getUniqueId.counter++;
-}
-getUniqueId.counter = 0;

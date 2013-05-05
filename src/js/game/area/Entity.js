@@ -247,7 +247,7 @@ var Entity = Object.extend(Sprite, {
     if (this.health > 0) {
       if (this.area.currentAttackSfx && this.area.currentAttackSfx.getAttribute('name') === 'AOL_Sword') {
         this.area.currentAttackSfx.pause();
-        this.area.currentAttackSfx = App.sfx.play('AOL_Sword_Hit');
+        this.area.currentAttackSfx = Audio.play('AOL_Sword_Hit');
       }
     }
     
@@ -273,7 +273,7 @@ var Entity = Object.extend(Sprite, {
       
       // sfx
       if (this.area.currentAttackSfx) { this.area.currentAttackSfx.pause(); }
-      this.area.currentAttackSfx = App.sfx.play('AOL_Kill');
+      this.area.currentAttackSfx = Audio.play('AOL_Kill');
     }
     
     return true;

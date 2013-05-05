@@ -19,7 +19,7 @@ var MainMenu = {
   },
   
   render: function() {
-    App.gfx.paintScreen('#000');
+    Video.paintScreen('#000');
     this.drawText("Zeldesque", '#fff', '80px', -80);
 //    this.drawText("[ Play ]",        this.selectedOptionIndex === 0 ? '#ff9' : '#9ff', '30px', 30);
 //    this.drawText("[ Editor ]",      this.selectedOptionIndex === 1 ? '#ff9' : '#9ff', '30px', 80);

@@ -223,6 +223,12 @@ function relToAbsHitbox(relHitbox, pos) {
   return { x1: relHitbox.x1 + pos.x, y1: relHitbox.y1 + pos.y, x2: relHitbox.x2 + pos.x, y2: relHitbox.y2 + pos.y };
 }
 
+//
+function getUniqueId() {
+  return getUniqueId.counter++;
+}
+getUniqueId.counter = 0;
+
 
 //
 // console.assert()!

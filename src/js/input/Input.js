@@ -151,7 +151,7 @@ var Input = Object.extend(FiniteStateMachine, {
         if (!this.refreshButtonTimeout) {
           this.refreshButtonTimeout = setTimeout(function() {
             App.pause();
-            App.gfx.drawTextScreen("Refresh!", "#000", "#f0f");
+            Video.drawTextScreen("Refresh!", "#000", "#f0f");
             window.location.reload();
           }, 750);
         }

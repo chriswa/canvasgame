@@ -88,7 +88,7 @@ var PlayerEntity = Object.extend(Entity, {
       //var facingAgainstMotion = (sign(entity.vx) !== this.facing);
       
       if (shieldAtRightHeight && (facingEntity /*|| facingAgainstMotion*/)) {
-        App.sfx.play('AOL_Deflect');
+        Audio.play('AOL_Deflect');
         entity.onBlock();
       }
     }
@@ -111,11 +111,11 @@ var PlayerEntity = Object.extend(Entity, {
         this.vy = -this.HURT_IMPULSE_Y;
       }
       if (Game.player.health <= 0) {
-        App.sfx.stopMusic();
-        App.sfx.play('AOL_Die');
+        Audio.stopMusic();
+        Audio.play('AOL_Die');
       }
       else {
-        App.sfx.play('AOL_Hurt');
+        Audio.play('AOL_Hurt');
       }
     }
     
@@ -173,7 +173,7 @@ var PlayerEntity = Object.extend(Entity, {
       
       // start attack?
       if (Input.gamepad.pressed.attack && !this.isAttacking) {
-        this.area.currentAttackSfx = App.sfx.play('AOL_Sword');
+        this.area.currentAttackSfx = Audio.play('AOL_Sword');
         this.isAttacking = true;
         this.isCrouching = Input.gamepad.held.down && !this.isAirborne && !this.isOnElevator;
         if (this.isCrouching) { this.startAnimation('crouch-attack'); }
@@ -206,8 +206,8 @@ var PlayerEntity = Object.extend(Entity, {
       
       // check for lava
       if (Game.player.health > 0 && this.touching.tiles[ Area.physicsTileTypes.INSTADEATH ]) {
-        App.sfx.stopMusic();
-        App.sfx.play('AOL_Die');
+        Audio.stopMusic();
+        Audio.play('AOL_Die');
         Game.player.health = 0;
         this.playAnimation('hurt');
         //this.frozenTimer = 1000;
@@ -397,9 +397,9 @@ var PlayerEntity = Object.extend(Entity, {
     this.vx = 0;
     this.vy = 0;
     
-    App.sfx.pauseMusic();
-    App.sfx.play('AOL_LevelUp_GetItem');
-    setTimeout(function() { App.sfx.restartMusic(); }, 2500);
+    Audio.pauseMusic();
+    Audio.play('AOL_LevelUp_GetItem');
+    setTimeout(function() { Audio.restartMusic(); }, 2500);
   },
   
 });

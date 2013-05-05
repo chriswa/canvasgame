@@ -192,13 +192,13 @@ var Area = {
   
   startMusic: function() {
     if (this.music === 'NONE') {
-      App.sfx.stopMusic();
+      Audio.stopMusic();
     }
     else if (this.music === 'NO_CHANGE') {
-      App.sfx.playMusic(Game.player.tempDungeonState.music);
+      Audio.playMusic(Game.player.tempDungeonState.music);
     }
     else {
-      App.sfx.playMusic(this.music);
+      Audio.playMusic(this.music);
     }
   },
   

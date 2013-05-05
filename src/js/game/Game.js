@@ -77,7 +77,7 @@ var Game = Object.extend(FiniteStateMachine, {
     mainmenu: {
       onenterstate: function() {
         this.mainmenu = Object.build(MainMenu);
-        App.sfx.playMusic("title");
+        Audio.playMusic("title");
       },
       onleavestate: function() {
         this.mainmenu.destroy();
@@ -119,7 +119,7 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     overworld: {
       onenterstate: function() {
-        App.sfx.playMusic("overworld");
+        Audio.playMusic("overworld");
         Input.setState(Input.gamepad);
         Game.overworld.player.finishMove();
         Game.overworld.updateCamera();
@@ -141,10 +141,10 @@ var Game = Object.extend(FiniteStateMachine, {
     //
     nextlife: {
       onenterstate: function(newArea) {
-        App.sfx.stopMusic();
+        Audio.stopMusic();
         this.newArea = newArea;
         //this.newArea.reset();
-        App.gfx.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
+        Video.drawTextScreen("Lives left: " + Game.player.lives, '#fff');
         setTimeout(function() {
           Game.setState(Game.states.area, newArea);
         }, 1500);
@@ -154,9 +154,9 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     gameover: {
       onenterstate: function() {
-        App.sfx.stopMusic();
-        App.sfx.play('AOL_Ganon_Laugh');
-        App.gfx.drawTextScreen("GAME OVER");
+        Audio.stopMusic();
+        Audio.play('AOL_Ganon_Laugh');
+        Video.drawTextScreen("GAME OVER");
         setTimeout(function() {
           Game.setState(Game.states.mainmenu);
         }, 3000);
@@ -166,7 +166,7 @@ var Game = Object.extend(FiniteStateMachine, {
     // 
     overworldWipe: {
       onenterstate: function(nextTransition, newArea) {
-        App.sfx.stopMusic();
+        Audio.stopMusic();
         this.stateTimer     = 0;
         this.nextTransition = nextTransition;
         this.newArea        = newArea;
@@ -285,10 +285,10 @@ var Game = Object.extend(FiniteStateMachine, {
         // do nothing: the fairy itself will make a sound
       }
       else if (exitObject.encounter) {
-        App.sfx.play('AOL_Battle');
+        Audio.play('AOL_Battle');
       }
       else {
-        App.sfx.play('AOL_Map');
+        Audio.play('AOL_Map');
       }
       this.queueState(Game.states.overworldWipe, doTransition, newArea);
     }

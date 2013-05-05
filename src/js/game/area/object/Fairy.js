@@ -26,7 +26,7 @@ R.spawnableSprites['Fairy'] = Object.extend(Entity, {
   update: function(dt) {
     if ( !this.hasPlayedSfx && dt > 0 ) {
       this.hasPlayedSfx = true;
-      App.sfx.play('AOL_Fairy');
+      Audio.play('AOL_Fairy');
     }
     
     if (this.isHealing) {

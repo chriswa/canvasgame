@@ -1,8 +1,8 @@
 Input.gui = {
   
   controls: undefined,
-  hoverControl: undefined,
-  depressControl: undefined,
+  hoverControl: undefined,    // rename this to activeHoverControl
+  depressControl: undefined,  // rename this to activeDepressControl
   
   onenterstate: function() {
     this.controls = [];

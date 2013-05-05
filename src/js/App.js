@@ -9,14 +9,14 @@ var App = {
   fpsRender: null,
   
   SIM_SPEED:           1.0,
-  SIM_STEP_MIN:        1000 * 1/60, // for stability, simulation delta times will not be smaller than this
-  SIM_STEP_MAX:        1000 * 1/30, // for stability, simulation delta times will not be greater than this
-  SIM_STEP_HARD_LIMIT: 1000 * 3/30, // for playability, each render frame will not advance simulation time more than this (avoiding the death spiral!)
+  SIM_STEP_MIN:        1000 * 1/60, // for stability, simulation delta times will never be smaller than this
+  SIM_STEP_MAX:        1000 * 1/30, // for stability, simulation delta times will never be greater than this
+  SIM_STEP_HARD_LIMIT: 1000 * 3/30, // for playability, each render frame will never advance simulation time more than this (also avoiding the game loop "death spiral")
   simTime: null,
   
   init: function(isProduction) {
     
-    // load request object from ?query=string
+    // load request object from url (i.e. ?query=string)
     this.request = loadQueryString();
     
     // disable audio?
@@ -70,7 +70,7 @@ var App = {
     // load resources, then call callback
     var startTime = now();
     ResourceManager.init( _.once(function() {
-      console.log("ResourceManager: " + (now() - startTime).toFixed(1) + "ms");
+      console.log("ResourceManager initialized in " + (now() - startTime).toFixed(1) + "ms");
       Game.init();
       Debug.init();
       

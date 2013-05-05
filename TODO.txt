@@ -1,3 +1,9 @@
+APR2013
+  - move App.gfx and App.sfx into GFX and SFX or Video and Audio
+    - consider moving CANVAS and CANVAS_CTX into Video.canvas and Video.ctx
+  - move getUniqueId from App.js into util.js?
+  
+
 TODO
   - onInjuredPlayer instead of onPlayerCollision being called only when not invincible for dangerous entities
   - sfx
